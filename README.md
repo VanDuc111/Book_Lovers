@@ -51,7 +51,7 @@ Dự án phát triển một hệ thống website thương mại điện tử ch
 
 ---
 
-## 📌 Các Tính năng Chính
+## Các Tính năng Chính
 
 * **Quản lý Sản phẩm:** Thêm, sửa, xóa sản phẩm, phân loại theo danh mục.
 * **Giỏ hàng Động:** Cho phép người dùng thêm/bỏ sản phẩm và thay đổi số lượng.
