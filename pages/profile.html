@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ Sơ</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="../css/form.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/profile.css">
+</head>
+
+<body>
+    <script type="module">
+        import { addHeader } from '../js/common.js';
+        addHeader();
+    </script>
+    <div class="container">
+        <h2>Hồ sơ của tôi</h2>
+        <div class="profile-container">
+            <div class="profile-info">
+                <img src="../assets/images/profile-img.jpg" alt="Ảnh đại diện" class="profile-image">
+                <div class="profile-details">
+                    <label for="name">Tên đầy đủ:</label>
+                    <input type="text" id="name" name="name" value="">
+
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" value="" readonly>
+
+                    <label for="address">Địa chỉ:</label>
+                    <input type="text" id="address" name="address" value="">
+
+                    <label for="phone">Số điện thoại:</label>
+                    <input type="tel" id="phone" name="phone" value="">
+                    <br>
+                    <button type="submit" class="save-button">Lưu chỉnh sửa</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { addFooter } from '../js/common.js';
+        addFooter();
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+        crossorigin="anonymous"></script>
+    <script src="../js/login.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userID = urlParams.get('userID');
+            const nameInput = document.getElementById('name');
+            const addressInput = document.getElementById('address');
+            const phoneInput = document.getElementById('phone');
+            const saveButton = document.querySelector('.save-button');
+
+            if (userID) {
+                // Lấy thông tin người dùng từ server để hiển thị ban đầu
+                fetch(`../api/api.php?endpoint=users&userID=${userID}`)
+                    .then(response => response.json())
+                    .then(user => {
+                        console.log("Dữ liệu người dùng ban đầu:", user);
+
+                        if (user) {
+                            nameInput.value = user.name || '';
+                            document.getElementById('email').value = user.email || '';
+                            addressInput.value = user.address || '';
+                            phoneInput.value = user.phone || '';
+                        } else {
+                            console.error('Không tìm thấy thông tin người dùng.');
+                            // Hiển thị thông báo lỗi cho người dùng (nếu cần)
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Lỗi khi lấy thông tin người dùng ban đầu:', error);
+                        // Hiển thị thông báo lỗi cho người dùng (nếu cần)
+                    });
+
+                // Xử lý sự kiện click nút "Lưu chỉnh sửa"
+                saveButton.addEventListener('click', () => {
+                    const updatedData = {
+                        userID: userID,
+                        name: nameInput.value,
+                        address: addressInput.value,
+                        phone: phoneInput.value
+                    };
+
+                    // Gửi dữ liệu cập nhật lên server bằng phương thức PUT
+                    fetch('../api/api.php?endpoint=users', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(updatedData)
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Phản hồi từ server khi cập nhật:', data);
+                            if (data.success) {
+                                alert('Thông tin hồ sơ đã được cập nhật thành công!');
+                                // Có thể cập nhật lại giao diện nếu cần
+                            } else {
+                                alert('Có lỗi xảy ra khi cập nhật hồ sơ. Vui lòng thử lại.');
+                                console.error('Lỗi cập nhật hồ sơ:', data.error);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Lỗi khi gửi yêu cầu cập nhật hồ sơ:', error);
+                            alert('Đã xảy ra lỗi khi cập nhật hồ sơ. Vui lòng kiểm tra kết nối mạng.');
+                        });
+                });
+
+            } else {
+                console.error('Không tìm thấy userID trong URL.');
+                alert('Không thể xác định người dùng để cập nhật.');
+            }
+        });
+    </script>
+</body>
+
+</html>

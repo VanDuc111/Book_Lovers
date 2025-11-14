@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>header</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+
+<body>
+    <!-- header section start -->
+
+    <header class="header">
+
+        <div class="header-1">
+            <a href="index.html" class="logo" id="logo"><i class="fas fa-book"> BookLovers</i></a>
+            <!---- category ---->
+            <nav class="category">
+                <button class="category-bars btn">
+                    <a href="" class="fas fa-bars"></a>
+                </button>
+                <div class="category-content">
+                    <ul id="header-category-list" class="category-list">
+
+                    </ul>
+                </div>
+            </nav>
+            <form action="" class="from-box form-control" id="search-form">
+                <input type="search" name="" placeholder="Tìm kiếm sản phẩm..." id="search-input">
+                <button type="submit" class="search-button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+            <!---- category end ---->
+
+
+            <div class="icons">
+                <a href="cart.html"><i class="fas fa-shopping-cart"></i></a>
+                <a href="login.html" id="login-btn" class="user-info fas fa-user">
+                    <span id="welcome-message" style="display: none;"></span>
+                </a>
+                <button id="logout-btn" style="display: none;">
+                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                </button>
+
+
+            </div>
+        </div>
+
+        <div class="header-2">
+            <div class="navbar">
+                <a href="index.html">Trang Chủ</a>
+                <a href="#sach-van-hoc">Sách Văn Học</a>
+                <a href="#daily-recommended">Sách mới</a>
+                <a href="#reviews">Đánh giá</a>
+                <a href="book-list.html">Toàn bộ</a>
+            </div>
+        </div>
+
+
+    </header>
+
+    <!---- header section ends ---->
+
+    <!---- bottom navbar start ---->
+
+    <div class="bottom-navbar">
+        <a href="#home" class="fas fa-home"></a>
+        <a href="#featured" class="fas fa-list"></a>
+        <a href="#arrivals" class="fas fa-tags"></a>
+        <a href="#reviews" class="fas fa-comments"></a>
+        <a href="#blogs" class="fas fa-store"></a>
+    </div>
+
+    <!---- bottom navbar ends ---->
+
+    <script type="module" src="../js/common.js"></script>
+    <!-- <script src="../js/script.js"></script> -->
+    <!-- <script src="../js/book-list.js"></script> -->
+</body>
+
+</html>

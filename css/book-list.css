@@ -1,0 +1,62 @@
+.card-img-top {
+    height: 250px;
+    object-fit: cover;
+}
+
+.card {
+    cursor: pointer;
+    /* Thay đổi con trỏ chuột thành pointer */
+    pointer-events: auto;
+}
+
+.card:hover {
+    /* Thêm các hiệu ứng hover khác nếu muốn */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Ví dụ: thêm bóng đổ */
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.card-text {
+    font-size: 1.2rem;
+    color: #555;
+}
+
+.category-item {
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    color: #333;
+}
+
+.category-item:hover {
+    background-color: #e0f7fa;
+    color: #00796b;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.category-item.active {
+    background-color: #b2dfdb;
+    color: #00796b;
+}
+
+.breadcrumb-item {
+    font-size: 1.5em;
+}
+
+.btn.btn-sm.btn-outline-secondary.decrease-quantity,
+.btn.btn-sm.btn-outline-secondary.increase-quantity {
+    padding: 0.4rem 0.6rem;
+    font-size: 1rem;
+    line-height: 1;
+    border-radius: 0.2rem;
+}
+
+.me-2 {
+    margin-right: 0.5rem;
+    font-size: 1.5rem;
+}

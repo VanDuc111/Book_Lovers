@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sách</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/book-list.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+</head>
+
+<body>
+    <script type="module">
+        import { addHeader } from '../js/common.js';
+        addHeader();
+    </script>
+    <div class="container-fluid mt-5">
+        <div class="container mt-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="index.html">Trang Chủ</a></li>
+                    <li class="breadcrumb-item"><a href="book-list.html">Sách</a></li>
+                    <li class="breadcrumb-item active" id="breadcrumb-current-category" aria-current="page"></li>
+                </ol>
+            </nav>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+            </div>
+            <div class="col-md-10">
+                <div class="row book-list"> </div>
+            </div>
+        </div>
+    </div>
+    <script type="module">
+        import { addFooter } from '../js/common.js';
+        addFooter();
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script type="module" src="../js/common.js"></script>
+    <script src="../js/login.js"></script>
+    <script defer src="../js/book-list.js"></script>
+    <script src="../js/book-details.js"></script>
+</body>
+
+</html>
