@@ -36,12 +36,12 @@ Dự án phát triển một hệ thống website thương mại điện tử ch
 3. **Import Dữ liệu:**
     * Nhấn vào database **`bookstore_db`** vừa tạo.
     * Chọn tab **Import** (Nhập).
-    * Chọn file **`bookstore_db.sql`**  nằm trong thư mục project và nhấn **Go** (Thực hiện) để nhập dữ liệu.
+    * Chọn file **`booklovers_db.sql`**  nằm trong thư mục project và nhấn **Go** (Thực hiện) để nhập dữ liệu.
 
 ### Bước 4: Chạy Ứng dụng
 
 1. **Kiểm tra file cấu hình:** Mở file cấu hình kết nối database của bạn (ví dụ: `connect.php` hoặc `db_config.php`) và đảm bảo các thông số sau là chính xác:
-    * **Tên Database:** `bookstore_db`
+    * **Tên Database:** `booklovers_db`
     * **Username:** `root` (Mặc định của XAMPP)
     * **Password:** (Thường để trống hoặc `""` - Mặc định của XAMPP)
 2. **Truy cập Website:** Mở trình duyệt và truy cập địa chỉ sau:
