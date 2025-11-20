@@ -1,9 +1,10 @@
 .form-container {
-    width: 300px;
+    width: 360px;
     margin: 50px auto;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    padding: calc(var(--spacing, 1.6rem));
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 0.8rem;
+    background: #fff;
 }
 
 .form-container h2 {
@@ -19,27 +20,41 @@
 .form-container input[type="text"],
 .form-container input[type="password"] {
     width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 3px;
+    padding: 0.9rem;
+    margin-bottom: calc(var(--spacing, 1.6rem) / 2);
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 0.5rem;
+    font-size: 1.05rem;
 }
 
-.form-container button {
+.form-container button[type="submit"], .form-container .btn {
     width: 100%;
-    padding: 10px;
-    background-color: #ee5513;
+    padding: var(--btn-padding-vertical, 0.9rem) var(--btn-padding-horizontal, 1.4rem);
+    background-color: var(--orange, #ee5513);
     color: white;
     border: none;
-    border-radius: 3px;
+    border-radius: var(--btn-radius, 0.7rem);
     cursor: pointer;
+    font-size: var(--btn-font-size, 1.05rem);
+    box-shadow: var(--btn-shadow, 0 6px 14px rgba(0,0,0,0.08));
 }
 
-.form-container button:hover {
+.form-container button[type="submit"]:hover, .form-container .btn:hover {
     background-color: #3e8e41;
 }
 
 .form-container p {
     text-align: center;
     margin-top: 10px;
+}
+
+.form-container p a {
+    color: var(--orange);
+    font-weight: 600;
+    font-size: 1.05rem;
+    text-decoration: none;
+}
+
+.form-container p a:hover {
+    text-decoration: underline;
 }

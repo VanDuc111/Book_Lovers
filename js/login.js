@@ -20,7 +20,7 @@ function runLoginJS() {
                     if (data.user.role === 'admin') {
                         window.location.href = 'admin.html'; // Chuyển hướng đến trang admin
                     } else {
-                        window.location.href = 'index.html'; // Chuyển hướng đến trang người dùng
+                        window.location.href = 'home.html'; // Chuyển hướng đến trang người dùng
                     }
                 } else {
                     alert(data.message);
@@ -35,7 +35,7 @@ function runLoginJS() {
     function logout() {
         localStorage.removeItem('user');
         updateUI(null);
-        window.location.href = 'index.html';
+        window.location.href = 'home.html';
     }
 
     function updateUI(user) {
@@ -93,3 +93,28 @@ function runLoginJS() {
         console.error('Lỗi khi parse JSON từ Local Storage:', error);
     }
 }
+
+// Attach password toggle handlers (works for login and other pages that include this file)
+function attachPasswordToggle() {
+    document.querySelectorAll('.password-toggle').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetSelector = this.getAttribute('data-target');
+            let input;
+            if (targetSelector) input = document.querySelector(targetSelector);
+            else input = this.parentElement.querySelector('input[type="password"], input[type="text"]');
+            if (!input) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                this.innerHTML = '<i class="fas fa-eye-slash"></i>';
+            } else {
+                input.type = 'password';
+                this.innerHTML = '<i class="fas fa-eye"></i>';
+            }
+        });
+    });
+}
+
+// Initialize
+try { runLoginJS(); } catch (e) { console.warn('runLoginJS init failed:', e); }
+try { attachPasswordToggle(); } catch (e) { /* no-op if DOM not ready */ }

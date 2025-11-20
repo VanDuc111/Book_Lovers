@@ -37,10 +37,10 @@ if ($result->num_rows > 0) {
             ]
         ]);
     } else {
-        echo json_encode(['success' => false, 'message' => 'Mật khẩu không đúng.']);
+        echo json_encode(['success' => false, 'message' => 'Email hoặc mật khẩu không chính xác.']);
     }
 } else {
-    echo json_encode(['success' => false, 'message' => 'Email không tồn tại.']);
+    echo json_encode(['success' => false, 'message' => 'Email hoặc mật khẩu không chính xác.']);
 }
 
 $stmt->close();

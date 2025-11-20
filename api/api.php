@@ -39,9 +39,11 @@ switch ($endpoint) {
                     $result = $stmt->get_result();
                     if ($result->num_rows > 0) {
                         $books = [];
-                        while ($row = $result->fetch_assoc()) {
-                            $books[] = $row;
-                        }
+                            while ($row = $result->fetch_assoc()) {
+                                // Normalize image
+                                $row['image'] = fixImagePath($row['image'] ?? null);
+                                $books[] = $row;
+                            }
                         echo json_encode($books);
                     } else {
                         http_response_code(404); // Not Found
@@ -168,6 +170,22 @@ switch ($endpoint) {
 $conn->close();
 
 //Các hàm xử lý
+/**
+ * Normalize image value from DB (which may store only filename).
+ * Returns a public path (absolute from web root) or null.
+ */
+function fixImagePath($image) {
+    if (empty($image)) return null;
+    // If already an absolute URL, keep it
+    if (preg_match('#^https?://#i', $image)) return $image;
+    // If starts with slash, assume public path already
+    if (strpos($image, '/') === 0) return $image;
+    // If contains directory separators, assume it's already a path
+    if (strpos($image, '/') !== false) return $image;
+    // Otherwise it's a bare filename -> prefix with public assets folder
+    return '/assets/images/' . $image;
+}
+
 function getBooks($conn) {
     header('Content-Type: application/json');
     // Lấy sách kèm tên thể loại và sửa đường dẫn ảnh ngắn -> URL
@@ -178,10 +196,8 @@ function getBooks($conn) {
     $books = [];
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            // Nếu image là tên file, trả kèm đường dẫn public
-            if (!empty($row['image']) && strpos($row['image'], '/') === false) {
-                $row['image'] = '/assets/images/' . $row['image'];
-            }
+            // Normalize image field
+            $row['image'] = fixImagePath($row['image'] ?? null);
             $books[] = $row;
         }
     }
@@ -198,9 +214,7 @@ function getBookById($conn, $id) {
     $result = $stmt->get_result();
     $book = $result->fetch_assoc();
     $stmt->close();
-    if ($book && !empty($book['image']) && strpos($book['image'], '/') === false) {
-        $book['image'] = '/assets/images/' . $book['image'];
-    }
+    if ($book) $book['image'] = fixImagePath($book['image'] ?? null);
     echo json_encode($book);
 }
 
@@ -222,9 +236,7 @@ function getBooksByCategory($conn, $category) {
     $result = $stmt->get_result();
     if ($result && $result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
-            if (!empty($row['image']) && strpos($row['image'], '/') === false) {
-                $row['image'] = '/assets/images/' . $row['image'];
-            }
+            $row['image'] = fixImagePath($row['image'] ?? null);
             $books[] = $row;
         }
     }
@@ -713,6 +725,8 @@ function getCartItems($conn, $userID = null) {
     $result = $stmt->get_result();
     $cartItems = [];
     while ($row = $result->fetch_assoc()) {
+        // Normalize book image on cart items
+        if (isset($row['image'])) $row['image'] = fixImagePath($row['image']);
         $cartItems[] = $row;
     }
     echo json_encode($cartItems);

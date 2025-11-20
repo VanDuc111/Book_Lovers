@@ -37,3 +37,24 @@ document.getElementById('registerForm').addEventListener('submit', function (eve
             alert('Đã xảy ra lỗi khi đăng ký.');
         });
 });
+
+// Attach password toggle for register page
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.password-toggle').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetSelector = this.getAttribute('data-target');
+            let input;
+            if (targetSelector) input = document.querySelector(targetSelector);
+            else input = this.parentElement.querySelector('input[type="password"], input[type="text"]');
+            if (!input) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                this.innerHTML = '<i class="fas fa-eye-slash"></i>';
+            } else {
+                input.type = 'password';
+                this.innerHTML = '<i class="fas fa-eye"></i>';
+            }
+        });
+    });
+});

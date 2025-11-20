@@ -5,27 +5,44 @@ document.addEventListener('DOMContentLoaded', async function () {
     const searchParams = new URLSearchParams(window.location.search);
     const searchTerm = searchParams.get('search');
 
-    // Chờ cho header được tải và categoryListFromHeader được thiết lập
-    await new Promise(resolve => {
-        const checkInterval = setInterval(() => {
-            if (window.categoryListFromHeader) {
-                clearInterval(checkInterval);
-                resolve();
-            }
-        }, 100);
-        // Đặt timeout nếu sau một thời gian vẫn chưa tìm thấy
-        setTimeout(() => {
-            clearInterval(checkInterval);
-            resolve();
-            console.error('Không thể truy cập categoryListFromHeader sau một khoảng thời gian.');
-        }, 5000); 
-    });
-
-    const categoryFilter = window.categoryListFromHeader;
+    // Ensure we have a reference to the header's category list.
+    // Prefer the global set by common.addHeader(), otherwise listen for the headerLoaded event.
+    let categoryFilter = window.categoryListFromHeader || document.getElementById('header-category-list');
     if (!categoryFilter) {
-        console.error('Không tìm thấy categoryFilter. Hãy đảm bảo common.js đã chạy và gán window.categoryListFromHeader.');
-        return;
+        // Wait for headerLoaded event (dispatched by common.addHeader)
+        let resolved = false;
+        const onHeaderLoaded = () => {
+            categoryFilter = window.categoryListFromHeader || document.getElementById('header-category-list');
+            resolved = true;
+            initAfterHeader();
+        };
+
+        document.addEventListener('headerLoaded', onHeaderLoaded);
+
+        // Fallback: if header doesn't appear within 5s, continue but warn
+        setTimeout(() => {
+            if (!resolved) {
+                document.removeEventListener('headerLoaded', onHeaderLoaded);
+                categoryFilter = document.getElementById('header-category-list');
+                if (!categoryFilter) {
+                    console.error('Không thể truy cập categoryListFromHeader sau một khoảng thời gian.');
+                    // proceed anyway but many features may not work
+                } else {
+                    initAfterHeader();
+                }
+            }
+        }, 5000);
+    } else {
+        initAfterHeader();
     }
+
+    function initAfterHeader() {
+        if (!categoryFilter) {
+            console.warn('Không tìm thấy categoryFilter. Hãy đảm bảo common.js đã chạy và gán window.categoryListFromHeader.');
+            // still attempt to fetch books without categories
+            fetchBooks('all');
+            return;
+        }
 
     if (breadcrumbSachsLink) {
         breadcrumbSachsLink.addEventListener('click', function (event) {
@@ -93,7 +110,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     function fetchBooks(categoryId = 'all', searchTerm = null) {
         let url = '../api/api.php?endpoint=books';
         if (categoryId !== 'all') {
-            url += `&category=${categoryId}`;
+            url += `&category=${encodeURIComponent(categoryId)}`;
         }
         if (searchTerm) {
             url += `&search=${encodeURIComponent(searchTerm)}`; // Thêm tham số search vào API
@@ -122,7 +139,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
             bookCard.innerHTML = `
                 <div class="card">
-                    <img src="${book.image ?? 'default-image.jpg'}" class="card-img-top" alt="${book.title ?? 'Không có tiêu đề'}">
+                            <img src="${book.image ? book.image : '/assets/images/default.jpg'}" class="card-img-top" alt="${book.title ?? 'Không có tiêu đề'}">
                     <div class="card-body">
                         <h5 class="card-title">${book.title ?? 'Không có tiêu đề'}</h5>
                         <p class="card-text">Tác giả: ${book.author ?? 'Không có tác giả'}</p>
@@ -149,5 +166,6 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
     } else {
         fetchBooks('all'); // Nếu không có từ khóa, hiển thị tất cả sách
+    }
     }
 });

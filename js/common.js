@@ -13,6 +13,16 @@ export async function addHeader() {
                 console.error('Không tìm thấy header-category-list trong header.html');
             }
 
+            // Dispatch an event so other scripts can know the header has been loaded
+            try {
+                document.dispatchEvent(new CustomEvent('headerLoaded'));
+            } catch (e) {
+                // fallback for very old browsers
+                const evt = document.createEvent('Event');
+                evt.initEvent('headerLoaded', true, true);
+                document.dispatchEvent(evt);
+            }
+
             // Tạo MutationObserver để theo dõi việc thêm header.html
             const observer = new MutationObserver(() => {
                 const welcomeMessage = document.getElementById('welcome-message');

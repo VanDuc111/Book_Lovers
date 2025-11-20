@@ -9,6 +9,16 @@
     --border: 0.1rem solid rgba(0, 0, 0, 0.1);
     --border-hover: 0.2rem solid var(--blue);
     --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+    /* Layout & sizing */
+    --spacing: 1.6rem;
+    --card-img-h: 26rem;
+
+    /* Buttons */
+    --btn-padding-vertical: 0.9rem;
+    --btn-padding-horizontal: 1.4rem;
+    --btn-font-size: 1.05rem;
+    --btn-radius: 0.8rem;
+    --btn-shadow: 0 6px 14px rgba(0,0,0,0.08);
 
 }
 
@@ -18,11 +28,14 @@
     margin: 0;
     padding: 0;
     text-decoration: none;
-    text-transform: capitalize;
     outline: none;
     border: none;
     transition: all 0.2s linear;
     transition: width none;
+}
+
+input, textarea, select, button, .box {
+    text-transform: none;
 }
 
 html {
@@ -90,7 +103,7 @@ html::-webkit-scrollbar-thumb {
     background-color: white;
     border: 1px solid #ccc;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-    z-index: 1;
+    z-index: 2000;
     width: 25rem;
     font-size: 1.5rem;
 }
@@ -100,6 +113,8 @@ html::-webkit-scrollbar-thumb {
     padding: 0;
     margin: 0;
 }
+
+.category { position: relative; }
 
 .category-content li {
     padding: 10px;
@@ -114,6 +129,11 @@ html::-webkit-scrollbar-thumb {
 .category-bars:hover+.category-content {
     display: block;
     z-index: 1000;
+}
+
+.category-bars:focus + .category-content,
+.category-bars:active + .category-content {
+    display: block;
 }
 
 .category-content:hover {
@@ -300,13 +320,20 @@ html::-webkit-scrollbar-thumb {
 }
 
 .btn {
-    color: var(--black);
+    color: #fff;
     background: var(--orange);
-    border: var(--border);
-    font-size: 1.7rem;
-    border-radius: 0.5rem;
+    border: none;
+    font-size: var(--btn-font-size);
+    border-radius: var(--btn-radius);
     cursor: pointer;
-    padding: 0.7rem 3rem;
+    padding: var(--btn-padding-vertical) var(--btn-padding-horizontal);
+    box-shadow: var(--btn-shadow);
+    display: inline-block;
+}
+
+/* Form and plain buttons fallback */
+button, input[type="submit"], .btn.btn-sm {
+    font-size: var(--btn-font-size);
 }
 
 /* login-form-container */
@@ -481,6 +508,65 @@ html::-webkit-scrollbar-thumb {
     margin: 1.2rem 0;
 }
 
+/* Password toggle wrapper */
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-wrapper input[type="password"],
+.password-wrapper input[type="text"] {
+    width: 100%;
+    padding-right: 3.8rem; /* space for toggle */
+    box-sizing: border-box;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 0.6rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--black);
+    cursor: pointer;
+    padding: 0.4rem;
+}
+
+/* Ensure password toggle is small and doesn't expand */
+.password-toggle {
+    width: auto !important;
+    min-width: 2.6rem;
+    height: 2.6rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    box-shadow: none !important;
+    background: rgba(255,255,255,0.0);
+}
+
+/* Stronger constraints for password toggle inside auth forms */
+.login-form-container form .password-wrapper .password-toggle,
+.register-form-container form .password-wrapper .password-toggle,
+.form-container .password-wrapper .password-toggle {
+    width: 3.2rem !important;
+    min-width: 3.2rem !important;
+    height: 3.2rem !important;
+    padding: 0 !important;
+    font-size: 1.2rem !important;
+}
+
+/* Avoid default button styles within form for non-submit buttons */
+.form-container button:not([type="submit"]):not(.btn) {
+    width: auto !important;
+    padding: 0.15rem 0.4rem !important;
+    background: transparent !important;
+    color: var(--black) !important;
+    box-shadow: none !important;
+}
+
 
 .register-form-container form .btn:hover {
     color: #ffffff;
@@ -557,9 +643,17 @@ section {
 
 .home .row .home-books-list a img {
     max-width: 150%;
-    height: 25rem;
-    object-fit: contain;
+    height: var(--card-img-h);
+    width: 100%;
+    object-fit: cover;
 
+}
+
+/* Make primary CTA in hero more prominent */
+.home .row .content .btn {
+    font-size: 1.2rem;
+    padding: 1rem 1.8rem;
+    border-radius: calc(var(--btn-radius) + 0.2rem);
 }
 
 .home .row .home-books-list a:hover img {
@@ -678,13 +772,17 @@ section {
     margin: 2rem 0;
     position: relative;
     overflow: hidden;
-    border-radius: 0.6rem;
+    border-radius: 0.8rem;
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 42rem;
 }
 
 .sach-van-hoc .sach-van-hoc-list .box .image {
     padding: 1rem;
-    border: var(--border);
+    border: none;
     background: #f7f7f7;
     text-align: center;
     position: relative;
@@ -692,7 +790,9 @@ section {
 }
 
 .sach-van-hoc .sach-van-hoc-list .box .image img {
-    height: 25rem;
+    height: var(--card-img-h);
+    width: 100%;
+    object-fit: cover;
 }
 
 .sach-van-hoc .sach-van-hoc-list .box .content {
@@ -747,21 +847,45 @@ section {
     margin: 2rem 0;
     position: relative;
     overflow: hidden;
-    border-radius: 0.6rem;
+    border-radius: 0.8rem;
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 42rem;
 }
 
 .daily-recommended .daily-recommended-list .box .image {
     padding: 1rem;
-    border: var(--border);
+    border: none;
     background: #f7f7f7;
     text-align: center;
     position: relative;
     overflow: hidden;
 }
 
+/* Generic card rounding and shadow */
+.card, .sach-van-hoc .sach-van-hoc-list .box, .daily-recommended .daily-recommended-list .box {
+    box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+    border: 0.06rem solid rgba(0,0,0,0.04);
+}
+
+/* Breadcrumbs and in-page links style to avoid default blue */
+.breadcrumb a, .page-links a, .form-container p a {
+    color: var(--black);
+    font-weight: 600;
+    font-size: 1.05rem;
+    text-decoration: none;
+}
+.breadcrumb a:hover, .page-links a:hover, .form-container p a:hover {
+    color: var(--orange);
+    text-decoration: underline;
+}
+
 .daily-recommended .daily-recommended-list .box .image img {
-    height: 25rem;
+    height: var(--card-img-h);
+    width: 100%;
+    object-fit: cover;
 }
 
 .daily-recommended .daily-recommended-list .box .content {
@@ -835,4 +959,22 @@ section {
 
 .container.mt-5 {
     margin-bottom: 50px;
+}
+
+/* Small icon-only search button inside header search box */
+.header .header-1 .from-box .search-button {
+    width: 3.6rem;
+    height: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--black);
+    cursor: pointer;
+    padding: 0 0.8rem;
+}
+
+.header .header-1 .from-box .search-button i {
+    font-size: 1.6rem;
 }
