@@ -5,10 +5,11 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "booklovers";
+// Cấu hình kết nối DB: ưu tiên biến môi trường, nếu không có dùng mặc định
+$servername = getenv('MYSQL_HOST') ?: 'localhost';
+$username = getenv('MYSQL_USER') ?: 'root';
+$password = getenv('MYSQL_PASSWORD') ?: '';
+$dbname = getenv('MYSQL_DATABASE') ?: 'booklovers';
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
@@ -65,6 +66,41 @@ switch ($endpoint) {
             echo json_encode(['error' => 'Phương thức không được hỗ trợ']);
         }
         break;
+    case 'upload':
+        // Tải ảnh lên: multipart/form-data, trường 'image'
+        if ($method == 'POST') {
+            // xử lý upload
+            if (!empty($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+                $uploadDir = __DIR__ . '/../assets/images/';
+                if (!is_dir($uploadDir)) mkdir($uploadDir, 0755, true);
+                $tmp = $_FILES['image']['tmp_name'];
+                $orig = basename($_FILES['image']['name']);
+                // tạo tên file an toàn, giữ extension png/jpg/gif
+                $ext = strtolower(pathinfo($orig, PATHINFO_EXTENSION));
+                $allowed = ['png','jpg','jpeg','gif'];
+                if (!in_array($ext, $allowed)) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Định dạng ảnh không được phép']);
+                    exit;
+                }
+                $filename = uniqid('img_') . '.' . $ext;
+                $dest = $uploadDir . $filename;
+                if (move_uploaded_file($tmp, $dest)) {
+                    echo json_encode(['filename' => $filename]);
+                } else {
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Không lưu được file']);
+                }
+            } else {
+                http_response_code(400);
+                echo json_encode(['error' => 'Không có file được gửi']);
+            }
+        } else {
+            http_response_code(405);
+            echo json_encode(['error' => 'Phương thức không hợp lệ']);
+        }
+        break;
+
     case 'categories':
         if ($method == 'GET') {
             getCategories($conn);
@@ -134,12 +170,18 @@ $conn->close();
 //Các hàm xử lý
 function getBooks($conn) {
     header('Content-Type: application/json');
-    $sql = "SELECT bookID, title, author, publisher, bookPrice, stock, categoryName, image, description
-            FROM book";
+    // Lấy sách kèm tên thể loại và sửa đường dẫn ảnh ngắn -> URL
+    $sql = "SELECT b.bookID, b.title, b.author, b.publisher, b.bookPrice, b.stock, b.image, b.description, b.categoryID, c.categoryName
+            FROM book b
+            LEFT JOIN category c ON b.categoryID = c.categoryID";
     $result = $conn->query($sql);
     $books = [];
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
+            // Nếu image là tên file, trả kèm đường dẫn public
+            if (!empty($row['image']) && strpos($row['image'], '/') === false) {
+                $row['image'] = '/assets/images/' . $row['image'];
+            }
             $books[] = $row;
         }
     }
@@ -150,27 +192,43 @@ function getBooks($conn) {
 function getBookById($conn, $id) {
     header('Content-Type: application/json');
     $id = intval($id);
-    $stmt = $conn->prepare("SELECT * FROM book WHERE bookID = ?");
+    $stmt = $conn->prepare("SELECT b.*, c.categoryName FROM book b LEFT JOIN category c ON b.categoryID = c.categoryID WHERE b.bookID = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $result = $stmt->get_result();
     $book = $result->fetch_assoc();
     $stmt->close();
+    if ($book && !empty($book['image']) && strpos($book['image'], '/') === false) {
+        $book['image'] = '/assets/images/' . $book['image'];
+    }
     echo json_encode($book);
 }
 
 // Hàm getBooksByCategory
-function getBooksByCategory($conn, $categoryName) {
-    $categoryName = mysqli_real_escape_string($conn, $categoryName);
-    $sql = "SELECT * FROM book WHERE categoryName = '$categoryName'"; // Sử dụng categoryName
-    $result = $conn->query($sql);
+function getBooksByCategory($conn, $category) {
+    // Truy vấn theo categoryName hoặc categoryID
+    header('Content-Type: application/json');
     $books = [];
+    if (is_numeric($category)) {
+        $stmt = $conn->prepare("SELECT b.*, c.categoryName FROM book b LEFT JOIN category c ON b.categoryID = c.categoryID WHERE b.categoryID = ?");
+        $cid = intval($category);
+        $stmt->bind_param('i', $cid);
+    } else {
+        $stmt = $conn->prepare("SELECT b.*, c.categoryName FROM book b LEFT JOIN category c ON b.categoryID = c.categoryID WHERE c.categoryName = ?");
+        $cname = $category;
+        $stmt->bind_param('s', $cname);
+    }
+    $stmt->execute();
+    $result = $stmt->get_result();
     if ($result && $result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
+            if (!empty($row['image']) && strpos($row['image'], '/') === false) {
+                $row['image'] = '/assets/images/' . $row['image'];
+            }
             $books[] = $row;
         }
     }
-    header('Content-Type: application/json');
+    $stmt->close();
     echo json_encode($books);
 }
 
@@ -179,19 +237,33 @@ function getBooksByCategory($conn, $categoryName) {
 function createBook($conn, $data) {
     header('Content-Type: application/json');
     try {
-        if (isset($data['title']) && isset($data['author']) && isset($data['publisher']) && isset($data['categoryName']) && isset($data['bookPrice']) && isset($data['stock'])) {
+        if (isset($data['title']) && isset($data['author']) && isset($data['publisher']) && (isset($data['categoryName']) || isset($data['categoryID'])) && isset($data['bookPrice']) && isset($data['stock'])) {
             $title = mysqli_real_escape_string($conn, $data['title']);
             $author = mysqli_real_escape_string($conn, $data['author']);
             $publisher = mysqli_real_escape_string($conn, $data['publisher']);
-            $categoryName = mysqli_real_escape_string($conn, $data['categoryName']);
+            // Xác định categoryID từ categoryID hoặc categoryName
+            $categoryID = null;
+            if (isset($data['categoryID'])) {
+                $categoryID = intval($data['categoryID']);
+            } else {
+                $tmpName = mysqli_real_escape_string($conn, $data['categoryName']);
+                $stmtCat = $conn->prepare("SELECT categoryID FROM category WHERE categoryName = ? LIMIT 1");
+                $stmtCat->bind_param('s', $tmpName);
+                $stmtCat->execute();
+                $stmtCat->bind_result($foundCatID);
+                if ($stmtCat->fetch()) { $categoryID = $foundCatID; }
+                $stmtCat->close();
+            }
             $bookPrice = floatval($data['bookPrice']);
             $stock = intval($data['stock']);
             $description = isset($data['description']) ? mysqli_real_escape_string($conn, $data['description']) : null;
             $image = isset($data['image']) ? mysqli_real_escape_string($conn, $data['image']) : null;
 
-            $sql = "INSERT INTO book (title, author, publisher, categoryName, bookPrice, stock, description, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            // Lưu image chỉ là tên file ngắn (nếu client gửi đường dẫn đầy đủ, lấy basename)
+            if (!empty($image)) { $image = basename($image); }
+            $sql = "INSERT INTO book (title, author, publisher, categoryID, bookPrice, stock, description, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ssssdiss", $title, $author, $publisher, $categoryName, $bookPrice, $stock, $description, $image);
+            $stmt->bind_param("sssidiss", $title, $author, $publisher, $categoryID, $bookPrice, $stock, $description, $image);
             if ($stmt->execute()) {
                 echo json_encode(['message' => 'Sách đã được thêm thành công', 'bookID' => $stmt->insert_id]);
             } else {
@@ -210,20 +282,34 @@ function createBook($conn, $data) {
 function updateBook($conn, $data) {
     header('Content-Type: application/json');
     try {
-        if (isset($data['bookID']) && isset($data['title']) && isset($data['author']) && isset($data['publisher']) && isset($data['categoryName']) && isset($data['bookPrice']) && isset($data['stock'])) {
+        if (isset($data['bookID']) && isset($data['title']) && isset($data['author']) && isset($data['publisher']) && (isset($data['categoryName']) || isset($data['categoryID'])) && isset($data['bookPrice']) && isset($data['stock'])) {
             $bookID = intval($data['bookID']);
             $title = mysqli_real_escape_string($conn, $data['title']);
             $author = mysqli_real_escape_string($conn, $data['author']);
             $publisher = mysqli_real_escape_string($conn, $data['publisher']);
-            $categoryName = mysqli_real_escape_string($conn, $data['categoryName']);
+            // Xác định categoryID từ categoryID hoặc categoryName
+            $categoryID = null;
+            if (isset($data['categoryID'])) {
+                $categoryID = intval($data['categoryID']);
+            } else {
+                $tmpName = mysqli_real_escape_string($conn, $data['categoryName']);
+                $stmtCat = $conn->prepare("SELECT categoryID FROM category WHERE categoryName = ? LIMIT 1");
+                $stmtCat->bind_param('s', $tmpName);
+                $stmtCat->execute();
+                $stmtCat->bind_result($foundCatID);
+                if ($stmtCat->fetch()) { $categoryID = $foundCatID; }
+                $stmtCat->close();
+            }
             $bookPrice = floatval($data['bookPrice']);
             $stock = intval($data['stock']);
             $description = isset($data['description']) ? mysqli_real_escape_string($conn, $data['description']) : null;
             $image = isset($data['image']) ? mysqli_real_escape_string($conn, $data['image']) : null;
 
-            $sql = "UPDATE book SET title = ?, author = ?, publisher = ?, categoryName = ?, bookPrice = ?, stock = ?, description = ?, image = ? WHERE bookID = ?";
+            // Lưu image là tên file ngắn
+            if (!empty($image)) { $image = basename($image); }
+            $sql = "UPDATE book SET title = ?, author = ?, publisher = ?, categoryID = ?, bookPrice = ?, stock = ?, description = ?, image = ? WHERE bookID = ?";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("ssssdssssi", $title, $author, $publisher, $categoryName, $bookPrice, $stock, $description, $image, $bookID);
+            $stmt->bind_param("sssidissi", $title, $author, $publisher, $categoryID, $bookPrice, $stock, $description, $image, $bookID);
             if ($stmt->execute()) {
                 echo json_encode(['message' => 'Thông tin sách đã được cập nhật']);
             } else {

@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async function () {
             clearInterval(checkInterval);
             resolve();
             console.error('Không thể truy cập categoryListFromHeader sau một khoảng thời gian.');
-        }, 5000); // 5 giây
+        }, 5000); 
     });
 
     const categoryFilter = window.categoryListFromHeader;

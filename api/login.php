@@ -1,10 +1,11 @@
 <?php
 header('Content-Type: application/json');
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "booklovers";
+// Cấu hình DB: dùng biến môi trường khi chạy trong Docker
+$servername = getenv('MYSQL_HOST') ?: 'localhost';
+$username = getenv('MYSQL_USER') ?: 'root';
+$password = getenv('MYSQL_PASSWORD') ?: '';
+$dbname = getenv('MYSQL_DATABASE') ?: 'booklovers';
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
