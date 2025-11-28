@@ -1,5 +1,4 @@
 
-
 export async function addHeader() {
     fetch('header.html')
         .then(response => response.text())
@@ -9,6 +8,7 @@ export async function addHeader() {
             const categoryListInHeader = document.getElementById('header-category-list');
             if (categoryListInHeader) {
                 window.categoryListFromHeader = categoryListInHeader;
+                fetchAndDisplayHeaderCategories(categoryListInHeader);
             } else {
                 console.error('Không tìm thấy header-category-list trong header.html');
             }
@@ -40,6 +40,34 @@ export async function addHeader() {
         })
         .catch(error => console.error('Lỗi khi tải header:', error));
 }
+
+async function fetchAndDisplayHeaderCategories(container) {
+    try {
+        const response = await fetch('../api/api.php?endpoint=categories');
+        if (!response.ok) throw new Error('Failed to fetch categories');
+        const categories = await response.json();
+
+        container.innerHTML = ''; // Clear existing items
+
+        if (categories.length === 0) {
+            container.innerHTML = '<li><a href="#">Không có thể loại nào</a></li>';
+            return;
+        }
+
+        categories.forEach(category => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = `book-list.html?category=${encodeURIComponent(category.categoryName)}`;
+            a.textContent = category.categoryName;
+            li.appendChild(a);
+            container.appendChild(li);
+        });
+    } catch (error) {
+        console.error('Lỗi khi tải danh mục cho header:', error);
+        container.innerHTML = '<li><a href="#">Lỗi tải danh mục</a></li>';
+    }
+}
+
 export async function addFooter() {
     try {
         const response = await fetch('footer.html');
