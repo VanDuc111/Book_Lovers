@@ -1,44 +1,60 @@
 
 export async function addHeader() {
-    fetch('header.html')
-        .then(response => response.text())
-        .then(html => {
-            document.body.insertAdjacentHTML('afterbegin', html);
-            attachSearchHandler();
-            const categoryListInHeader = document.getElementById('header-category-list');
-            if (categoryListInHeader) {
-                window.categoryListFromHeader = categoryListInHeader;
-                fetchAndDisplayHeaderCategories(categoryListInHeader);
-            } else {
-                console.error('Không tìm thấy header-category-list trong header.html');
+    try {
+        // Avoid inserting header more than once
+        if (document.getElementById('site-header')) return;
+
+        const res = await fetch('header.html');
+        const text = await res.text();
+
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/html');
+
+        // Copy stylesheet links from the fragment's head to the current document head (avoid duplicates)
+        const links = doc.querySelectorAll('link[rel="stylesheet"]');
+        links.forEach(l => {
+            const href = l.getAttribute('href');
+            if (href && !Array.from(document.head.querySelectorAll('link')).some(existing => existing.getAttribute('href') === href)) {
+                const newLink = document.createElement('link');
+                newLink.rel = 'stylesheet';
+                newLink.href = href;
+                document.head.appendChild(newLink);
             }
+        });
 
-            // Dispatch an event so other scripts can know the header has been loaded
-            try {
-                document.dispatchEvent(new CustomEvent('headerLoaded'));
-            } catch (e) {
-                // fallback for very old browsers
-                const evt = document.createEvent('Event');
-                evt.initEvent('headerLoaded', true, true);
-                document.dispatchEvent(evt);
-            }
+        // Extract the header element and bottom-navbar if present
+        const headerEl = doc.querySelector('header');
+        const bottomNav = doc.querySelector('.bottom-navbar');
 
-            // Tạo MutationObserver để theo dõi việc thêm header.html
-            const observer = new MutationObserver(() => {
-                const welcomeMessage = document.getElementById('welcome-message');
-                const logoutButton = document.getElementById('logout-btn');
+        const wrapper = document.createElement('div');
+        wrapper.id = 'site-header';
 
-                if (welcomeMessage && logoutButton) {
-                    // header.html đã được thêm vào DOM, chạy login.js
-                    observer.disconnect(); // Dừng theo dõi thay đổi
-                    runLoginJS();
-                }
-            });
+        if (headerEl) wrapper.appendChild(headerEl.cloneNode(true));
+        if (bottomNav) wrapper.appendChild(bottomNav.cloneNode(true));
 
-            // Bắt đầu theo dõi thay đổi trong body
-            observer.observe(document.body, { childList: true, subtree: true });
-        })
-        .catch(error => console.error('Lỗi khi tải header:', error));
+        // Insert at top of body
+        document.body.insertAdjacentElement('afterbegin', wrapper);
+
+        // Attach handlers after insertion
+        attachSearchHandler();
+
+        const categoryListInHeader = document.getElementById('header-category-list');
+        if (categoryListInHeader) {
+            window.categoryListFromHeader = categoryListInHeader;
+            fetchAndDisplayHeaderCategories(categoryListInHeader);
+        } else {
+            console.error('Không tìm thấy header-category-list trong header fragment');
+        }
+
+        // Notify other scripts
+        document.dispatchEvent(new CustomEvent('headerLoaded'));
+
+        // Attempt to run login.js logic if available
+        if (typeof runLoginJS === 'function') runLoginJS();
+
+    } catch (error) {
+        console.error('Lỗi khi tải header:', error);
+    }
 }
 
 async function fetchAndDisplayHeaderCategories(container) {
@@ -70,14 +86,35 @@ async function fetchAndDisplayHeaderCategories(container) {
 
 export async function addFooter() {
     try {
+        // Avoid duplicate footers
+        if (document.getElementById('site-footer')) return;
+
         const response = await fetch('footer.html');
-        const footerHtml = await response.text();
-        const footer = document.createElement('footer');
-        footer.innerHTML = footerHtml;
-        document.body.append(footer);
+        const text = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/html');
+
+        // Copy stylesheet links from footer fragment if any
+        const links = doc.querySelectorAll('link[rel="stylesheet"]');
+        links.forEach(l => {
+            const href = l.getAttribute('href');
+            if (href && !Array.from(document.head.querySelectorAll('link')).some(existing => existing.getAttribute('href') === href)) {
+                const newLink = document.createElement('link');
+                newLink.rel = 'stylesheet';
+                newLink.href = href;
+                document.head.appendChild(newLink);
+            }
+        });
+
+        // Extract main footer content (look for .footer-section or footer element)
+        const footerSection = doc.querySelector('.footer-section') || doc.querySelector('footer') || doc.body;
+        const wrapper = document.createElement('div');
+        wrapper.id = 'site-footer';
+        wrapper.appendChild(footerSection.cloneNode(true));
+
+        document.body.append(wrapper);
     } catch (error) {
         console.error('Lỗi khi tải footer:', error);
-        // Hiển thị thông báo lỗi cho người dùng (nếu cần)
     }
 }
 

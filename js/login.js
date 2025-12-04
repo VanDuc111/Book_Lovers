@@ -17,10 +17,10 @@ function runLoginJS() {
                 if (data.success) {
                     localStorage.setItem('user', JSON.stringify(data.user));
                     updateUI(data.user);
-                    if (data.user.role === 'admin') {
-                        window.location.href = 'admin.html'; // Chuyển hướng đến trang admin
-                    } else {
-                        window.location.href = 'home.html'; // Chuyển hướng đến trang người dùng
+                        if (data.user.role === 'admin') {
+                            window.location.href = '/pages/admin.html'; // Chuyển hướng đến trang admin
+                        } else {
+                            window.location.href = '/pages/home.html'; // Chuyển hướng đến trang người dùng
                     }
                 } else {
                     alert(data.message);
@@ -35,7 +35,7 @@ function runLoginJS() {
     function logout() {
         localStorage.removeItem('user');
         updateUI(null);
-        window.location.href = 'home.html';
+        window.location.href = '/pages/home.html';
     }
 
     function updateUI(user) {
@@ -97,16 +97,37 @@ function runLoginJS() {
 // Attach password toggle handlers (works for login and other pages that include this file)
 function attachPasswordToggle() {
     document.querySelectorAll('.password-toggle').forEach(btn => {
+        // find the associated input (password or text)
+        const input = btn.parentElement.querySelector('input[type="password"], input[type="text"]');
+        if (!input) return;
+
+        // initialize icon and state
+        btn.innerHTML = '<i class="fas fa-eye"></i>'; // default modern eye
+        btn.classList.remove('visible');
+
+        // show toggle only when user types something
+        const updateVisibility = () => {
+            if (input.value && input.value.length > 0) {
+                btn.classList.add('visible');
+            } else {
+                btn.classList.remove('visible');
+                // ensure input is masked when empty
+                input.type = 'password';
+                btn.innerHTML = '<i class="fas fa-eye"></i>';
+            }
+        };
+
+        // initial visibility
+        updateVisibility();
+
+        input.addEventListener('input', updateVisibility);
+
+        // toggle show/hide on click
         btn.addEventListener('click', function (e) {
             e.preventDefault();
-            const targetSelector = this.getAttribute('data-target');
-            let input;
-            if (targetSelector) input = document.querySelector(targetSelector);
-            else input = this.parentElement.querySelector('input[type="password"], input[type="text"]');
-            if (!input) return;
             if (input.type === 'password') {
                 input.type = 'text';
-                this.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                this.innerHTML = '<i class="fas fa-eye-slash"></i>'; // eye-slash when visible
             } else {
                 input.type = 'password';
                 this.innerHTML = '<i class="fas fa-eye"></i>';

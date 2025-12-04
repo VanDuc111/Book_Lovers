@@ -9,11 +9,15 @@
 
 .form-container h2 {
     text-align: center;
+    font-size: 2.4rem;
+    margin-bottom: 1.2rem;
 }
 
 .form-container label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 0.6rem;
+    font-size: 1.15rem;
+    color: #333;
 }
 
 .form-container input[type="email"],
@@ -27,6 +31,12 @@
     font-size: 1.05rem;
 }
 
+/* Ensure password input reserves space for the toggle icon */
+.form-container .password-wrapper input[type="password"],
+.form-container .password-wrapper input[type="text"] {
+    padding-right: 4.6rem;
+}
+
 .form-container button[type="submit"], .form-container .btn {
     width: 100%;
     padding: var(--btn-padding-vertical, 0.9rem) var(--btn-padding-horizontal, 1.4rem);
@@ -35,7 +45,7 @@
     border: none;
     border-radius: var(--btn-radius, 0.7rem);
     cursor: pointer;
-    font-size: var(--btn-font-size, 1.05rem);
+    font-size: 1.15rem;
     box-shadow: var(--btn-shadow, 0 6px 14px rgba(0,0,0,0.08));
 }
 
@@ -43,18 +53,42 @@
     background-color: #3e8e41;
 }
 
-.form-container p {
-    text-align: center;
-    margin-top: 10px;
-}
-
 .form-container p a {
     color: var(--orange);
-    font-weight: 600;
-    font-size: 1.05rem;
+    font-weight: 200;
+    font-size: 0.2rem;
     text-decoration: none;
 }
 
 .form-container p a:hover {
     text-decoration: underline;
 }
+
+/* Hide browser-native password reveal controls (Edge/IE/Chrome) so only our custom toggle appears */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+input[type="password"]::-webkit-textfield-decoration-container,
+input[type="password"]::-webkit-credentials-auto-fill-button {
+    display: none !important;
+}
+
+/* Slightly larger custom toggle and spacing so it does not cover text */
+.form-container .password-toggle {
+    width: 3.4rem !important;
+    height: 3.4rem !important;
+    font-size: 1.2rem !important;
+    right: 0.6rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 160ms ease, visibility 160ms ease;
+}
+
+.form-container .password-toggle.visible {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Extra padding bottom so short pages push footer further down */
+.form-container { margin-bottom: 4rem; }

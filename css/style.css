@@ -116,6 +116,25 @@ html::-webkit-scrollbar-thumb {
 
 .category { position: relative; }
 
+/* Category button: larger, colored, and stable hover (override bootstrap defaults) */
+.category .category-bars.btn {
+    background: var(--orange) !important;
+    color: #fff !important;
+    border-radius: 0.8rem;
+    padding: 0.9rem 1.1rem;
+    font-size: 2.2rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 4.8rem;
+    min-height: 4.4rem;
+    border: none !important;
+}
+.category .category-bars.btn:hover {
+    background: var(--dark-color) !important;
+    color: #fff !important;
+}
+
 .category-content li {
     padding: 10px;
     text-align: left;
@@ -184,6 +203,24 @@ html::-webkit-scrollbar-thumb {
     color: var(--black);
     cursor: pointer;
     margin-left: 1.5rem;
+}
+
+/* Remove underline on the login/user icon link and ensure consistent sizing */
+.user-info, #login-btn {
+    text-decoration: none !important;
+    font-size: 2.4rem;
+    color: var(--black);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.user-info:hover, #login-btn:hover {
+    color: var(--orange);
+}
+
+
+body {
+    padding-bottom: 10rem;
 }
 
 #search-btn {
@@ -762,6 +799,13 @@ section {
     border-radius: 0.6rem;
 }
 
+.sach-van-hoc .heading span,
+.daily-recommended .heading span,
+.home .heading span {
+    font-size: 2rem; 
+    padding: 0.6rem 1.2rem; 
+}
+
 .sach-van-hoc .sach-van-hoc-list {
     padding-bottom: 3rem;
 }
@@ -864,21 +908,31 @@ section {
     overflow: hidden;
 }
 
-/* Generic card rounding and shadow */
 .card, .sach-van-hoc .sach-van-hoc-list .box, .daily-recommended .daily-recommended-list .box {
     box-shadow: 0 6px 20px rgba(0,0,0,0.04);
     border: 0.06rem solid rgba(0,0,0,0.04);
 }
 
-/* Breadcrumbs and in-page links style to avoid default blue */
-.breadcrumb a, .page-links a, .form-container p a {
+
+.breadcrumb a, .page-links a {
     color: var(--black);
-    font-weight: 600;
-    font-size: 1.05rem;
+    font-weight: 500;
+    font-size: 1.8rem;
     text-decoration: none;
 }
-.breadcrumb a:hover, .page-links a:hover, .form-container p a:hover {
+.breadcrumb a:hover, .page-links a:hover {
     color: var(--orange);
+    text-decoration: underline;
+}
+
+/* Small helper links inside forms should remain compact */
+.form-container p a {
+    color: var(--orange);
+    font-weight: 500;
+    font-size: 1.3rem;
+    text-decoration: none;
+}
+.form-container p a:hover {
     text-decoration: underline;
 }
 
@@ -915,23 +969,184 @@ section {
 
 .swiper-button-next,
 .swiper-button-prev {
-    border: var(--border);
-    color: var(--black);
+    width: 4.8rem;
+    height: 4.8rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
     background: #fff;
-    padding: 1rem 1.5rem;
+    color: var(--blue); /* use blue for a modern look */
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    border: 0.06rem solid rgba(0,0,0,0.06);
+    z-index: 2000;
+    transition: transform 160ms ease, background-color 160ms ease, color 160ms ease;
 }
 
 .swiper-button-next::after,
 .swiper-button-prev::after {
-    font-size: 2rem;
+    font-size: 1.6rem;
+    color: currentColor;
 }
 
 .swiper-button-prev {
-    left: 0;
+    left: 1rem;
+    transform: translateY(-50%);
+    top: 50%;
+    position: absolute;
 }
 
 .swiper-button-next {
-    right: 0;
+    right: 1rem;
+    transform: translateY(-50%);
+    top: 50%;
+    position: absolute;
+}
+
+/* Hover/focus effects */
+.swiper-button-next:hover,
+.swiper-button-prev:hover,
+.swiper-button-next:focus,
+.swiper-button-prev:focus {
+    background: var(--blue);
+    color: #fff;
+    transform: translateY(-50%) scale(1.06);
+}
+
+/* Make the category book cards smoother and match the home carousel style */
+.sach-van-hoc .swiper-wrapper {
+    align-items: stretch; /* ensure slides fill the same vertical space */
+}
+.sach-van-hoc .swiper-slide {
+    display: flex;
+    align-items: stretch;
+}
+.sach-van-hoc .sach-van-hoc-list .box {
+    transition: transform 220ms ease, box-shadow 220ms ease;
+    overflow: hidden;
+    border-radius: 0.8rem;
+}
+.sach-van-hoc .sach-van-hoc-list .box .image {
+    padding: 0; /* remove inner padding so image aligns to card edge */
+    height: 26rem; /* use same variable height as hero */
+    overflow: hidden;
+}
+.sach-van-hoc .sach-van-hoc-list .box .image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 320ms ease;
+}
+.sach-van-hoc .sach-van-hoc-list .box:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.06);
+}
+.sach-van-hoc .sach-van-hoc-list .box:hover .image img {
+    transform: scale(1.04);
+}
+
+.sach-van-hoc .sach-van-hoc-list .box .content {
+    padding: 1.6rem;
+}
+
+.sach-van-hoc .sach-van-hoc-list .box .content h3 {
+    font-size: 1.15rem;
+    margin-bottom: 0.8rem;
+}
+
+/* Book-store friendly swiper controls: subtle, small, appear on hover */
+.sach-van-hoc .swiper-button-next,
+.sach-van-hoc .swiper-button-prev,
+.daily-recommended .swiper-button-next,
+.daily-recommended .swiper-button-prev,
+.home .swiper-button-next,
+.home .swiper-button-prev {
+    width: 3.6rem;
+    height: 3.6rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.9);
+    color: var(--blue);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    border: 0.04rem solid rgba(0,0,0,0.06);
+    z-index: 2200;
+    transition: transform 180ms ease, background-color 180ms ease, color 180ms ease, opacity 180ms ease;
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* position controls inset and vertically centered */
+.sach-van-hoc .swiper-button-prev,
+.daily-recommended .swiper-button-prev,
+.home .swiper-button-prev { left: 0.6rem; }
+.sach-van-hoc .swiper-button-next,
+.daily-recommended .swiper-button-next,
+.home .swiper-button-next { right: 0.6rem; }
+.sach-van-hoc .swiper-button-prev,
+.sach-van-hoc .swiper-button-next,
+.daily-recommended .swiper-button-prev,
+.daily-recommended .swiper-button-next,
+.home .swiper-button-prev,
+.home .swiper-button-next {
+    top: 50%;
+    transform: translateY(-50%);
+    position: absolute;
+}
+
+/* show controls when user interacts (hover/focus) with the swiper region */
+.sach-van-hoc:hover .swiper-button-next,
+.sach-van-hoc:hover .swiper-button-prev,
+.sach-van-hoc:focus-within .swiper-button-next,
+.sach-van-hoc:focus-within .swiper-button-prev,
+.daily-recommended:hover .swiper-button-next,
+.daily-recommended:hover .swiper-button-prev,
+.daily-recommended:focus-within .swiper-button-next,
+.daily-recommended:focus-within .swiper-button-prev,
+.home:hover .swiper-button-next,
+.home:hover .swiper-button-prev,
+.home:focus-within .swiper-button-next,
+.home:focus-within .swiper-button-prev {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* hover styles */
+.sach-van-hoc .swiper-button-next:hover,
+.sach-van-hoc .swiper-button-prev:hover,
+.daily-recommended .swiper-button-next:hover,
+.daily-recommended .swiper-button-prev:hover,
+.home .swiper-button-next:hover,
+.home .swiper-button-prev:hover {
+    background: var(--blue);
+    color: #fff;
+    transform: translateY(-50%) scale(1.08);
+}
+
+.sach-van-hoc .swiper-button-next::after,
+.sach-van-hoc .swiper-button-prev::after,
+.daily-recommended .swiper-button-next::after,
+.daily-recommended .swiper-button-prev::after,
+.home .swiper-button-next::after,
+.home .swiper-button-prev::after {
+    font-size: 1.2rem;
+}
+
+@media(max-width:768px) {
+    .sach-van-hoc .swiper-button-next,
+    .sach-van-hoc .swiper-button-prev,
+    .daily-recommended .swiper-button-next,
+    .daily-recommended .swiper-button-prev,
+    .home .swiper-button-next,
+    .home .swiper-button-prev {
+        opacity: 1;
+        visibility: visible;
+        background: rgba(255,255,255,0.95);
+        width: 3.2rem;
+        height: 3.2rem;
+    }
 }
 
 /* ----cart ---- */
@@ -961,7 +1176,6 @@ section {
     margin-bottom: 50px;
 }
 
-/* Small icon-only search button inside header search box */
 .header .header-1 .from-box .search-button {
     width: 3.6rem;
     height: 100%;

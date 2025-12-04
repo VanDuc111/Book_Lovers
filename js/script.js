@@ -3,30 +3,48 @@
 
 /*----- swiper ----------- */
 
-var swiper = new Swiper(".home-books-list", {
-
+// Initialize home swiper; keep reference so we can update after populating slides
+var homeSwiper = new Swiper(".home-books-list", {
     loop: true,
-    centeredSlides: true,
+    centeredSlides: false,
     autoplay: {
         delay: 5000,
         disableOnInteraction: false,
     },
-
     breakpoints: {
-        0: {
-            slidesPerView: 1,
-            spaceBetween: 10,
-        },
-        768: {
-            slidesPerView: 2,
-            spaceBetween: 20,
-        },
-        1024: {
-            slidesPerView: 3,
-            spaceBetween: 50,
-        },
+        0: { slidesPerView: 1, spaceBetween: 10 },
+        768: { slidesPerView: 2, spaceBetween: 20 },
+        1024: { slidesPerView: 3, spaceBetween: 50 },
     },
 });
+
+// Populate the home swiper with featured books (called after fetching all books)
+function displayHomeBooks(books) {
+    const wrapper = document.getElementById('home-books-wrapper');
+    if (!wrapper) return;
+
+    wrapper.innerHTML = '';
+
+    // Choose up to 6 books for the hero carousel. Prefer books marked as featured if available.
+    let featured = books.filter(b => b.isFeatured || b.featured === 1);
+    if (featured.length === 0) featured = books.slice(0, 6);
+    const selection = featured.slice(0, Math.min(6, featured.length));
+
+    selection.forEach(book => {
+        const a = document.createElement('a');
+        // Use absolute path so links work from any page
+        a.href = `/pages/book-details.html?id=${encodeURIComponent(book.bookID)}`;
+        a.className = 'swiper-slide';
+        const img = document.createElement('img');
+        img.src = book.image || '../assets/images/placeholder.jpg';
+        img.alt = book.title || 'Sách nổi bật';
+        a.appendChild(img);
+        wrapper.appendChild(a);
+    });
+
+    // Tell Swiper to update now that slides changed
+    try { homeSwiper.update(); } catch (e) { console.warn('homeSwiper update failed:', e); }
+}
 
 /*------- sach-van-hoc section ------- */
 function displayVanHocBooks(books, containerElement) {
@@ -70,7 +88,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const sachVanHocContainer = document.getElementById('sach-van-hoc-container');
     const dailyRecommendedContainer = document.getElementById('daily-recommended-container');
 
-    fetch('../api/api.php?endpoint=books&category=Sách Văn Học')
+    // Request books in the "Văn học" category (matches `category.categoryName` in DB)
+    fetch('../api/api.php?endpoint=books&category=' + encodeURIComponent('Văn học'))
         .then(response => response.json())
         .then(vanHocBooks => {
             // Gọi hàm hiển thị sách văn học
@@ -87,6 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(allBooks => {
             // Gọi hàm hiển thị sách gợi ý hàng ngày với tất cả sách
             displayDailyRecommendedBooks(allBooks, dailyRecommendedContainer);
+            // Gọi hàm hiển thị cho carousel trang chủ
+            try { displayHomeBooks(allBooks); } catch (e) { console.warn('displayHomeBooks failed:', e); }
         })
         .catch(error => {
             console.error('Lỗi khi tải tất cả sách cho gợi ý:', error);
@@ -98,7 +119,8 @@ var swiper = new Swiper(".sach-van-hoc-list", {
 
     spaceBetween: 10,
     loop: true,
-    centeredSlides: true,
+    centeredSlides: false, 
+    watchOverflow: true,    
     autoplay: {
         delay: 8500,
         disableOnInteraction: false,
