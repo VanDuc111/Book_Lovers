@@ -1,7 +1,10 @@
-
+/**
+ * Tải và chèn header vào trang.
+ * Bao gồm việc tải tài nguyên CSS, HTML và khởi tạo các sự kiện liên quan.
+ * @async
+ */
 export async function addHeader() {
     try {
-        // Avoid inserting header more than once
         if (document.getElementById('site-header')) return;
 
         const res = await fetch('header.html');
@@ -64,6 +67,11 @@ export async function addHeader() {
     }
 }
 
+/**
+ * Lấy danh sách danh mục từ API và hiển thị vào container được chỉ định.
+ * @async
+ * @param {HTMLElement} container - Element chứa danh sách danh mục.
+ */
 async function fetchAndDisplayHeaderCategories(container) {
     try {
         const response = await fetch('../api/api.php?endpoint=categories');
@@ -91,6 +99,11 @@ async function fetchAndDisplayHeaderCategories(container) {
     }
 }
 
+/**
+ * Tải và chèn footer vào trang.
+ * Bao gồm việc tải tài nguyên CSS và HTML cho footer.
+ * @async
+ */
 export async function addFooter() {
     try {
         // Avoid duplicate footers
@@ -125,6 +138,10 @@ export async function addFooter() {
     }
 }
 
+/**
+ * Gắn sự kiện submit cho form tìm kiếm.
+ * Chuyển hướng người dùng đến trang tìm kiếm khi submit.
+ */
 function attachSearchHandler() {
     const searchForm = document.getElementById('search-form');
     const searchInput = document.getElementById('search-input');
@@ -142,6 +159,10 @@ function attachSearchHandler() {
     }
 }
 
+/**
+ * Cập nhật số lượng item trong giỏ hàng hiển thị trên icon.
+ * Dữ liệu được lấy từ localStorage.
+ */
 function updateCartIcon() {
     try {
         let cart = JSON.parse(localStorage.getItem('cart'));
@@ -163,7 +184,10 @@ function updateCartIcon() {
     }
 }
 
-// Hàm lấy userID từ localStorage
+/**
+ * Lấy ID người dùng hiện tại từ localStorage.
+ * @returns {string|null} UserID hoặc null nếu chưa đăng nhập.
+ */
 export function getUserId() {
     const user = JSON.parse(localStorage.getItem('user'));
     return user ? user.userID : null;

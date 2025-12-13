@@ -137,6 +137,8 @@ switch ($endpoint) {
     case 'review':
         if ($method == 'GET') {
             getReviews($conn);
+        } elseif ($method == 'POST') {
+            createReview($conn, json_decode(file_get_contents("php://input"), true));
         } elseif ($method == 'DELETE') {
             deleteReview($conn, isset($_GET['id']) ? $_GET['id'] : null);
         }
@@ -160,6 +162,14 @@ switch ($endpoint) {
             checkoutItems($conn, json_decode(file_get_contents("php://input"), true));
         } else {
             http_response_code(405); 
+            echo json_encode(['error' => 'Phương thức không được hỗ trợ']);
+        }
+        break;
+    case 'purchased-books':
+        if ($method == 'GET') {
+            getPurchasedBooks($conn, isset($_GET['userID']) ? $_GET['userID'] : null);
+        } else {
+            http_response_code(405);
             echo json_encode(['error' => 'Phương thức không được hỗ trợ']);
         }
         break;
@@ -630,6 +640,38 @@ function deleteReview($conn, $reviewID) {
     }
 }
 
+// Hàm createReview
+function createReview($conn, $data) {
+    header('Content-Type: application/json');
+    try {
+        if (isset($data['bookID']) && isset($data['userID']) && isset($data['rating'])) {
+            $bookID = intval($data['bookID']);
+            $userID = intval($data['userID']);
+            $rating = intval($data['rating']);
+            $comment = isset($data['comment']) ? mysqli_real_escape_string($conn, $data['comment']) : null;
+
+            if ($rating < 1 || $rating > 5) {
+                throw new Exception('Đánh giá phải từ 1 đến 5 sao');
+            }
+
+            $sql = "INSERT INTO review (bookID, userID, rating, comment) VALUES (?, ?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("iiis", $bookID, $userID, $rating, $comment);
+            
+            if ($stmt->execute()) {
+                echo json_encode(['message' => 'Đánh giá đã được gửi thành công', 'reviewID' => $stmt->insert_id]);
+            } else {
+                throw new Exception('Lỗi khi gửi đánh giá: ' . $stmt->error);
+            }
+            $stmt->close();
+        } else {
+            throw new Exception('Thiếu thông tin cần thiết (bookID, userID, rating)');
+        }
+    } catch (Exception $e) {
+        echo json_encode(['error' => $e->getMessage()]);
+    }
+}
+
 // Hàm thêm sách vào giỏ hàng
 function addToCart($conn, $data) {
     header('Content-Type: application/json');
@@ -795,52 +837,58 @@ function deleteCartItem($conn, $cartItemID) {
 function checkoutItems($conn, $data) {
     header('Content-Type: application/json');
     try {
-        if (isset($data['cartItemIDs']) && is_array($data['cartItemIDs'])) {
+        if (isset($data['cartItemIDs']) && is_array($data['cartItemIDs']) && !empty($data['cartItemIDs'])) {
             $cartItemIDs = $data['cartItemIDs'];
+            $userID = isset($data['userID']) ? intval($data['userID']) : null;
+            $shippingAddress = isset($data['shippingAddress']) ? mysqli_real_escape_string($conn, $data['shippingAddress']) : '';
 
-            // Lấy thông tin cartItems
-            $sql = "SELECT cart_item.*, book.stock, book.bookPrice, cart.userID FROM cart_item JOIN book ON cart_item.bookID = book.bookID JOIN cart ON cart_item.cartID = cart.cartID WHERE cartItemID IN (" . implode(',', $cartItemIDs) . ")";
-            $result = $conn->query($sql);
-            $cartItems = $result->fetch_all(MYSQLI_ASSOC);
+            if (!$userID) throw new Exception('Thiếu userID');
 
-            // Kiểm tra số lượng sách trong kho
-            foreach ($cartItems as $item) {
-                if ($item['stock'] < $item['quantity']) {
-                    throw new Exception('Không đủ số lượng sách trong kho cho sản phẩm: ' . $item['bookID']);
-                }
-            }
-
-            // Tính toán total_amount
+            // 1. Calculate total and verify items
             $totalAmount = 0;
-            foreach ($cartItems as $item) {
-                $totalAmount += $item['bookPrice'] * $item['quantity'];
-            }
-
-            // Tạo đơn hàng mới
-            $sql = "INSERT INTO `order` (userID, order_date, total_amount, shipping_address, order_status) VALUES (?, NOW(), ?, ?, 'pending')";
+            $itemsToOrder = [];
+            
+            // Prepare placeholders for IN clause
+            $placeholders = implode(',', array_fill(0, count($cartItemIDs), '?'));
+            $types = str_repeat('i', count($cartItemIDs));
+            
+            // Get cart items with book price
+            $sql = "SELECT ci.cartItemID, ci.bookID, ci.quantity, b.bookPrice 
+                    FROM cart_item ci 
+                    JOIN book b ON ci.bookID = b.bookID 
+                    WHERE ci.cartItemID IN ($placeholders)";
+            
             $stmt = $conn->prepare($sql);
-            $shippingAddress = "Địa chỉ mặc định"; // Thay thế bằng địa chỉ thực tế
-            $stmt->bind_param("ids", $cartItems[0]['userID'], $totalAmount, $shippingAddress);
+            $stmt->bind_param($types, ...$cartItemIDs);
             $stmt->execute();
-            $orderID = $conn->insert_id;
+            $result = $stmt->get_result();
+            
+            while ($row = $result->fetch_assoc()) {
+                $itemsToOrder[] = $row;
+                $totalAmount += $row['quantity'] * $row['bookPrice'];
+            }
             $stmt->close();
 
-            // Thêm order_items
-            foreach ($cartItems as $item) {
+            if (empty($itemsToOrder)) throw new Exception('Không tìm thấy sản phẩm trong giỏ hàng');
+
+            // 2. Create Order
+            $sql = "INSERT INTO `order` (userID, total_amount, shipping_address, order_status) VALUES (?, ?, ?, 'Pending')";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("ids", $userID, $totalAmount, $shippingAddress);
+            if (!$stmt->execute()) throw new Exception('Lỗi khi tạo đơn hàng: ' . $stmt->error);
+            $orderID = $stmt->insert_id;
+            $stmt->close();
+
+            // 3. Create Order Items and Delete Cart Items
+            foreach ($itemsToOrder as $item) {
+                // Insert into order_item
                 $sql = "INSERT INTO order_item (orderID, bookID, quantity, price) VALUES (?, ?, ?, ?)";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("iiid", $orderID, $item['bookID'], $item['quantity'], $item['bookPrice']);
                 $stmt->execute();
                 $stmt->close();
 
-                // Cập nhật số lượng sách trong kho
-                $sql = "UPDATE book SET stock = stock - ? WHERE bookID = ?";
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("ii", $item['quantity'], $item['bookID']);
-                $stmt->execute();
-                $stmt->close();
-
-                // Xóa cart_item đã thanh toán
+                // Delete from cart_item
                 $sql = "DELETE FROM cart_item WHERE cartItemID = ?";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("i", $item['cartItemID']);
@@ -848,14 +896,39 @@ function checkoutItems($conn, $data) {
                 $stmt->close();
             }
 
-            echo json_encode(['message' => 'Thanh toán thành công!']);
+            echo json_encode(['message' => 'Đặt hàng thành công', 'orderID' => $orderID]);
+
         } else {
-            throw new Exception('Thiếu thông tin cần thiết.');
+            throw new Exception('Thiếu danh sách sản phẩm (cartItemIDs)');
         }
     } catch (Exception $e) {
         echo json_encode(['error' => $e->getMessage()]);
     }
 }
 
-
-?>
+function getPurchasedBooks($conn, $userID) {
+    header('Content-Type: application/json');
+    if ($userID) {
+        $userID = intval($userID);
+        $sql = "SELECT DISTINCT b.bookID, b.title, b.author, b.bookPrice, b.image, o.order_date
+                FROM `order` o
+                JOIN `order_item` oi ON o.orderID = oi.orderID
+                JOIN `book` b ON oi.bookID = b.bookID
+                WHERE o.userID = ?
+                ORDER BY o.order_date DESC";
+        
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("i", $userID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $books = [];
+        while ($row = $result->fetch_assoc()) {
+            $row['image'] = fixImagePath($row['image'] ?? null);
+            $books[] = $row;
+        }
+        echo json_encode($books);
+        $stmt->close();
+    } else {
+        echo json_encode(['error' => 'Thiếu userID']);
+    }
+}
