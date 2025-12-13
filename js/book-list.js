@@ -5,11 +5,12 @@ document.addEventListener('DOMContentLoaded', async function () {
     const searchParams = new URLSearchParams(window.location.search);
     const searchTerm = searchParams.get('search');
 
-    // Ensure we have a reference to the header's category list.
-    // Prefer the global set by common.addHeader(), otherwise listen for the headerLoaded event.
+    if (!bookListContainer) {
+        return;
+    }
+
     let categoryFilter = window.categoryListFromHeader || document.getElementById('header-category-list');
-    if (!categoryFilter) {
-        // Wait for headerLoaded event (dispatched by common.addHeader)
+        if (!categoryFilter) {
         let resolved = false;
         const onHeaderLoaded = () => {
             categoryFilter = window.categoryListFromHeader || document.getElementById('header-category-list');
@@ -18,15 +19,12 @@ document.addEventListener('DOMContentLoaded', async function () {
         };
 
         document.addEventListener('headerLoaded', onHeaderLoaded);
-
-        // Fallback: if header doesn't appear within 5s, continue but warn
         setTimeout(() => {
             if (!resolved) {
                 document.removeEventListener('headerLoaded', onHeaderLoaded);
                 categoryFilter = document.getElementById('header-category-list');
                 if (!categoryFilter) {
                     console.error('Không thể truy cập categoryListFromHeader sau một khoảng thời gian.');
-                    // proceed anyway but many features may not work
                 } else {
                     initAfterHeader();
                 }
@@ -39,10 +37,28 @@ document.addEventListener('DOMContentLoaded', async function () {
     function initAfterHeader() {
         if (!categoryFilter) {
             console.warn('Không tìm thấy categoryFilter. Hãy đảm bảo common.js đã chạy và gán window.categoryListFromHeader.');
-            // still attempt to fetch books without categories
-            fetchBooks('all');
+                // Check URL param for category even if header isn't available
+                const urlParams = new URLSearchParams(window.location.search);
+                const initialCategory = urlParams.get('category');
+                if (initialCategory) {
+                    fetchBooks(initialCategory);
+                    if (breadcrumbCurrentCategory) breadcrumbCurrentCategory.textContent = initialCategory;
+                } else {
+                    fetchBooks('all');
+                }
             return;
         }
+
+            // If user navigated here with ?category=... we should honor it on load
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoryParam = urlParams.get('category');
+            if (categoryParam) {
+                // If header is present we can also update breadcrumb
+                if (breadcrumbCurrentCategory) breadcrumbCurrentCategory.textContent = categoryParam;
+                // fetch and display books for that category
+                fetchBooks(categoryParam);
+                return; // we've handled initial load
+            }
 
     if (breadcrumbSachsLink) {
         breadcrumbSachsLink.addEventListener('click', function (event) {

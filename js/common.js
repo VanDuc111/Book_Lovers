@@ -10,16 +10,23 @@ export async function addHeader() {
         const parser = new DOMParser();
         const doc = parser.parseFromString(text, 'text/html');
 
-        // Copy stylesheet links from the fragment's head to the current document head (avoid duplicates)
         const links = doc.querySelectorAll('link[rel="stylesheet"]');
         links.forEach(l => {
             const href = l.getAttribute('href');
-            if (href && !Array.from(document.head.querySelectorAll('link')).some(existing => existing.getAttribute('href') === href)) {
-                const newLink = document.createElement('link');
-                newLink.rel = 'stylesheet';
-                newLink.href = href;
-                document.head.appendChild(newLink);
-            }
+            if (!href) return;
+
+            const existingLinks = Array.from(document.head.querySelectorAll('link'))
+                .map(existing => existing.getAttribute('href') || '');
+
+            if (existingLinks.some(e => e === href)) return;
+
+            if (href.toLowerCase().includes('bootstrap') && existingLinks.some(e => e.toLowerCase().includes('bootstrap'))) return;
+            if (href.toLowerCase().includes('font-awesome') && existingLinks.some(e => e.toLowerCase().includes('font-awesome'))) return;
+
+            const newLink = document.createElement('link');
+            newLink.rel = 'stylesheet';
+            newLink.href = href;
+            document.head.appendChild(newLink);
         });
 
         // Extract the header element and bottom-navbar if present

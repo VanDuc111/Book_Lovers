@@ -19,7 +19,8 @@ h2 {
     color: #333;
 }
 
-form {
+.profile-container form,
+.profile-details form {
     display: flex;
     flex-direction: column;
     width: 300px;

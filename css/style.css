@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
+/* ==========================
+    Variables
+    --------------------------
+    CSS custom properties and global constants
+    ========================== */
 :root {
     --orange: #ff6347;
     --blue: #5e5ef9;
@@ -22,6 +27,12 @@
 
 }
 
+
+/* ==========================
+    Base / Reset
+    --------------------------
+    Global reset, base typography and form defaults
+    ========================== */
 
 * {
     font-family: "Montserrat", serif;
@@ -53,48 +64,21 @@ html::-webkit-scrollbar-track {
     background: transparent;
 }
 
-html::-webkit-scrollbar-thumb {
+.header::-webkit-scrollbar-thumb {
     background: var(--black);
 }
 
-
-.header .header-1 {
-    display: flex;
-    background-color: #fff;
-    justify-content: space-between;
-    align-items: center;
-    text-align: center;
-    padding: 1.5rem 9%;
-
+/* Minimal, non-invasive constraints for the header search:
+   keep the rest of the header styles untouched so layout doesn't shift. */
+.header .header-1 .from-box,
+.header .header-1 form.form-box {
+    max-width: 46rem; /* increased so header search appears longer on wide screens */
+    min-width: 28rem;
 }
 
-.header .header-1 .logo {
-    font-size: 2.5rem;
-    font-weight: bolder;
-    color: var(--black);
-
-}
-
-
-.header .header-1 .logo i {
-    color: var(--orange);
-
-}
-
-.fas.fa-bars {
-    color: black;
-    text-decoration: none;
-}
-
-.cart-count {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background-color: red;
-    color: white;
-    border-radius: 50%;
-    padding: 2px 5px;
-    font-size: 12px;
+.header .header-1 form.form-box input,
+.header .header-1 .from-box input {
+    font-size: 1.8rem; /* larger text for readability */
 }
 
 .category-content {
@@ -107,6 +91,12 @@ html::-webkit-scrollbar-thumb {
     width: 25rem;
     font-size: 1.5rem;
 }
+
+/* ==========================
+   Navigation / Category
+   --------------------------
+   Category dropdown and category button styles
+   ========================== */
 
 .category-content ul {
     list-style: none;
@@ -164,32 +154,119 @@ html::-webkit-scrollbar-thumb {
     background-color: rgb(163, 238, 238);
 }
 
-.header .header-1 .from-box {
-    width: 50rem;
-    height: 5rem;
-    overflow: hidden;
-    border: var(--border);
-    border-radius: 0.5rem;
+/* ==========================
+    Header / Topbar
+    --------------------------
+    Logo, category button, search form and top icons
+    ========================== */
+
+.header .header-1 {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    gap: 1.6rem;
+    padding: auto;
+    margin: 2.6rem;
+}
+
+.header .header-1 .logo .logo-text {
+    color: var(--orange);
+    font-size: 2.2rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+/* Ensure logo link has no underline or focus ring */
+.header .header-1 a.logo {
+    text-decoration: none;
+    color: inherit;
+}
+.header .header-1 a.logo:focus,
+.header .header-1 a.logo:active {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Make the header search expand horizontally and appear as a rounded pill */
+.header .header-1 form.form-box {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: transparent;
+    padding: 0.2rem;
+    flex: 1 1 auto; /* occupy remaining horizontal space */
+    margin: 0 0.8rem;
+    min-width: 0;
+}
+
+.header .header-1 .from-box {
+    width: 100%;
+    flex: 1 1 auto;
+    max-width: none;
+    min-width: 26rem;
+    height: 4.8rem;
+    overflow: hidden;
+    border: none;
+    border-radius: 3rem; /* pill corners */
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.95);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    padding: 0.2rem 0.6rem;
 }
 
 .header .header-1 .from-box input {
-    font-size: 1.6rem;
-    padding: 0 1.2rem;
+    font-size: 1.9rem; 
+    padding: 0 1.2rem; 
     color: var(--black);
+    flex: 1 1 auto; 
     width: 100%;
     height: 100%;
+    box-sizing: border-box;
     text-transform: none;
+    text-align: left;
+    background: transparent;
+    border: none;
+    outline: none;
+}
 
+.header .header-1 .from-box input::placeholder {
+    font-size: 1.6rem;
+    color: rgba(0,0,0,0.45);
 }
 
 .header .header-1 .from-box label {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     color: var(--black);
-    margin-right: 1.5rem;
+    margin-right: 1rem;
     cursor: pointer;
+}
 
+/* ==========================
+   Header / Search / Logo
+   - logo, category, search (pill), icons
+   - search button styles placed here for locality
+   ========================== */
+
+.header .header-1 .from-box .search-button,
+.header .header-1 form.form-box .search-button {
+    width: 3.6rem;
+    height: 3.6rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(251, 247, 247, 0.9);
+    border: 0.06rem solid rgba(0,0,0,0.06);
+    color: var(--black);
+    cursor: pointer;
+    margin-left: 0.6rem;
+    padding: 0;
+    border-radius: 50%;
+}
+
+.header .header-1 .from-box .search-button i,
+.header .header-1 form.form-box .search-button i {
+    font-size: 1.8rem;
 }
 
 .header .header-1 .from-box label:hover {
@@ -197,15 +274,21 @@ html::-webkit-scrollbar-thumb {
 
 }
 
-.header .header-1 .icons div,
-.header .header-1 .icons a {
-    font-size: 2.5rem;
-    color: var(--black);
-    cursor: pointer;
-    margin-left: 1.5rem;
+.header .header-1 .icons {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex: 0 0 auto;
 }
 
-/* Remove underline on the login/user icon link and ensure consistent sizing */
+.header .header-1 .icons div,
+.header .header-1 .icons a {
+    font-size: 2.4rem;
+    color: var(--black);
+    cursor: pointer;
+    margin-left: 0.6rem;
+}
+
 .user-info, #login-btn {
     text-decoration: none !important;
     font-size: 2.4rem;
@@ -216,11 +299,6 @@ html::-webkit-scrollbar-thumb {
 }
 .user-info:hover, #login-btn:hover {
     color: var(--orange);
-}
-
-
-body {
-    padding-bottom: 10rem;
 }
 
 #search-btn {
@@ -274,7 +352,9 @@ body {
     cursor: pointer;
 }
 
+/*==================================*/
 /* ---- media query ------ */
+/*==================================*/
 @media(max-width:991px) {
     html {
         font-size: 55%;
@@ -302,19 +382,37 @@ body {
     .header .header-1 {
         position: relative;
         box-shadow: var(--box-shadow);
+        padding: 1rem 4%;
+        align-items: center;
+        gap: 0.6rem;
     }
 
     .header .header-1 .from-box {
-        position: absolute;
-        top: -115%;
-        right: 2rem;
-        width: 90%;
+        position: relative;
+        top: 0;
+        right: 0;
+        width: 60%;
+        max-width: none;
         box-shadow: var(--box-shadow);
+        order: 2;
+        flex: 1 1 auto;
     }
 
     .header .header-1 .from-box.active {
-        top: 115%;
+        top: 0;
+    }
 
+    .category .category-bars.btn {
+        font-size: 1.6rem !important;
+        padding: 0.5rem 0.8rem !important;
+        min-width: 3.6rem !important;
+        min-height: 3.6rem !important;
+    }
+
+    .header .header-1 .icons div,
+    .header .header-1 .icons a {
+        font-size: 2.2rem;
+        margin-left: 0.8rem;
     }
 
     #search-btn {
@@ -326,9 +424,39 @@ body {
     html {
         font-size: 50%;
     }
+
+    .header .header-1 {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.8rem 4%;
+    }
+
+    .header .header-1 .logo {
+        grid-column: 1;
+        font-size: 2.2rem;
+    }
+
+    .header .header-1 .from-box {
+        grid-column: 2;
+        width: 100%;
+        order: initial;
+        height: 4.2rem;
+    }
+
+    .header .header-1 .icons {
+        grid-column: 3;
+        justify-self: end;
+    }
+
+    .category-content {
+        width: 18rem;
+    }
 }
 
 /* -----bottom-navbar ----------- */
+
 .bottom-navbar {
     text-align: center;
     background-color: var(--orange);
@@ -355,7 +483,6 @@ body {
         display: inline-block;
     }
 }
-
 .btn {
     color: #fff;
     background: var(--orange);
@@ -368,12 +495,22 @@ body {
     display: inline-block;
 }
 
+/* ==========================
+   Buttons
+   --------------------------
+   Primary button styles used across the site
+   ========================== */
+
 /* Form and plain buttons fallback */
 button, input[type="submit"], .btn.btn-sm {
     font-size: var(--btn-font-size);
 }
 
-/* login-form-container */
+/* ==========================
+    Forms / Modals
+    --------------------------
+    Login, register and generic form component styles
+    ========================== */
 
 .login-form-container {
     background-color: rgba(255, 255, 255, 0.9);
@@ -715,12 +852,17 @@ section {
 }
 
 /* ------ icons-container ------- */
-
 .footer-section {
     background: var(--orange);
     color: #fff;
     padding: 5rem 9%;
 }
+
+/* ==========================
+   Footer
+   --------------------------
+   Footer sections and icons container
+   ========================== */
 
 .icons-container {
     display: grid;
@@ -1174,21 +1316,4 @@ section {
 
 .container.mt-5 {
     margin-bottom: 50px;
-}
-
-.header .header-1 .from-box .search-button {
-    width: 3.6rem;
-    height: 100%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border: none;
-    color: var(--black);
-    cursor: pointer;
-    padding: 0 0.8rem;
-}
-
-.header .header-1 .from-box .search-button i {
-    font-size: 1.6rem;
 }
