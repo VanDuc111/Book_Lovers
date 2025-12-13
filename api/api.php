@@ -21,6 +21,7 @@ if ($conn->connect_error) {
 $endpoint = isset($_GET['endpoint']) ? $_GET['endpoint'] : '';
 $method = $_SERVER['REQUEST_METHOD'];
 
+// Xử lý các endpoint API 
 switch ($endpoint) {
     case 'books':
         if ($method == 'GET') {
@@ -68,6 +69,7 @@ switch ($endpoint) {
             echo json_encode(['error' => 'Phương thức không được hỗ trợ']);
         }
         break;
+
     case 'upload':
         // Tải ảnh lên: multipart/form-data, trường 'image'
         if ($method == 'POST') {
@@ -114,6 +116,7 @@ switch ($endpoint) {
             deleteCategory($conn, isset($_GET['id']) ? $_GET['id'] : null);
         }
         break;
+
     case 'users':
         if ($method == 'GET' && isset($_GET['userID'])) {
             getUserById($conn, $_GET['userID']); // Lấy thông tin người dùng theo userID
@@ -127,6 +130,7 @@ switch ($endpoint) {
             deleteUser($conn, isset($_GET['id']) ? $_GET['id'] : null);
         }
         break;
+
     case 'order':
         if ($method == 'GET') {
             getOrders($conn);
@@ -134,6 +138,7 @@ switch ($endpoint) {
             updateOrder($conn, json_decode(file_get_contents("php://input"), true));
          }
         break;
+
     case 'review':
         if ($method == 'GET') {
             getReviews($conn);
@@ -143,6 +148,7 @@ switch ($endpoint) {
             deleteReview($conn, isset($_GET['id']) ? $_GET['id'] : null);
         }
         break;
+
     case 'cart':
         if ($method == 'POST') {
             addToCart($conn, json_decode(file_get_contents("php://input"), true));
@@ -157,6 +163,7 @@ switch ($endpoint) {
             echo json_encode(['error' => 'Phương thức không được hỗ trợ']);
         }
         break;
+
     case 'checkout':
         if ($method == 'POST') {
             checkoutItems($conn, json_decode(file_get_contents("php://input"), true));
@@ -165,6 +172,7 @@ switch ($endpoint) {
             echo json_encode(['error' => 'Phương thức không được hỗ trợ']);
         }
         break;
+
     case 'purchased-books':
         if ($method == 'GET') {
             getPurchasedBooks($conn, isset($_GET['userID']) ? $_GET['userID'] : null);
@@ -255,7 +263,7 @@ function getBooksByCategory($conn, $category) {
 }
 
 
-// Hàm createBook
+// Hàm có chức năng tạo sách mới 
 function createBook($conn, $data) {
     header('Content-Type: application/json');
     try {
@@ -272,20 +280,22 @@ function createBook($conn, $data) {
                 $stmtCat = $conn->prepare("SELECT categoryID FROM category WHERE categoryName = ? LIMIT 1");
                 $stmtCat->bind_param('s', $tmpName);
                 $stmtCat->execute();
+                $foundCatID = null;
                 $stmtCat->bind_result($foundCatID);
                 if ($stmtCat->fetch()) { $categoryID = $foundCatID; }
                 $stmtCat->close();
             }
+            // Các trường khác
             $bookPrice = floatval($data['bookPrice']);
             $stock = intval($data['stock']);
             $description = isset($data['description']) ? mysqli_real_escape_string($conn, $data['description']) : null;
             $image = isset($data['image']) ? mysqli_real_escape_string($conn, $data['image']) : null;
-
-            // Lưu image chỉ là tên file ngắn (nếu client gửi đường dẫn đầy đủ, lấy basename)
+            // Lưu image là tên file ngắn
             if (!empty($image)) { $image = basename($image); }
             $sql = "INSERT INTO book (title, author, publisher, categoryID, bookPrice, stock, description, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("sssidiss", $title, $author, $publisher, $categoryID, $bookPrice, $stock, $description, $image);
+            // Thực thi và kiểm tra kết quả
             if ($stmt->execute()) {
                 echo json_encode(['message' => 'Sách đã được thêm thành công', 'bookID' => $stmt->insert_id]);
             } else {
@@ -300,7 +310,7 @@ function createBook($conn, $data) {
     }
 }
 
-// Hàm updateBook
+// Hàm updateBook giúp cập nhật thông tin sách
 function updateBook($conn, $data) {
     header('Content-Type: application/json');
     try {
@@ -318,6 +328,7 @@ function updateBook($conn, $data) {
                 $stmtCat = $conn->prepare("SELECT categoryID FROM category WHERE categoryName = ? LIMIT 1");
                 $stmtCat->bind_param('s', $tmpName);
                 $stmtCat->execute();
+                $foundCatID = null;
                 $stmtCat->bind_result($foundCatID);
                 if ($stmtCat->fetch()) { $categoryID = $foundCatID; }
                 $stmtCat->close();
@@ -346,7 +357,7 @@ function updateBook($conn, $data) {
     }
 }
 
-// Hàm deleteBook
+// Hàm deleteBook giúp xóa sách
 function deleteBook($conn, $bookID) {
     header('Content-Type: application/json');
     if ($bookID !== null) {
@@ -368,7 +379,7 @@ function deleteBook($conn, $bookID) {
     }
 }
 
-// Hàm getCategories
+// Hàm getCategories giúp lấy danh sách thể loại
 function getCategories($conn) {
     header('Content-Type: application/json');
     $sql = "SELECT categoryID, categoryName, description FROM category";
@@ -386,7 +397,7 @@ function getCategories($conn) {
     }
 }
 
-// Hàm createCategory
+// Hàm createCategory giúp thêm thể loại mới
 function createCategory($conn, $data) {
     header('Content-Type: application/json');
     if (isset($data['categoryName'])) {
@@ -406,7 +417,7 @@ function createCategory($conn, $data) {
     }
 }
 
-// Hàm updateCategory
+// Hàm updateCategory giúp cập nhật thể loại
 function updateCategory($conn, $data) {
     header('Content-Type: application/json');
     if (isset($data['categoryID']) && isset($data['categoryName'])) {
@@ -427,7 +438,7 @@ function updateCategory($conn, $data) {
     }
 }
 
-// Hàm deleteCategory
+// Hàm deleteCategory giúp xóa thể loại
 function deleteCategory($conn, $categoryID) {
     header('Content-Type: application/json');
     if ($categoryID !== null) {
@@ -449,7 +460,7 @@ function deleteCategory($conn, $categoryID) {
     }
 }
 
-// Hàm getUsers
+// Hàm getUsers giúp lấy danh sách người dùng
 function getUsers($conn) {
     header('Content-Type: application/json');
     $sql = "SELECT userID, name, email, role FROM user";
@@ -463,7 +474,7 @@ function getUsers($conn) {
     echo json_encode($users);
 }
 
-// Hàm getUserById
+// Hàm getUserById giúp lấy thông tin người dùng theo userID
 function getUserById($conn, $userID) {
     $userID = intval($userID);
     $stmt = $conn->prepare("SELECT userID, name, email, address, phone FROM user WHERE userID = ?");
@@ -475,7 +486,7 @@ function getUserById($conn, $userID) {
     echo json_encode($user);
 }
 
-// Hàm createUser
+// Hàm createUser giúp thêm người dùng mới
 function createUser($conn, $data) {
     header('Content-Type: application/json');
     if (isset($data['name']) && isset($data['email']) && isset($data['password']) && isset($data['role'])) {
@@ -500,7 +511,7 @@ function createUser($conn, $data) {
     }
 }
 
-// Hàm updateUser
+// Hàm updateUser giúp cập nhật thông tin người dùng
 function updateUser($conn, $data) {
     header('Content-Type: application/json');
     if (isset($data['userID']) && isset($data['name']) && isset($data['email']) && isset($data['role'])) {
@@ -527,7 +538,18 @@ function updateUser($conn, $data) {
         $bindParams[] = $userID;
 
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param($params, ...$bindParams); // Sử dụng ... để truyền mảng làm tham số
+        if ($stmt === false) {
+            echo json_encode(['error' => 'Lỗi chuẩn bị truy vấn: ' . $conn->error]);
+            return;
+        }
+
+        // bind_param requires parameters by reference; build an array of references
+        $refs = [];
+        $refs[] = & $params;
+        foreach ($bindParams as $key => $value) {
+            $refs[] = & $bindParams[$key];
+        }
+        call_user_func_array([$stmt, 'bind_param'], $refs);
         if ($stmt->execute()) {
             echo json_encode(['message' => 'Thông tin người dùng đã được cập nhật']);
         } else {
@@ -600,9 +622,36 @@ function updateOrder($conn, $data) {
     }
 }
 
-// Hàm getReviews
+// Hàm getReviews giúp lấy đánh giá
 function getReviews($conn) {
     header('Content-Type: application/json');
+    // If caller requests a summary, return aggregated reviews per book
+    if (isset($_GET['summary']) && ($_GET['summary'] == '1' || strtolower($_GET['summary']) === 'true')) {
+        // Truy vấn tổng hợp: đếm số đánh giá và tính điểm trung bình cho mỗi sách
+        $sql = "SELECT r.bookID, COUNT(*) AS review_count, ROUND(AVG(r.rating),2) AS avg_rating, b.title, b.image
+                FROM review r
+                LEFT JOIN book b ON r.bookID = b.bookID
+                GROUP BY r.bookID
+                ORDER BY review_count DESC";
+        $result = $conn->query($sql);
+        $out = [];
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $row['image'] = fixImagePath($row['image'] ?? null);
+                // cast numeric fields
+                $row['review_count'] = intval($row['review_count']);
+                $row['avg_rating'] = floatval($row['avg_rating']);
+                $out[] = $row;
+            }
+            echo json_encode($out);
+            return;
+        } else {
+            echo json_encode(['error' => 'Lỗi truy vấn cơ sở dữ liệu: ' . $conn->error]);
+            return;
+        }
+    }
+
+    // Default: return raw reviews
     $sql = "SELECT reviewID, bookID, userID, rating, comment, created_at FROM review";
     $result = $conn->query($sql);
     $reviews = [];
@@ -618,7 +667,7 @@ function getReviews($conn) {
     }
 }
 
-// Hàm deleteReview
+// Hàm deleteReview giúp xóa đánh giá
 function deleteReview($conn, $reviewID) {
     header('Content-Type: application/json');
     if ($reviewID !== null) {
@@ -640,7 +689,7 @@ function deleteReview($conn, $reviewID) {
     }
 }
 
-// Hàm createReview
+// Hàm createReview giúp thêm đánh giá mới
 function createReview($conn, $data) {
     header('Content-Type: application/json');
     try {
@@ -672,7 +721,7 @@ function createReview($conn, $data) {
     }
 }
 
-// Hàm thêm sách vào giỏ hàng
+// Hàm thêm sách vào giỏ hàng 
 function addToCart($conn, $data) {
     header('Content-Type: application/json');
     try {
@@ -686,6 +735,7 @@ function addToCart($conn, $data) {
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("i", $bookID);
             $stmt->execute();
+            $stock = 0;
             $stmt->bind_result($stock);
             $stmt->fetch();
             $stmt->close();
@@ -696,6 +746,7 @@ function addToCart($conn, $data) {
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("i", $userID);
                 $stmt->execute();
+                $cartID = null;
                 $stmt->bind_result($cartID);
                 $stmt->fetch();
                 $stmt->close();
@@ -752,6 +803,7 @@ function addToCart($conn, $data) {
     }
 }
 
+// Hàm getCartItems giúp lấy các mục trong giỏ hàng
 function getCartItems($conn, $userID = null) {
     header('Content-Type: application/json');
     if ($userID) {
@@ -775,6 +827,7 @@ function getCartItems($conn, $userID = null) {
     $stmt->close();
 }
 
+// Hàm updateCartItem giúp cập nhật số lượng mục trong giỏ hàng
 function updateCartItem($conn, $data) {
     header('Content-Type: application/json');
     try {
@@ -799,6 +852,7 @@ function updateCartItem($conn, $data) {
     }
 }
 
+// Hàm deleteCartItem giúp xóa mục khỏi giỏ hàng
 function deleteCartItem($conn, $cartItemID) {
     header('Content-Type: application/json');
     if ($cartItemID) {
@@ -807,6 +861,8 @@ function deleteCartItem($conn, $cartItemID) {
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $cartItemID);
         $stmt->execute();
+        $bookID = null;
+        $quantity = null;
         $stmt->bind_result($bookID, $quantity);
         $stmt->fetch();
         $stmt->close();
@@ -834,6 +890,7 @@ function deleteCartItem($conn, $cartItemID) {
     }
 }
 
+// Hàm checkoutItems giúp thanh toán các mục trong giỏ hàng
 function checkoutItems($conn, $data) {
     header('Content-Type: application/json');
     try {
@@ -844,25 +901,32 @@ function checkoutItems($conn, $data) {
 
             if (!$userID) throw new Exception('Thiếu userID');
 
-            // 1. Calculate total and verify items
+            // 1. Tính tổng số tiền và lấy thông tin các mục đặt hàng
             $totalAmount = 0;
             $itemsToOrder = [];
             
-            // Prepare placeholders for IN clause
+            // Tạo placeholders cho truy vấn IN
             $placeholders = implode(',', array_fill(0, count($cartItemIDs), '?'));
             $types = str_repeat('i', count($cartItemIDs));
             
-            // Get cart items with book price
+            // Truy vấn để lấy thông tin các mục trong giỏ hàng
             $sql = "SELECT ci.cartItemID, ci.bookID, ci.quantity, b.bookPrice 
                     FROM cart_item ci 
                     JOIN book b ON ci.bookID = b.bookID 
                     WHERE ci.cartItemID IN ($placeholders)";
             
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param($types, ...$cartItemIDs);
+            if ($stmt === false) throw new Exception('Lỗi chuẩn bị truy vấn: ' . $conn->error);
+            $refs = [];
+            $refs[] = & $types;
+            foreach ($cartItemIDs as $k => $v) {
+                $cartItemIDs[$k] = intval($v);
+                $refs[] = & $cartItemIDs[$k];
+            }
+            call_user_func_array([$stmt, 'bind_param'], $refs);
             $stmt->execute();
             $result = $stmt->get_result();
-            
+            // Tính tổng và lưu thông tin mục đặt hàng
             while ($row = $result->fetch_assoc()) {
                 $itemsToOrder[] = $row;
                 $totalAmount += $row['quantity'] * $row['bookPrice'];
@@ -871,7 +935,7 @@ function checkoutItems($conn, $data) {
 
             if (empty($itemsToOrder)) throw new Exception('Không tìm thấy sản phẩm trong giỏ hàng');
 
-            // 2. Create Order
+            // 2. Tạo đơn hàng mới
             $sql = "INSERT INTO `order` (userID, total_amount, shipping_address, order_status) VALUES (?, ?, ?, 'Pending')";
             $stmt = $conn->prepare($sql);
             $stmt->bind_param("ids", $userID, $totalAmount, $shippingAddress);
@@ -879,7 +943,7 @@ function checkoutItems($conn, $data) {
             $orderID = $stmt->insert_id;
             $stmt->close();
 
-            // 3. Create Order Items and Delete Cart Items
+            // 3. thêm từng mục vào order_item và xóa khỏi cart_item
             foreach ($itemsToOrder as $item) {
                 // Insert into order_item
                 $sql = "INSERT INTO order_item (orderID, bookID, quantity, price) VALUES (?, ?, ?, ?)";
@@ -906,6 +970,7 @@ function checkoutItems($conn, $data) {
     }
 }
 
+// Hàm getPurchasedBooks giúp lấy danh sách sách đã mua của người dùng
 function getPurchasedBooks($conn, $userID) {
     header('Content-Type: application/json');
     if ($userID) {
