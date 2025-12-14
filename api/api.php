@@ -10,8 +10,9 @@ $servername = getenv('MYSQL_HOST') ?: 'localhost';
 $username = getenv('MYSQL_USER') ?: 'root';
 $password = getenv('MYSQL_PASSWORD') ?: '';
 $dbname = getenv('MYSQL_DATABASE') ?: 'booklovers';
+$port       = getenv('MYSQL_PORT') ?: 3306;
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conn = new mysqli($servername, $username, $password, $dbname, (int)$port);
 
 if ($conn->connect_error) {
     echo json_encode(['error' => 'Kết nối cơ sở dữ liệu thất bại: ' . $conn->connect_error]);
