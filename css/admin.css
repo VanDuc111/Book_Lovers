@@ -1,52 +1,177 @@
 /* css/admin.css */
 #sidebar {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    z-index: 1000;
-    /* Keep sidebar above everything */
-    padding: 48px 0 0;
-    /* Height of navbar */
-    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  padding: 48px 0 0;
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
 }
 
 .sidebar-sticky {
-    position: relative;
-    top: 0;
-    height: calc(100vh - 48px);
-    padding-top: .5rem;
-    overflow-x: hidden;
-    overflow-y: auto;
-    /* Scrollable contents if viewport is shorter than content. */
+  position: relative;
+  top: 0;
+  height: calc(100vh - 48px);
+  padding-top: 0.5rem;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .sidebar .nav-link {
-    font-size: .875rem;
-    padding: .75rem 1rem;
-    color: #333;
+  font-size: 0.875rem;
+  padding: 0.75rem 1rem;
+  color: #333;
 }
 
 .sidebar .nav-link.active {
-    color: #007bff;
-    font-weight: bold;
+  color: #007bff;
+  font-weight: bold;
 }
 
+/* predictable fixed sidebar width to avoid layout overflow */
+#sidebar {
+  width: 220px;
+}
 main {
-    margin-left: 20%;
-    /* Adjust based on sidebar width */
-    padding-top: 48px;
-    /* Adjust based on navbar height */
+  margin-left: 20%;
+  padding-top: 48px;
+  margin-left: 220px;
+
+  padding-right: 1rem;
+  padding-left: 1rem;
+  max-width: calc(100% - 220px);
+}
+.admin-cards {
+  margin-top: 1rem;
+}
+.card-summary {
+  border-radius: 0.6rem;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+.card-summary .card-body {
+  padding: 1.4rem;
+}
+.card-summary .icon-wrap {
+  width: 4rem;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 0.6rem;
+}
+
+.mb-2.d-flex.gap-2 > .btn,
+.mb-2 > .btn {
+  padding: 0.42rem 0.68rem;
+  font-size: 0.95rem;
+  border-radius: 0.35rem;
+}
+.mb-2 .btn + .btn {
+  margin-left: 0.5rem;
+}
+
+.mb-2 .form-control {
+  max-width: 480px;
+  width: 100%;
+}
+.summary-number {
+  font-size: 2.4rem;
+  font-weight: 700;
+}
+.summary-label {
+  color: #666;
+  font-size: 1.2rem;
+}
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 0.5rem;
+}
+.table {
+  table-layout: auto;
+  width: 100%;
+}
+.table td,
+.table th {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @media (max-width: 767.98px) {
-    #sidebar {
-        width: 100%;
-        position: relative;
-        padding: 0;
-    }
+  #sidebar {
+    position: relative;
+    width: 100%;
+  }
+  main {
+    margin-left: 0;
+    padding: 1rem;
+  }
+  .summary-number {
+    font-size: 2rem;
+  }
+}
 
-    main {
-        margin-left: 0;
-    }
+.admin-cards + .mb-2 .form-control,
+.table-responsive + .mb-2 .form-control,
+.mb-2 .form-control {
+  max-width: 480px;
+}
+
+@media (max-width: 991.98px) {
+  #sidebar {
+    width: 200px;
+  }
+  main {
+    margin-left: 200px;
+    max-width: calc(100% - 200px);
+  }
+}
+
+.table tbody tr {
+  cursor: pointer;
+  transition: background-color 0.12s ease-in-out;
+}
+.table tbody tr:nth-child(odd) {
+  background-color: #f7fbff;
+}
+.table tbody tr:hover {
+  background-color: #eef7ff;
+}
+.table tbody tr.table-active,
+.table tbody tr.selected {
+  background-color: #cfe8ff !important;
+}
+
+.table td,
+.table th {
+  vertical-align: middle;
+}
+
+#bookFormContainer .btn + .btn,
+#categoryFormContainer .btn + .btn,
+#userFormContainer .btn + .btn,
+#categoryFormContainer .btn + .btn {
+  margin-left: 0.6rem;
+}
+
+#bookFormContainer form .btn,
+#categoryFormContainer form .btn,
+#userFormContainer form .btn {
+  margin-top: 0.75rem;
+}
+
+#deleteReviewGlobalBtn {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: #fff;
+}
+#deleteReviewGlobalBtn:hover:not(:disabled) {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+#deleteReviewGlobalBtn:disabled {
+  opacity: 0.6;
 }

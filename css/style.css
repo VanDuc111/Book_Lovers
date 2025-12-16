@@ -28,8 +28,6 @@
 
 /* ==========================
     Base / Reset
-    --------------------------
-    Global reset, base typography and form defaults
     ========================== */
 
 * {
@@ -78,7 +76,6 @@ html {
   color: #ddd;
 }
 
-/* Stronger rule to ensure checked stars display yellow across FA versions (font or SVG) */
 .rating-stars .fa-star.checked {
   color: #ffc107 !important;
 }
@@ -278,8 +275,6 @@ html::-webkit-scrollbar-track {
 
 /* ==========================
    Header / Search / Logo
-   - logo, category, search (pill), icons
-   - search button styles placed here for locality
    ========================== */
 
 .header .header-1 .from-box .search-button,
@@ -726,7 +721,7 @@ input[type="submit"],
 .password-wrapper input[type="password"],
 .password-wrapper input[type="text"] {
   width: 100%;
-  padding-right: 3.8rem; /* space for toggle */
+  padding-right: 3.8rem;
   box-sizing: border-box;
 }
 
@@ -743,7 +738,6 @@ input[type="submit"],
   padding: 0.4rem;
 }
 
-/* Ensure password toggle is small and doesn't expand */
 .password-toggle {
   width: auto !important;
   min-width: 2.6rem;
@@ -756,7 +750,6 @@ input[type="submit"],
   background: rgba(255, 255, 255, 0);
 }
 
-/* Stronger constraints for password toggle inside auth forms */
 .login-form-container form .password-wrapper .password-toggle,
 .register-form-container form .password-wrapper .password-toggle,
 .form-container .password-wrapper .password-toggle {
@@ -767,7 +760,6 @@ input[type="submit"],
   font-size: 1.2rem !important;
 }
 
-/* Avoid default button styles within form for non-submit buttons */
 .form-container button:not([type="submit"]):not(.btn) {
   width: auto !important;
   padding: 0.15rem 0.4rem !important;
@@ -855,7 +847,6 @@ section {
   object-fit: cover;
 }
 
-/* Make primary CTA in hero more prominent */
 .home .row .content .btn {
   font-size: 1.2rem;
   padding: 1rem 1.8rem;
@@ -1094,7 +1085,6 @@ section {
   text-decoration: underline;
 }
 
-/* Small helper links inside forms should remain compact */
 .form-container p a {
   color: var(--orange);
   font-weight: 500;
@@ -1145,7 +1135,7 @@ section {
   justify-content: center;
   border-radius: 50%;
   background: #fff;
-  color: var(--blue); /* use blue for a modern look */
+  color: var(--blue);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
   border: 0.06rem solid rgba(0, 0, 0, 0.06);
   z-index: 2000;
@@ -1183,9 +1173,9 @@ section {
   transform: translateY(-50%) scale(1.06);
 }
 
-/* Make the category book cards smoother and match the home carousel style */
+/* ------- sach-van-hoc swiper styles ------ */
 .sach-van-hoc .swiper-wrapper {
-  align-items: stretch; /* ensure slides fill the same vertical space */
+  align-items: stretch;
 }
 .sach-van-hoc .swiper-slide {
   display: flex;
@@ -1197,8 +1187,8 @@ section {
   border-radius: 0.8rem;
 }
 .sach-van-hoc .sach-van-hoc-list .box .image {
-  padding: 0; /* remove inner padding so image aligns to card edge */
-  height: 26rem; /* use same variable height as hero */
+  padding: 0;
+  height: 26rem;
   overflow: hidden;
 }
 .sach-van-hoc .sach-van-hoc-list .box .image img {
@@ -1385,13 +1375,11 @@ html {
   scrollbar-color: var(--scroll-thumb) var(--scroll-track);
 }
 
-/* Ensure body content doesn't hide behind fixed headers/footers */
 body {
-  padding-top: 0; /* header already handles its own spacing */
+  padding-top: 0;
   box-sizing: border-box;
 }
 
-/* Responsive adjustments to prevent element overlap */
 @media (max-width: 991px) {
   section {
     padding: 2.6rem 3.5%;
@@ -1538,7 +1526,6 @@ body {
   font-size: 1.6rem;
 }
 
-/* Make reviews responsive: stack on small screens */
 @media (max-width: 991px) {
   .reviews .col-md-4 {
     flex: 1 1 100%;
