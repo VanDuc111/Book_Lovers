@@ -1,60 +1,86 @@
-#  Website Bán Sách BookLovers
+# Website Bán Sách BookLovers
 
-Dự án phát triển một hệ thống website thương mại điện tử chuyên bán sách, được xây dựng trên nền tảng XAMPP. Hệ thống cung cấp đầy đủ các tính năng cơ bản của một trang bán hàng trực tuyến, bao gồm quản lý sản phẩm, giỏ hàng, và giao dịch cơ bản.
-
----
-
-##  Công nghệ và Môi trường Phát triển
-
-| Hạng mục | Công nghệ/Phiên bản | Vai trò |
-| :--- | :--- | :--- |
-| **Ngôn ngữ Lập trình** | PHP (Phiên bản 7.x trở lên) | Ngôn ngữ xử lý logic phía máy chủ. |
-| **Cơ sở dữ liệu** | MySQL | Lưu trữ dữ liệu sản phẩm, người dùng, đơn hàng. |
-| **Môi trường Server** | XAMPP | Cung cấp môi trường Apache và MySQL cục bộ. |
-| **Giao diện** | HTML5, CSS3, JavaScript (Bootstrap 3/4) | Thiết kế giao diện người dùng. |
+Dự án phát triển một hệ thống website thương mại điện tử chuyên bán sách. Hệ thống cung cấp đầy đủ các tính năng cơ bản của một trang bán hàng trực tuyến, bao gồm quản lý sản phẩm, giỏ hàng, và giao dịch cơ bản.
 
 ---
 
-##  Hướng dẫn Cài đặt và Khởi chạy (Sử dụng XAMPP)
+## Live Demo: https://book-lovers-izlv.onrender.com
 
-Để chạy dự án này trên máy tính cá nhân của bạn, hãy làm theo các bước sau:
+---
 
-### Bước 1: Cài đặt và Chuẩn bị Môi trường
+## Công nghệ và Môi trường Phát triển
 
-1. Đảm bảo bạn đã cài đặt phần mềm **XAMPP** trên máy tính (hoặc WAMP/MAMP nếu bạn đang dùng môi trường khác).
-2. Khởi động **XAMPP Control Panel** và bật các dịch vụ **Apache** và **MySQL**.
+| Hạng mục               | Công nghệ/Phiên bản                     | Vai trò                                         |
+| :--------------------- | :-------------------------------------- | :---------------------------------------------- |
+| **Ngôn ngữ Lập trình** | PHP (Phiên bản 7.x trở lên)             | Ngôn ngữ xử lý logic phía máy chủ.              |
+| **Cơ sở dữ liệu**      | MySQL                                   | Lưu trữ dữ liệu sản phẩm, người dùng, đơn hàng. |
+| **Môi trường Server**  | Docker (Docker Compose)                 | Chạy Apache/PHP và MySQL qua Docker Compose.    |
+| **Giao diện**          | HTML5, CSS3, JavaScript (Bootstrap 3/4) | Thiết kế giao diện người dùng.                  |
 
-### Bước 2: Tải Mã nguồn và Đặt vào Thư mục `htdocs`
+---
 
-1. **Tải Mã nguồn:** Tải toàn bộ mã nguồn của Repository này về máy tính (dưới dạng file ZIP hoặc sử dụng lệnh `git clone`).
-2. **Sao chép Folder:** Sao chép toàn bộ thư mục mã nguồn vừa tải vào thư mục **`htdocs`** của XAMPP.
+## Hướng dẫn chạy (Docker Compose)
 
-### Bước 3: Thiết lập Cơ sở Dữ liệu (MySQL)
+Dự án có cấu hình sẵn để chạy bằng Docker Compose. Dùng Docker giúp bạn dễ thiết lập môi trường (Apache + PHP + MySQL + phpMyAdmin) mà không cần cài XAMPP.
 
-1. **Truy cập phpMyAdmin:** Mở trình duyệt web và truy cập địa chỉ: `http://localhost/phpmyadmin`.
-2. **Tạo Database mới:** Tạo một cơ sở dữ liệu mới với tên là **`bookstore_db`** .
-3. **Import Dữ liệu:**
-    * Nhấn vào database **`bookstore_db`** vừa tạo.
-    * Chọn tab **Import** (Nhập).
-    * Chọn file **`booklovers_db.sql`**  nằm trong thư mục project và nhấn **Go** (Thực hiện) để nhập dữ liệu.
+Yêu cầu:
 
-### Bước 4: Chạy Ứng dụng
+- Docker Engine (>= 20.x) và Docker Compose (đã tích hợp trong Docker Desktop).
 
-1. **Kiểm tra file cấu hình:** Mở file cấu hình kết nối database của bạn (ví dụ: `connect.php` hoặc `db_config.php`) và đảm bảo các thông số sau là chính xác:
-    * **Tên Database:** `booklovers_db`
-    * **Username:** `root` (Mặc định của XAMPP)
-    * **Password:** (Thường để trống hoặc `""` - Mặc định của XAMPP)
-2. **Truy cập Website:** Mở trình duyệt và truy cập địa chỉ sau:
-    ```
-    http://localhost/booklovers/pages/
-    ```
+1. Tạo file `.env` tại gốc repo (bên cạnh `docker-compose.yml`) với nội dung mẫu sau (ví dụ):
+
+```
+APACHE_PORT=8080
+PHPMYADMIN_PORT=8081
+MYSQL_ROOT_PASSWORD=secret_root_password
+MYSQL_DATABASE=booklovers_db
+MYSQL_USER=booklovers_user
+MYSQL_PASSWORD=booklovers_pass
+```
+
+2. Khởi động dịch vụ bằng Docker Compose:
+
+```bash
+docker-compose up --build -d
+```
+
+3. Truy cập ứng dụng:
+
+- Frontend: http://localhost:8080/pages/
+- phpMyAdmin: http://localhost:8081/ (user: value of `MYSQL_USER`, password: `MYSQL_PASSWORD` in `.env`)
+
+4. Cơ sở dữ liệu mặc định: thư mục `database/` được mount vào container MySQL và sẽ tự import các file `*.sql` khi container khởi tạo lần đầu. Nếu bạn cần import thủ công:
+
+```bash
+# import bằng cách exec vào container mysql
+docker exec -i booklovers_db mysql -u root -p${MYSQL_ROOT_PASSWORD} ${MYSQL_DATABASE} < database/booklovers.sql
+```
+
+5. Dừng và xóa containers (và volumes nếu muốn):
+
+```bash
+docker-compose down            # dừng và xóa containers
+docker-compose down -v         # xóa cả volumes (dữ liệu DB sẽ mất)
+```
+
+6. Xem logs:
+
+```bash
+docker-compose logs -f
+```
+
+Ghi chú:
+
+- `docker-compose.yml` trong dự án đã định nghĩa 3 service: `app` (Apache/PHP), `db` (MySQL) và `phpmyadmin`.
+- Nếu đổi port trong `.env`, hãy dùng port tương ứng để truy cập.
 
 ---
 
 ## Các Tính năng Chính
 
-* **Quản lý Sản phẩm:** Thêm, sửa, xóa sản phẩm, phân loại theo danh mục.
-* **Giỏ hàng Động:** Cho phép người dùng thêm/bỏ sản phẩm và thay đổi số lượng.
-* **Thanh toán Đơn giản:** Hệ thống xử lý quy trình đặt hàng và lưu trữ thông tin giao dịch.
-* **Giao diện Người dùng (Front-end):** Thiết kế trực quan, dễ sử dụng.
+- Quản lý Sản phẩm: Thêm, sửa, xóa sản phẩm, phân loại theo danh mục.
+- Giỏ hàng động: Cho phép người dùng thêm/bỏ sản phẩm và thay đổi số lượng.
+- Thanh toán đơn giản: Hệ thống xử lý quy trình đặt hàng và lưu trữ thông tin giao dịch.
+- Giao diện người dùng: HTML/CSS/JS (Bootstrap), trang admin để quản lý nội dung.
 
+---
