@@ -52,10 +52,44 @@ button,
 }
 
 html {
-  font-size: 62.5%;
+  font-size: 65%;
   overflow-x: hidden;
   scroll-padding-top: 5rem;
   scroll-behavior: smooth;
+}
+
+.reviews-table td,
+.reviews-table th {
+  vertical-align: middle;
+}
+.no-data {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+.rating-stars {
+  font-size: 2.4rem;
+  color: #ddd;
+  cursor: pointer;
+  display: inline-block;
+}
+.rating-stars .fa-star {
+  color: #ddd;
+}
+
+/* Stronger rule to ensure checked stars display yellow across FA versions (font or SVG) */
+.rating-stars .fa-star.checked {
+  color: #ffc107 !important;
+}
+.rating-stars .fa-star.checked svg,
+.rating-stars .fa-star.checked * {
+  fill: #ffc107 !important;
+  color: #ffc107 !important;
+}
+
+.rating-stars.static {
+  cursor: default;
 }
 
 html::-webkit-scrollbar {
@@ -70,17 +104,15 @@ html::-webkit-scrollbar-track {
   background: var(--black);
 }
 
-/* Minimal, non-invasive constraints for the header search:
-   keep the rest of the header styles untouched so layout doesn't shift. */
 .header .header-1 .from-box,
 .header .header-1 form.form-box {
-  max-width: 46rem; /* increased so header search appears longer on wide screens */
+  max-width: 46rem;
   min-width: 28rem;
 }
 
 .header .header-1 form.form-box input,
 .header .header-1 .from-box input {
-  font-size: 1.8rem; /* larger text for readability */
+  font-size: 1.8rem;
 }
 
 .category-content {
@@ -180,7 +212,6 @@ html::-webkit-scrollbar-track {
   text-decoration: none;
 }
 
-/* Ensure logo link has no underline or focus ring */
 .header .header-1 a.logo {
   text-decoration: none;
   color: inherit;
@@ -191,14 +222,13 @@ html::-webkit-scrollbar-track {
   box-shadow: none;
 }
 
-/* Make the header search expand horizontally and appear as a rounded pill */
 .header .header-1 form.form-box {
   display: flex;
   align-items: center;
   gap: 0.6rem;
   background: transparent;
   padding: 0.2rem;
-  flex: 1 1 auto; /* occupy remaining horizontal space */
+  flex: 1 1 auto;
   margin: 0 0.8rem;
   min-width: 0;
 }
@@ -211,7 +241,7 @@ html::-webkit-scrollbar-track {
   height: 4.8rem;
   overflow: hidden;
   border: none;
-  border-radius: 3rem; /* pill corners */
+  border-radius: 3rem;
   display: flex;
   align-items: center;
   background: rgba(255, 255, 255, 0.95);
