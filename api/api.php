@@ -626,20 +626,43 @@ function updateOrder($conn, $data) {
 // Hàm getReviews giúp lấy đánh giá
 function getReviews($conn) {
     header('Content-Type: application/json');
-    // If caller requests a summary, return aggregated reviews per book
+    // Optional: filter by bookID
+    $bookID = isset($_GET['bookID']) ? intval($_GET['bookID']) : null;
+
+    // If caller requests a summary, return aggregated reviews per book (or for a specific book)
     if (isset($_GET['summary']) && ($_GET['summary'] == '1' || strtolower($_GET['summary']) === 'true')) {
-        // Truy vấn tổng hợp: đếm số đánh giá và tính điểm trung bình cho mỗi sách
-        $sql = "SELECT r.bookID, COUNT(*) AS review_count, ROUND(AVG(r.rating),2) AS avg_rating, b.title, b.image
-                FROM review r
-                LEFT JOIN book b ON r.bookID = b.bookID
-                GROUP BY r.bookID
-                ORDER BY review_count DESC";
-        $result = $conn->query($sql);
+        if ($bookID) {
+            // Include distribution counts for each star (5..1) so frontend can render progress bars
+            $sql = "SELECT r.bookID,
+                           COUNT(*) AS review_count,
+                           ROUND(AVG(r.rating),2) AS avg_rating,
+                           SUM(r.rating = 5) AS c5,
+                           SUM(r.rating = 4) AS c4,
+                           SUM(r.rating = 3) AS c3,
+                           SUM(r.rating = 2) AS c2,
+                           SUM(r.rating = 1) AS c1,
+                           b.title, b.image
+                    FROM review r
+                    LEFT JOIN book b ON r.bookID = b.bookID
+                    WHERE r.bookID = ?
+                    GROUP BY r.bookID";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param('i', $bookID);
+            $stmt->execute();
+            $result = $stmt->get_result();
+        } else {
+            $sql = "SELECT r.bookID, COUNT(*) AS review_count, ROUND(AVG(r.rating),2) AS avg_rating, b.title, b.image
+                    FROM review r
+                    LEFT JOIN book b ON r.bookID = b.bookID
+                    GROUP BY r.bookID
+                    ORDER BY review_count DESC";
+            $result = $conn->query($sql);
+        }
+
         $out = [];
         if ($result) {
             while ($row = $result->fetch_assoc()) {
                 $row['image'] = fixImagePath($row['image'] ?? null);
-                // cast numeric fields
                 $row['review_count'] = intval($row['review_count']);
                 $row['avg_rating'] = floatval($row['avg_rating']);
                 $out[] = $row;
@@ -652,9 +675,25 @@ function getReviews($conn) {
         }
     }
 
-    // Default: return raw reviews
-    $sql = "SELECT reviewID, bookID, userID, rating, comment, created_at FROM review";
-    $result = $conn->query($sql);
+    // Default: return reviews (optionally for a specific book) with reviewer name
+    if ($bookID) {
+        $sql = "SELECT r.reviewID, r.bookID, r.userID, u.name as userName, r.rating, r.comment, r.created_at
+                FROM review r
+                LEFT JOIN user u ON r.userID = u.userID
+                WHERE r.bookID = ?
+                ORDER BY r.created_at DESC";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param('i', $bookID);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    } else {
+        $sql = "SELECT r.reviewID, r.bookID, r.userID, u.name as userName, r.rating, r.comment, r.created_at
+                FROM review r
+                LEFT JOIN user u ON r.userID = u.userID
+                ORDER BY r.created_at DESC";
+        $result = $conn->query($sql);
+    }
+
     $reviews = [];
     if ($result) {
         if ($result->num_rows > 0) {
