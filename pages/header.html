@@ -30,15 +30,17 @@
         >
           <span class="logo-text">BookLovers</span>
         </a>
+
         <!---- category ---->
         <nav class="category">
           <button class="category-bars btn" aria-label="Mở danh mục">
-            <i class="fas fa-bars"></i>
+            <img src="../assets/icons/category.svg" alt="Category" class="category-icon">
           </button>
           <div class="category-content">
             <ul id="header-category-list" class="category-list"></ul>
           </div>
         </nav>
+
         <form
           action=""
           class="form-box from-box"
@@ -57,19 +59,18 @@
             autocorrect="off"
             spellcheck="false"
           />
-          <button type="submit" class="search-button" aria-label="Tìm kiếm">
-            <i class="fas fa-search" aria-hidden="true"></i>
-          </button>
         </form>
-        <!---- category end ---->
 
         <div class="icons">
-          <a href="cart.html"><i class="fas fa-shopping-cart"></i></a>
-          <a href="login.html" id="login-btn" class="user-info fas fa-user">
-            <span id="welcome-message" style="display: none"></span>
+          <a href="cart.html" class="cart-link">
+            <img src="../assets/icons/shopping-cart.svg" alt="Cart" class="navbar-icon">
+          </a>
+          <a href="login.html" id="login-btn" class="user-info">
+            <img src="../assets/icons/user.svg" alt="User" class="navbar-icon">
+            <span id="welcome-message"></span>
           </a>
           <button id="logout-btn" style="display: none">
-            <i class="fas fa-sign-out-alt"></i> Đăng xuất
+            <i class="fas fa-sign-out-alt"></i>
           </button>
         </div>
       </div>
@@ -85,18 +86,6 @@
     </header>
 
     <!---- header section ends ---->
-
-    <!---- bottom navbar start ---->
-
-    <div class="bottom-navbar">
-      <a href="#home" class="fas fa-home"></a>
-      <a href="#featured" class="fas fa-list"></a>
-      <a href="#arrivals" class="fas fa-tags"></a>
-      <a href="#reviews" class="fas fa-comments"></a>
-      <a href="#blogs" class="fas fa-store"></a>
-    </div>
-
-    <!---- bottom navbar ends ---->
 
     <script type="module" src="../js/common.js"></script>
     <!-- <script src="../js/script.js"></script> -->
