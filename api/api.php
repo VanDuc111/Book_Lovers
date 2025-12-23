@@ -182,6 +182,123 @@ switch ($endpoint) {
             echo json_encode(['error' => 'Phương thức không được hỗ trợ']);
         }
         break;
+    case 'auth':
+        // Simple Google OAuth2 flow (authorization code). Uses env vars:
+        // GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_REDIRECT_URI (optional)
+        $provider = isset($_GET['provider']) ? $_GET['provider'] : '';
+        if ($provider === 'google' && $method === 'GET') {
+            $clientId = getenv('GOOGLE_CLIENT_ID');
+            if (empty($clientId)) {
+                echo json_encode(['error' => 'GOOGLE_CLIENT_ID not configured']);
+                exit;
+            }
+            $redirect = getenv('GOOGLE_REDIRECT_URI') ?: ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/api.php?endpoint=auth&provider=google_callback');
+            $state = bin2hex(random_bytes(8));
+            $_SESSION['oauth_state'] = $state;
+            $authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=' . urlencode($clientId) . '&redirect_uri=' . urlencode($redirect) . '&scope=' . urlencode('openid email profile') . '&state=' . $state . '&access_type=offline&prompt=select_account';
+            header('Location: ' . $authUrl);
+            exit;
+        } elseif ($provider === 'google_callback' && $method === 'GET') {
+            // Handle callback from Google
+            if (!isset($_GET['code'])) {
+                echo json_encode(['error' => 'Missing code']);
+                exit;
+            }
+            if (!isset($_GET['state']) || $_GET['state'] !== ($_SESSION['oauth_state'] ?? '')) {
+                echo json_encode(['error' => 'Invalid state']);
+                exit;
+            }
+            $code = $_GET['code'];
+            $clientId = getenv('GOOGLE_CLIENT_ID');
+            $clientSecret = getenv('GOOGLE_CLIENT_SECRET');
+            if (empty($clientId) || empty($clientSecret)) {
+                echo json_encode(['error' => 'Google OAuth client ID/secret not configured']);
+                exit;
+            }
+            $redirect = getenv('GOOGLE_REDIRECT_URI') ?: ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . '/api.php?endpoint=auth&provider=google_callback');
+
+            // Exchange code for tokens
+            $tokenUrl = 'https://oauth2.googleapis.com/token';
+            $postFields = http_build_query([
+                'code' => $code,
+                'client_id' => $clientId,
+                'client_secret' => $clientSecret,
+                'redirect_uri' => $redirect,
+                'grant_type' => 'authorization_code'
+            ]);
+            $ch = curl_init($tokenUrl);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/x-www-form-urlencoded']);
+            $resp = curl_exec($ch);
+            if ($resp === false) {
+                echo json_encode(['error' => 'Token exchange failed', 'detail' => curl_error($ch)]);
+                exit;
+            }
+            $data = json_decode($resp, true);
+            if (isset($data['error'])) {
+                echo json_encode(['error' => 'Token response error', 'detail' => $data]);
+                exit;
+            }
+            $accessToken = $data['access_token'] ?? null;
+            if (!$accessToken) {
+                echo json_encode(['error' => 'No access token returned']);
+                exit;
+            }
+
+            // Fetch user info
+            $ch = curl_init('https://www.googleapis.com/oauth2/v3/userinfo');
+            curl_setopt($ch, CURLOPT_HTTPHEADER, ['Authorization: Bearer ' . $accessToken]);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $ui = curl_exec($ch);
+            if ($ui === false) {
+                echo json_encode(['error' => 'Failed to fetch userinfo', 'detail' => curl_error($ch)]);
+                exit;
+            }
+            $uiData = json_decode($ui, true);
+            $email = $uiData['email'] ?? null;
+            $name = $uiData['name'] ?? ($uiData['given_name'] ?? '');
+            if (!$email) {
+                echo json_encode(['error' => 'Google did not return an email']);
+                exit;
+            }
+
+            // Find or create local user
+            $stmt = $conn->prepare('SELECT userID FROM user WHERE email = ? LIMIT 1');
+            $stmt->bind_param('s', $email);
+            $stmt->execute();
+            $stmt->bind_result($userID);
+            if ($stmt->fetch()) {
+                $stmt->close();
+            } else {
+                $stmt->close();
+                $randomPass = bin2hex(random_bytes(8));
+                $passwordHash = password_hash($randomPass, PASSWORD_DEFAULT);
+                $address = null; $phone = null; $role = 'client';
+                $stmt = $conn->prepare('INSERT INTO user (name, email, password, address, phone, role) VALUES (?, ?, ?, ?, ?, ?)');
+                $stmt->bind_param('ssssss', $name, $email, $passwordHash, $address, $phone, $role);
+                if (!$stmt->execute()) {
+                    echo json_encode(['error' => 'Failed to create user', 'detail' => $stmt->error]);
+                    exit;
+                }
+                $userID = $stmt->insert_id;
+                $stmt->close();
+            }
+
+            // Log the user in (session)
+            $_SESSION['userID'] = $userID;
+            $_SESSION['userEmail'] = $email;
+
+            // Redirect to homepage (adjust as needed)
+            header('Location: /pages/home.html');
+            exit;
+        } else {
+            http_response_code(400);
+            echo json_encode(['error' => 'Provider không được hỗ trợ hoặc phương thức sai']);
+            exit;
+        }
+        break;
     default:
         echo json_encode(['error' => 'Endpoint không hợp lệ']);
         exit;

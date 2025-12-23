@@ -92,3 +92,20 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
 
 /* Extra padding bottom so short pages push footer further down */
 .form-container { margin-bottom: 4rem; }
+
+/* Tweak Google button appearance inside form container: separate from primary CTA and
+   give a subtle background to distinguish from white page background */
+.form-container .btn-google {
+    margin-top: 0.9rem;
+    background: #faf7f5; /* warm light background to contrast white page */
+    border: 1px solid rgba(0,0,0,0.06);
+    color: #222;
+    box-shadow: none;
+}
+.form-container .btn-google .fab,
+.form-container .btn-google .fa-google {
+    color: #db4437;
+}
+
+/* Slightly larger gap below Google button so footer/link don't crowd it */
+.form-container .btn-google + p { margin-top: 0.8rem; }

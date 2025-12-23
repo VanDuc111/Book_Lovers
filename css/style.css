@@ -554,11 +554,12 @@ input[type="submit"],
 }
 
 .login-form-container form {
-  width: 40rem;
+  max-width: 42rem;
+  width: 90%;
   border: var(--border);
   background: #ffffff;
-  padding: 2rem;
-  margin: 2rem;
+  padding: 1.6rem;
+  margin: 1.2rem;
   border-radius: 0.5rem;
   box-shadow: var(--box-shadow);
 }
@@ -578,14 +579,16 @@ input[type="submit"],
 }
 
 .login-form-container form .box {
-  margin-top: 1rem;
-  padding: 1rem 1.2rem;
+  margin-top: 0.8rem;
+  padding: 0.6rem 1.2rem;
   font-size: 1.6rem;
   color: var(--black);
   text-decoration: none;
   border: var(--border);
   border-radius: 0.5rem;
   width: 100%;
+  min-height: 44px;
+  box-sizing: border-box;
 }
 
 .login-form-container form .check-box {
@@ -604,7 +607,9 @@ input[type="submit"],
 .login-form-container form .btn {
   width: 100%;
   text-align: center;
-  margin: 1.2rem 0;
+  margin: 1rem 0;
+  height: 44px;
+  line-height: 44px;
 }
 
 .login-form-container form .btn:hover {
@@ -661,11 +666,12 @@ input[type="submit"],
 /* Shared form styles */
 .login-form-container form,
 .register-form-container form {
-  width: 40rem;
+  max-width: 42rem;
+  width: 90%;
   border: var(--border);
   background: #ffffff;
-  padding: 2rem;
-  margin: 2rem;
+  padding: 1.6rem;
+  margin: 1.2rem;
   border-radius: 0.5rem;
   box-shadow: var(--box-shadow);
 }
@@ -688,14 +694,16 @@ input[type="submit"],
 
 .login-form-container form .box,
 .register-form-container form .box {
-  margin-top: 1rem;
-  padding: 1rem 1.2rem;
+  margin-top: 0.8rem;
+  padding: 0.6rem 1.2rem;
   font-size: 1.6rem;
   color: var(--black);
   text-decoration: none;
   border: var(--border);
   border-radius: 0.5rem;
   width: 100%;
+  min-height: 44px;
+  box-sizing: border-box;
 }
 
 .login-form-container form .check-box,
@@ -717,7 +725,35 @@ input[type="submit"],
 .register-form-container form .btn {
   width: 100%;
   text-align: center;
-  margin: 1.2rem 0;
+  margin: 1rem 0;
+  height: 44px;
+  line-height: 44px;
+}
+
+/* Google sign-in button */
+.btn-google {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  width: 100%;
+  height: 44px;
+  background: #ffffff;
+  color: #222;
+  border: 0.08rem solid rgba(0,0,0,0.08);
+  border-radius: 0.6rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+.btn-google .fab,
+.btn-google .fa-google {
+  color: #db4437;
+  font-size: 1.6rem;
+}
+.btn-google:hover {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
 }
 
 .login-form-container form .btn:hover,
@@ -738,6 +774,19 @@ input[type="submit"],
   color: var(--orange);
   text-decoration: underline;
   cursor: pointer;
+}
+
+/* Focus styles for form elements (scoped to auth/form areas) */
+.login-form-container form .box:focus,
+.register-form-container form .box:focus,
+.form-container .box:focus,
+.form-container input:focus,
+.form-container textarea:focus,
+.login-form-container form .box:focus-visible,
+.register-form-container form .box:focus-visible {
+  outline: 3px solid rgba(255, 99, 71, 0.12);
+  outline-offset: 2px;
+  box-shadow: 0 6px 18px rgba(255, 99, 71, 0.06);
 }
 
 /* duplicate register-form-container removed; shared styles used above */
