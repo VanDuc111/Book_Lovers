@@ -1,43 +1,86 @@
+-- BookLovers SQL dump (wrapped for easy import)
+-- Generated: Dec 23, 2025 - wrapped by script
 
-CREATE DATABASE IF NOT EXISTS `booklovers` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS;
+SET FOREIGN_KEY_CHECKS=0;
+
+DROP DATABASE IF EXISTS `booklovers`;
+CREATE DATABASE `booklovers` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `booklovers`;
+
+SET SESSION sql_require_primary_key = 0;
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `booklovers`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `book`
+--
+
+CREATE TABLE `book` (
+  `bookID` int UNSIGNED NOT NULL,
+  `title` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `author` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `publisher` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `bookPrice` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `stock` int NOT NULL DEFAULT '0',
+  `categoryID` int UNSIGNED DEFAULT NULL,
+  `image` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `book`
+--
+
+INSERT INTO `book` (`bookID`, `title`, `author`, `publisher`, `bookPrice`, `description`, `stock`, `categoryID`, `image`) VALUES
+(1, '7 Thói Quen Của Bạn Trẻ Thành Đạt', 'Sean Covery', 'NXB Tổng Hợp', 99000.00, 'Sách phát triển bản thân', 23, 2, '7-thoi-quen-cua-ban-tre-thanh-dat.jpg'),
+(2, 'Alice In Borderland - Tậ­p 1', 'Haro Aso', 'NXB Trẻ', 120000.00, 'Truyện tranh', 16, 4, 'alice-in-borderland-tap-1.jpg'),
+(3, 'Bố Già', 'Mario Puzo', 'NXB Văn Học', 150000.00, 'Tiểu thuyết kinh điển', 10, 1, 'bo-gia-mario-puzo.jpg'),
+(4, 'Đi Tìm Lẽ Sống', 'Viktor E. Frankl', 'NXB Tri Thức', 140000.00, 'Tích cực và phát triển tương lai', 20, 2, 'di-tim-le-song.jpg'),
+(5, 'Đồng Tháp Đất & Người tập 10', 'Nhiều tác giả', 'NXB Đồng Nai', 80000.00, 'Văn học ', 10, 1, 'dong-thap-dat-va-nguoi-tap-10.jpg'),
+(6, 'Doraemon - Túi Thần Kỳ Của Doraemon', 'Fujiko F. Fujio', 'NXB Kim Đồng', 60000.00, 'Truyện thiếu nhi', 37, 4, 'doraemon-tui-than-ky-cua-doraemon.jpg'),
+(7, 'Harry Potter và Hòn Đá Phù Thủy', 'J.K. Rowling', 'NXB Trẻ', 170000.00, 'Tiểu thuyết giả tưởng', 22, 1, 'harry-potter-va-hon-da-phu-thuy.jpg'),
+(8, 'Không Gì Là Không Thể', 'George Matthew Adams', 'NXB Tổng Hợp Tp.HCM', 85000.00, 'Sách động lực', 30, 2, 'khong-gi-la-khong-the.jpg'),
+(9, 'Marketing Căn Bản', 'Don Sexton', 'NXB Lao Động', 110000.00, 'Sách marketing căn bản', 15, 3, 'marketing-can-ban.jpg'),
+(10, 'Nhà Giả Kim', 'Paulo Coelho', 'NXB Văn Học', 130000.00, 'Tiểu thuyết nổi tiếng', 28, 1, 'nha-gia-kim.jpg'),
+(11, 'Nỗi Buồn Chiến Tranh', 'Bảo Ninh', 'NXB Trẻ', 90000.00, 'Văn học chiến tranh', 8, 1, 'noi-buon-chien-tranh.jpg'),
+(12, 'Sherlock Holmes - Toàn Tập (3 Tập)', 'Arthur Conan Doyle', 'NXB Văn Học', 360000.00, 'Truyện Trinh Thám', 14, 1, 'sherlock-holmes-toan-tap-3-tap.jpg'),
+(13, 'Thiền cho người mới bắt đầu', 'Ian Tuhovsky', 'NXB Hồng Đức', 79000.00, 'Sách kỹ năng', 20, 2, 'thien-cho-nguoi-moi-bat-dau.jpg'),
+(14, 'Tôi Thấy Hoa Vàng Trên Cỏ Xanh', 'Nguyễn Nhật Ánh', 'NXB Trẻ', 85000.00, 'Tiểu thuyết thiếu niên nổi tiếng', 26, 1, 'toi-thay-hoa-vang-tren-co-xanh.jpg'),
+(15, 'Tuổi Trẻ Đáng Giá Bao Nhiêu', 'Rosie Nguyễn', 'NXB Nhã Nam', 95000.00, 'Sách phát triển bản thân', 30, 2, 'tuoi-tre-dang-gia-bao-nhieu.jpg');
 
 -- Users
 CREATE TABLE `user` (
   `userID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` VARCHAR(40) NOT NULL,
-  `email` VARCHAR(50) NOT NULL,
-  `password` VARCHAR(255) NOT NULL,
-  `address` VARCHAR(255) DEFAULT NULL,
-  `phone` VARCHAR(20) DEFAULT NULL,
-  `role` VARCHAR(20) NOT NULL DEFAULT 'user',
-  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `name` VARCHAR(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` VARCHAR(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password` VARCHAR(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `address` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone` VARCHAR(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `role` ENUM('admin','client') NOT NULL DEFAULT 'client',
   PRIMARY KEY (`userID`),
-  UNIQUE KEY `uk_user_email` (`email`)
+  UNIQUE KEY `uniq_user_email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Categories
 CREATE TABLE `category` (
   `categoryID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `categoryName` VARCHAR(255) NOT NULL,
-  `description` TEXT DEFAULT NULL,
+  `categoryName` VARCHAR(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` VARCHAR(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`categoryID`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Books
-CREATE TABLE `book` (
-  `bookID` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `title` VARCHAR(100) NOT NULL,
-  `author` VARCHAR(100) DEFAULT NULL,
-  `publisher` VARCHAR(100) DEFAULT NULL,
-  `bookPrice` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-  `description` TEXT DEFAULT NULL,
-  `stock` INT NOT NULL DEFAULT 0,
-  `categoryID` INT UNSIGNED DEFAULT NULL,
-  `image` VARCHAR(255) DEFAULT NULL,
-  PRIMARY KEY (`bookID`),
-  KEY `fk_book_category` (`categoryID`),
-  CONSTRAINT `fk_book_category` FOREIGN KEY (`categoryID`) REFERENCES `category` (`categoryID`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Cart (one per user)
@@ -121,23 +164,5 @@ INSERT INTO `category` (`categoryID`, `categoryName`, `description`) VALUES
 (2, 'Phát triển bản thân', 'Sách động lực, tự lực, hướng nghiệp'),
 (3, 'Kiến thức & Kinh tế', 'Sách khoa học, kinh tế, marketing'),
 (4, 'Thiếu nhi', 'Sách cho trẻ em');
-
--- Thêm sách mẫu (gán category đã gộp)
-INSERT INTO `book` (`title`, `author`, `publisher`, `bookPrice`, `description`, `stock`, `categoryID`, `image`) VALUES
-('7 Thói Quen Của Bạn Trẻ Thành Đạt', 'Tác giả VN', 'NXB Tổng Hợp', 99000.00, 'Sách phát triển bản thân', 25, 2, '7-thoi-quen-cua-ban-tre-thanh-dat.jpg'),
-('Alice In Borderland - Tập 1', 'Haro Aso', 'NXB Văn Học', 120000.00, 'Truyện giả tưởng', 18, 1, 'alice-in-borderland-tap-1.jpg'),
-('Bố Già', 'Mario Puzo', 'NXB Văn Học', 150000.00, 'Tiểu thuyết kinh điển', 12, 1, 'bo-gia-mario-puzo.jpg'),
-('Đi Tìm Lẽ Sống', 'Viktor E. Frankl', 'NXB Tri Thức', 140000.00, 'Tự lực và ý nghĩa sống', 20, 2, 'di-tim-le-song.jpg'),
-('Đồng Tháp Mười và Người - Tập 10', 'Tác giả VN', 'NXB Địa Phương', 80000.00, 'Văn học địa phương', 10, 1, 'dong-thap-dat-va-nguoi-tap-10.jpg'),
-('Doraemon - Túi Thần Kỳ', 'Fujiko F. Fujio', 'NXB Thiếu Nhi', 60000.00, 'Truyện thiếu nhi', 40, 4, 'doraemon-tui-than-ky-cua-doraemon.jpg'),
-('Harry Potter và Hòn Đá Phù Thủy', 'J.K. Rowling', 'NXB Văn Học', 170000.00, 'Tiểu thuyết giả tưởng', 22, 1, 'harry-potter-va-hon-da-phu-thuy.jpg'),
-('Không Gì Là Không Thể', 'Tác giả VN', 'NXB Tri Thức', 85000.00, 'Sách động lực', 30, 2, 'khong-gi-la-khong-the.jpg'),
-('Marketing Căn Bản', 'Tác giả VN', 'NXB Kinh Tế', 110000.00, 'Sách marketing cơ bản', 15, 3, 'marketing-can-ban.jpg'),
-('Nhà Giả Kim', 'Paulo Coelho', 'NXB Văn Học', 130000.00, 'Tiểu thuyết nổi tiếng', 28, 1, 'nha-gia-kim.jpg'),
-('Nơi Buồn Chiến Tranh', 'Tác giả VN', 'NXB Văn Học', 90000.00, 'Văn học chiến tranh', 8, 1, 'noi-buon-chien-tranh.jpg'),
-('Sherlock Holmes - Toàn Tập (Tập 3)', 'Arthur Conan Doyle', 'NXB Văn Học', 160000.00, 'Truyện trinh thám', 14, 1, 'sherlock-holmes-toan-tap-3-tap.jpg'),
-('Thiên Cho Người Mới Bắt Đầu', 'Tác giả VN', 'NXB Tri Thức', 79000.00, 'Sách hướng nghiệp', 20, 2, 'thien-cho-nguoi-moi-bat-dau.jpg'),
-('Tôi Thấy Hoa Vàng Trên Cỏ Xanh', 'Nguyễn Nhật Ánh', 'NXB Trẻ', 85000.00, 'Tiểu thuyết thiếu nhi/thiếu niên', 26, 1, 'toi-thay-hoa-vang-tren-co-xanh.jpg'),
-('Tuổi Trẻ Đáng Giá Bao Nhiêu', 'Lý Hâm', 'NXB Tri Thức', 95000.00, 'Sách phát triển cá nhân', 30, 2, 'tuoi-tre-dang-gia-bao-nhieu.jpg');
 
 -- End of schema
