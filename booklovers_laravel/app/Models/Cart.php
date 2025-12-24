@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Cart extends Model
+{
+    protected $table = 'cart';
+    protected $primaryKey = 'cartID';
+    public $timestamps = false;
+
+    protected $fillable = [
+        'userID',
+        'created_at',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'userID', 'userID');
+    }
+
+    public function items()
+    {
+        return $this->hasMany(CartItem::class, 'cartID', 'cartID');
+    }
+}
