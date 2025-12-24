@@ -478,7 +478,7 @@ function getUsers($conn) {
 // Hàm getUserById giúp lấy thông tin người dùng theo userID
 function getUserById($conn, $userID) {
     $userID = intval($userID);
-    $stmt = $conn->prepare("SELECT userID, name, email, address, phone FROM user WHERE userID = ?");
+    $stmt = $conn->prepare("SELECT userID, name, email, password, address, phone, role FROM user WHERE userID = ?");
     $stmt->bind_param("i", $userID);
     $stmt->execute();
     $result = $stmt->get_result();

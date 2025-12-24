@@ -94,44 +94,17 @@ function runLoginJS() {
     }
 }
 
-// Attach password toggle handlers (works for login and other pages that include this file)
+// Attach password toggle handlers
 function attachPasswordToggle() {
-    document.querySelectorAll('.password-toggle').forEach(btn => {
-        // find the associated input (password or text)
-        const input = btn.parentElement.querySelector('input[type="password"], input[type="text"]');
+    document.querySelectorAll('.toggle-password').forEach(icon => {
+        const input = icon.parentElement.querySelector('input');
         if (!input) return;
 
-        // initialize icon and state
-        btn.innerHTML = '<i class="fas fa-eye"></i>'; // default modern eye
-        btn.classList.remove('visible');
-
-        // show toggle only when user types something
-        const updateVisibility = () => {
-            if (input.value && input.value.length > 0) {
-                btn.classList.add('visible');
-            } else {
-                btn.classList.remove('visible');
-                // ensure input is masked when empty
-                input.type = 'password';
-                btn.innerHTML = '<i class="fas fa-eye"></i>';
-            }
-        };
-
-        // initial visibility
-        updateVisibility();
-
-        input.addEventListener('input', updateVisibility);
-
-        // toggle show/hide on click
-        btn.addEventListener('click', function (e) {
-            e.preventDefault();
-            if (input.type === 'password') {
-                input.type = 'text';
-                this.innerHTML = '<i class="fas fa-eye-slash"></i>'; // eye-slash when visible
-            } else {
-                input.type = 'password';
-                this.innerHTML = '<i class="fas fa-eye"></i>';
-            }
+        icon.addEventListener('click', function () {
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+            // Toggle the icon
+            this.src = type === 'password' ? '../assets/icons/eye.svg' : '../assets/icons/eye-slash.svg';
         });
     });
 }

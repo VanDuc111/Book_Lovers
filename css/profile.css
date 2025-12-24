@@ -17,6 +17,8 @@ body {
 h2 {
     text-align: center;
     color: #333;
+    font-size: 2.4rem;
+    margin-bottom: 2rem;
 }
 
 .profile-container form,
@@ -34,28 +36,26 @@ h2 {
     padding: 20px;
 }
 
-.profile-image {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    margin-bottom: 20px;
-}
-
 .profile-details {
     width: 100%;
 }
 
 .profile-details label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #444;
 }
 
 .profile-details input {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
+    padding: 12px;
+    margin-bottom: 20px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 8px;
+    font-size: 1.5rem;
+    box-sizing: border-box; /* Ensure padding doesn't affect width */
 }
 
 .save-button {

@@ -109,6 +109,8 @@ html {
 .category-content {
   display: none;
   position: absolute;
+  top: 100%;
+  left: 0;
   background-color: white;
   border: 1px solid #ccc;
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
@@ -446,7 +448,7 @@ html {
   }
 
   body {
-    padding-bottom: 2rem;
+    padding-bottom: 0;
   }
 
   .header .header-2 {
@@ -479,11 +481,11 @@ html {
     background: var(--orange) !important;
     padding: 1.2rem 1rem;
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: min-content 1fr min-content;
     grid-template-areas: 
       "logo logo logo"
       "cat search icons";
-    gap: 1rem 1.5rem;
+    gap: 1rem 1.2rem;
     align-items: center;
     box-sizing: border-box;
     width: 100%;
@@ -502,16 +504,13 @@ html {
     font-weight: 800;
   }
 
-  .main-logo {
-    display: none;
-  }
-
   .category {
     grid-area: cat;
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    width: fit-content;
+    width: 4rem;
     margin: 0;
     padding: 0;
   }
@@ -531,6 +530,27 @@ html {
     filter: brightness(0) invert(1);
   }
 
+  /* Fix category content position */
+  .category-content {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    background: #fff;
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+    min-width: 20rem;
+    display: none;
+  }
+
+  .category:hover .category-content {
+    display: block;
+  }
+
+  /* Force category content below header on mobile */
+  .header .header-1 .category .category-content {
+    top: calc(100% + 1rem); /* Distance from the button */
+  }
+
   .header .header-1 .from-box {
     grid-area: search;
     width: 100%;
@@ -544,6 +564,8 @@ html {
     display: flex;
     align-items: center;
     overflow: hidden;
+    min-width: 0;
+    width: 100%;
   }
 
   .header .header-1 .from-box input {
@@ -563,7 +585,7 @@ html {
   .header .header-1 .icons {
     grid-area: icons;
     display: flex;
-    gap: 1rem;
+    gap: 0.8rem;
     margin: 0;
     align-items: center;
     flex-shrink: 0;
@@ -585,10 +607,7 @@ html {
   }
 
   .user-info span {
-    display: inline-block;
-    color: #fff;
-    font-size: 1.6rem;
-    font-weight: 600;
+    display: none !important;
   }
 
   .header .header-1 .from-box .search-button i {
@@ -607,8 +626,8 @@ html {
   }
   
   .header .header-1 {
-    gap: 1.2rem 0.8rem;
-    padding: 1rem 0.8rem;
+    gap: 0.8rem 0.5rem;
+    padding: 1rem 0.6rem;
   }
 
   .header .header-1 .icons {
@@ -978,6 +997,12 @@ section {
   padding: 5rem 9%;
 }
 
+@media (max-width: 768px) {
+  .footer-section {
+    padding: 3rem 2rem;
+  }
+}
+
 /* ==========================
    Footer
    --------------------------
@@ -986,32 +1011,40 @@ section {
 
 .icons-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(25rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
   gap: 1.5rem;
+  align-items: stretch;
 }
 
 .icons-container .icons {
   display: flex;
-  align-items: center;
-  padding: 2rem 0;
-  gap: 1.5rem;
+  align-items: flex-start;
+  padding: 1.5rem 0.5rem;
+  gap: 1.2rem;
 }
 
 .icons-container .icons i {
-  font-size: 3.5rem;
-  color: var(--black);
-  padding: 2rem 0;
+  font-size: 3rem;
+  color: #fff;
+  opacity: 0.9;
+  padding-top: 0.4rem;
 }
 
 .icons-container .icons h3 {
   color: #fff;
   font-size: 2.2rem;
-  border-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
 }
 
 .icons-container .icons p {
   color: #fff;
   font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.9;
+}
+.icons-container .icons p:last-child {
+  margin-bottom: 0;
 }
 
 /* ----- heading ----- */
@@ -1566,18 +1599,13 @@ body {
   display: flex;
   gap: 2rem;
   flex-wrap: wrap;
-}
-.reviews .row {
-  display: flex;
-  gap: 2rem;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: stretch;
 }
 
 .reviews .col-md-4 {
   display: flex;
-  width: 25rem; /* match book card width */
+  width: 25rem;
   flex: 0 0 auto;
 }
 .reviews .card {
@@ -1591,9 +1619,10 @@ body {
 }
 .reviews .card-img-top {
   width: 100%;
-  height: 22rem;
+  aspect-ratio: 2 / 3;
   object-fit: cover;
   display: block;
+  background: #f9f9f9;
 }
 .reviews .card-body {
   padding: 1.4rem 1.6rem;
@@ -1620,10 +1649,94 @@ body {
 }
 
 @media (max-width: 991px) {
+  .icons-container {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  .icons-container .icons {
+    padding: 1.5rem 0.5rem;
+  }
+  .icons-container .icons h3 {
+    font-size: 1.8rem;
+  }
+  .icons-container .icons p {
+    font-size: 1.25rem;
+  }
+  
+  .reviews .row {
+    gap: 1.5rem;
+  }
   .reviews .col-md-4 {
-    flex: 1 1 100%;
+    width: 22rem;
+    max-width: 45%;
+    flex: 1 1 auto;
   }
   .reviews .card-img-top {
-    height: 18rem;
+    height: auto;
   }
+}
+
+@media (max-width: 768px) {
+  .icons-container {
+    grid-template-columns: 1fr;
+  }
+  .icons-container .icons h3 {
+    font-size: 1.6rem;
+  }
+  .icons-container .icons p {
+    font-size: 1.2rem;
+  }
+  .footer-section {
+    padding: 2.5rem 1.5rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .reviews .col-md-4 {
+    max-width: 90%;
+    flex: 0 0 auto;
+  }
+}
+
+/* Final polish for site-wide consistency */
+#site-footer {
+  width: 100%;
+  display: block;
+  overflow: hidden;
+  background: var(--orange);
+}
+
+.reviews .card-body h5 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+/* Password Toggle shared styles */
+.password-wrapper {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.password-wrapper input {
+  padding-right: 4.5rem !important;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 1.2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.22rem;
+  height: 2.22rem;
+  cursor: pointer;
+  opacity: 0.65;
+  transition: opacity 0.2s;
+  z-index: 10;
+}
+
+.toggle-password:hover {
+  opacity: 1;
 }

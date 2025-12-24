@@ -47,24 +47,15 @@ document
 
 // Attach password toggle for register page
 document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".password-toggle").forEach((btn) => {
-    btn.addEventListener("click", function (e) {
-      e.preventDefault();
-      const targetSelector = this.getAttribute("data-target");
-      let input;
-      if (targetSelector) input = document.querySelector(targetSelector);
-      else
-        input = this.parentElement.querySelector(
-          'input[type="password"], input[type="text"]'
-        );
-      if (!input) return;
-      if (input.type === "password") {
-        input.type = "text";
-        this.innerHTML = '<i class="fas fa-eye-slash"></i>';
-      } else {
-        input.type = "password";
-        this.innerHTML = '<i class="fas fa-eye"></i>';
-      }
+  document.querySelectorAll(".toggle-password").forEach((icon) => {
+    const input = icon.parentElement.querySelector("input");
+    if (!input) return;
+
+    icon.addEventListener("click", function () {
+      const type = input.getAttribute("type") === "password" ? "text" : "password";
+      input.setAttribute("type", type);
+      // Toggle the icon
+      this.src = type === "password" ? "../assets/icons/eye.svg" : "../assets/icons/eye-slash.svg";
     });
   });
 });
