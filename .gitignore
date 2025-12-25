@@ -22,3 +22,7 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# SQL dumps and backups
+/booklovers.sql
+/database/booklovers_preimport_backup.sql
