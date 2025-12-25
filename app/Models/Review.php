@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Review extends Model
 {
-    protected $table = 'review';
+    protected $table = 'reviews';
     protected $primaryKey = 'reviewID';
     
     // Legacy schema usually expects 'created_at' but not 'updated_at' automatically managed unless defined

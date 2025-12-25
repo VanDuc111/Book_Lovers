@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Book extends Model
 {
-    protected $table = 'book';
+    protected $table = 'books';
     protected $primaryKey = 'bookID';
     public $timestamps = false; // Assuming no created_at/updated_at in legacy table
 

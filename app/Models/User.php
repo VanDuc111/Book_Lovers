@@ -12,9 +12,9 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    protected $table = 'user';
+    protected $table = 'users';
     protected $primaryKey = 'userID';
-    public $timestamps = false; // Assuming the legacy table doesn't have created_at/updated_at or they are managed manually
+    public $timestamps = false;
 
     protected $fillable = [
         'name',
