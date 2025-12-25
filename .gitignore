@@ -26,3 +26,7 @@ Thumbs.db
 # SQL dumps and backups
 /booklovers.sql
 /database/booklovers_preimport_backup.sql
+
+# Local container and inspect logs
+inspect.json
+mysql_logs.txt
