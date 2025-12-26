@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/header.css') }}">
     <link rel="stylesheet" href="{{ asset('css/book-list.css') }}">
     
     <!-- Swiper CSS -->
@@ -22,7 +23,8 @@
         <header class="header">
             <div class="header-1">
                 <a href="{{ route('home') }}" class="logo" id="logo" aria-label="BookLovers">
-                    <span class="logo-text">BookLovers</span>
+                    <i class="fas fa-book-open logo-icon"></i>
+                    <span class="logo-text">Book<span class="logo-accent">Lovers</span></span>
                 </a>
 
                 <!-- Category -->

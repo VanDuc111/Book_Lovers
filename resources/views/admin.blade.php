@@ -42,8 +42,11 @@
       <div class="row">
         <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
           <div class="sidebar-sticky">
-            <div class="py-4 text-center">
-                <a href="{{ route('home') }}" class="h4 text-decoration-none text-dark">BookLovers</a>
+            <div class="py-4 text-center sidebar">
+                <a href="{{ route('home') }}" class="logo">
+                     <i class="fas fa-book-open logo-icon"></i>
+                     <span class="logo-text">Book<span class="logo-accent">Lovers</span></span>
+                </a>
             </div>
             <ul class="nav flex-column">
               <li class="nav-item">

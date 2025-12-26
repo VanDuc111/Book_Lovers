@@ -44,18 +44,3 @@ document
         alert("Đã xảy ra lỗi khi đăng ký.");
       });
   });
-
-// Attach password toggle for register page
-document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll(".toggle-password").forEach((icon) => {
-    const input = icon.parentElement.querySelector("input");
-    if (!input) return;
-
-    icon.addEventListener("click", function () {
-      const type = input.getAttribute("type") === "password" ? "text" : "password";
-      input.setAttribute("type", type);
-      // Toggle the icon
-      this.src = type === "password" ? "../assets/icons/eye.svg" : "../assets/icons/eye-slash.svg";
-    });
-  });
-});

@@ -94,21 +94,5 @@ function runLoginJS() {
     }
 }
 
-// Attach password toggle handlers
-function attachPasswordToggle() {
-    document.querySelectorAll('.toggle-password').forEach(icon => {
-        const input = icon.parentElement.querySelector('input');
-        if (!input) return;
-
-        icon.addEventListener('click', function () {
-            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-            input.setAttribute('type', type);
-            // Toggle the icon
-            this.src = type === 'password' ? '/assets/icons/eye.svg' : '/assets/icons/eye-slash.svg';
-        });
-    });
-}
-
 // Initialize
 try { runLoginJS(); } catch (e) { console.warn('runLoginJS init failed:', e); }
-try { attachPasswordToggle(); } catch (e) { /* no-op if DOM not ready */ }

@@ -15,7 +15,6 @@
             <label for="password">Mật Khẩu:</label>
             <div class="password-wrapper">
                 <input type="password" id="password" name="password">
-                <img src="{{ asset('assets/icons/eye.svg') }}" alt="Toggle Password" class="toggle-password" id="togglePassword">
             </div>
             
             <button type="submit">Đăng Nhập</button>

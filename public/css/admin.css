@@ -175,3 +175,41 @@ main {
 #deleteReviewGlobalBtn:disabled {
   opacity: 0.6;
 }
+
+
+/* Synchronized Logo Styles */
+.sidebar .logo {
+  text-decoration: none !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+  width: 100%;
+  padding: 0 10px;
+  overflow: hidden;
+}
+
+.sidebar .logo .logo-text {
+  color: #333;
+  font-size: 1.8rem;
+  font-weight: 800;
+  text-decoration: none !important;
+  letter-spacing: -0.5px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.logo-accent {
+  color: #ff6347;
+  margin-left: 0.1rem;
+}
+
+.logo-icon {
+  color: #ff6347;
+  font-size: 1.6rem;
+  margin-right: 0.2rem;
+  flex-shrink: 0;
+}

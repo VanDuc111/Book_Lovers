@@ -64,15 +64,4 @@
     text-decoration: underline;
 }
 
-/* Hide browser-native password reveal controls */
-input[type="password"]::-ms-reveal,
-input[type="password"]::-ms-clear {
-    display: none;
-}
-input[type="password"]::-webkit-textfield-decoration-container,
-input[type="password"]::-webkit-credentials-auto-fill-button {
-    display: none !important;
-}
-
-/* Extra padding bottom so short pages push footer further down */
 .form-container { margin-bottom: 4rem; }

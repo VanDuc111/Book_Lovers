@@ -95,6 +95,546 @@ html {
 
 /* (Moved detailed scrollbar styling later) */
 
+.header .header-1 .from-box,
+.header .header-1 form.form-box {
+  max-width: 46rem;
+  min-width: 28rem;
+}
+
+.header .header-1 form.form-box input,
+.header .header-1 .from-box input {
+  font-size: 1.8rem;
+}
+
+.category-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+  z-index: 2000;
+  width: 25rem;
+  font-size: 1.5rem;
+}
+
+/* ==========================
+   Navigation / Category
+   --------------------------
+   Category dropdown and category button styles
+   ========================== */
+
+.category-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.category {
+  position: relative;
+}
+
+/* Category button: larger, colored, and stable hover (override bootstrap defaults) */
+.category .category-bars.btn {
+  background: var(--orange) !important;
+  color: #fff !important;
+  border-radius: 1rem;
+  padding: 0.8rem;
+  font-size: 2.2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 4.4rem;
+  min-height: 4.4rem;
+  border: none !important;
+}
+
+.category .category-bars.btn img.category-icon {
+  width: 2.4rem;
+  height: 2.4rem;
+  filter: brightness(0) invert(1);
+}
+.category .category-bars.btn:hover {
+  background: var(--dark-color) !important;
+  color: #fff !important;
+}
+
+.category-content li {
+  padding: 10px;
+  text-align: left;
+}
+
+.category-content a {
+  text-decoration: none;
+  color: #333;
+}
+
+.category-bars:hover + .category-content {
+  display: block;
+  z-index: 1000;
+}
+
+.category-bars:focus + .category-content,
+.category-bars:active + .category-content {
+  display: block;
+}
+
+.category-content:hover {
+  display: block;
+  z-index: 1000;
+}
+
+.category-content li:hover {
+  background-color: rgb(163, 238, 238);
+}
+
+/* ==========================
+    Header / Topbar
+    --------------------------
+    Logo, category button, search form and top icons
+    ========================== */
+
+.header .header-1 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3rem;
+  padding: 1.5rem 5%;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  position: relative;
+  z-index: 1001;
+}
+
+.header .header-1 .logo .logo-text {
+  color: var(--orange);
+  font-size: 2.6rem;
+  font-weight: 800;
+  text-decoration: none;
+  letter-spacing: -1px;
+}
+
+.main-logo {
+  display: none;
+}
+
+.header .header-1 a.logo {
+  text-decoration: none;
+  color: inherit;
+}
+.header .header-1 a.logo:focus,
+.header .header-1 a.logo:active {
+  outline: none;
+  box-shadow: none;
+}
+
+.header .header-1 form.form-box {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: transparent;
+  padding: 0.2rem;
+  flex: 1 1 auto;
+  margin: 0 0.8rem;
+  min-width: 0;
+}
+
+.header .header-1 .from-box {
+  flex: 1;
+  max-width: 50rem;
+  height: 4.5rem;
+  overflow: hidden;
+  border: none;
+  border-radius: 3rem;
+  display: flex;
+  align-items: center;
+  background: #f8f9fa;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+  padding: 0.2rem 1.5rem;
+  border: 1px solid #eee;
+}
+
+.header .header-1 .from-box input {
+  font-size: 1.9rem;
+  padding: 0 1.2rem;
+  color: var(--black);
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  text-transform: none;
+  text-align: left;
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+.header .header-1 .from-box input::placeholder {
+  font-size: 1.6rem;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.header .header-1 .from-box label {
+  font-size: 2.2rem;
+  color: var(--black);
+  margin-right: 1rem;
+  cursor: pointer;
+}
+
+/* ==========================
+   Header / Search / Logo
+   ========================== */
+
+.header .header-1 .from-box .search-button,
+.header .header-1 form.form-box .search-button {
+  width: 3.6rem;
+  height: 3.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(251, 247, 247, 0.9);
+  border: 0.06rem solid rgba(0, 0, 0, 0.06);
+  color: var(--black);
+  cursor: pointer;
+  margin-left: 0.6rem;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.header .header-1 .from-box .search-button i,
+.header .header-1 .from-box label:hover {
+  color: var(--orange);
+}
+
+.header .header-1 .icons {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  flex: 0 0 auto;
+}
+
+.header .header-1 .icons a {
+  display: flex;
+  align-items: center;
+  color: var(--black);
+  cursor: pointer;
+  margin-left: 1rem;
+}
+
+.navbar-icon {
+  width: 2.6rem;
+  height: 2.6rem;
+  object-fit: contain;
+  filter: brightness(0) grayscale(1);
+  transition: 0.3s;
+}
+
+.header .header-1 .icons a:hover .navbar-icon {
+  filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(341deg) brightness(102%) contrast(101%); /* Match var(--orange) */
+}
+
+.user-info,
+#login-btn {
+  text-decoration: none !important;
+  font-size: 1.8rem;
+  color: var(--black);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.user-info span {
+  font-size: 1.5rem;
+  color: #333;
+}
+.user-info:hover,
+#login-btn:hover {
+  color: var(--orange);
+}
+
+#search-btn {
+  display: none;
+}
+
+.header .header-1 .icons div:hover,
+.header .header-1 .icons a:hover {
+  color: var(--orange);
+}
+
+.header .header-2 {
+  background: #fff;
+  border-bottom: 1px solid #f0f0f0;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+}
+
+.header .header-2 .navbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 0.5rem 0;
+}
+
+.header .header-2 .navbar a {
+  display: inline-block;
+  font-size: 1.6rem;
+  padding: 1.2rem 1.5rem;
+  color: #555;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.3s;
+  position: relative;
+}
+
+.header .header-2 .navbar a::after {
+  content: '';
+  position: absolute;
+  bottom: 0.8rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: var(--orange);
+  transition: 0.3s;
+}
+
+.header .header-2 .navbar a:hover {
+  color: var(--orange);
+}
+
+.header .header-2 .navbar a:hover::after {
+  width: 30%;
+}
+
+.header .header-2.active {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+#welcome-message {
+  font-size: 14px;
+}
+
+#logout-btn {
+  padding: 8px 16px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/*==================================*/
+/* ---- media query ------ */
+/*==================================*/
+@media (max-width: 991px) {
+  html {
+    font-size: 55%;
+  }
+
+  .header .header-1 {
+    padding: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  html {
+    scroll-padding-top: 0;
+  }
+
+  body {
+    padding-bottom: 0;
+  }
+
+  .header .header-2 {
+    display: block;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+  }
+
+  .header .header-2 .navbar {
+    display: flex;
+    overflow-x: auto;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 0;
+    gap: 0.8rem;
+    scrollbar-width: none;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .header .header-2 .navbar a {
+    color: var(--black);
+    font-size: 1.4rem;
+    padding: 0.8rem 0.6rem;
+    white-space: nowrap;
+    font-weight: 600;
+  }
+
+  .header .header-1 {
+    background: var(--orange) !important;
+    padding: 1.2rem 1rem;
+    display: grid;
+    grid-template-columns: min-content 1fr min-content;
+    grid-template-areas: 
+      "logo logo logo"
+      "cat search icons";
+    gap: 1rem 1.2rem;
+    align-items: center;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  .header .header-1 .logo {
+    grid-area: logo;
+    justify-self: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .header .header-1 .logo .logo-text {
+    display: block;
+    color: #fff !important;
+    font-size: 2.8rem;
+    font-weight: 800;
+  }
+
+  .category {
+    grid-area: cat;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 4rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .category .category-bars.btn {
+    background: transparent !important;
+    padding: 0;
+    min-width: unset !important;
+    min-height: unset !important;
+    font-size: 2.4rem;
+    color: #fff !important;
+  }
+
+  .category .category-bars.btn img.category-icon {
+    width: 2.6rem;
+    height: 2.6rem;
+    filter: brightness(0) invert(1);
+  }
+
+  /* Fix category content position */
+  .category-content {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    background: #fff;
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+    min-width: 20rem;
+    display: none;
+  }
+
+  .category:hover .category-content {
+    display: block;
+  }
+
+  /* Force category content below header on mobile */
+  .header .header-1 .category .category-content {
+    top: calc(100% + 1rem); /* Distance from the button */
+  }
+
+  .header .header-1 .from-box {
+    grid-area: search;
+    width: 100%;
+    height: 4.2rem;
+    background: transparent;
+    border: 1.5px solid rgba(255, 255, 255, 0.9);
+    border-radius: 1rem;
+    margin: 0;
+    padding: 0 1rem;
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .header .header-1 .from-box input {
+    font-size: 1.6rem;
+    height: 100%;
+    color: #fff;
+    background: transparent;
+    width: 100%;
+    outline: none;
+    border: none;
+  }
+
+  .header .header-1 .from-box input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .header .header-1 .icons {
+    grid-area: icons;
+    display: flex;
+    gap: 0.8rem;
+    margin: 0;
+    align-items: center;
+    flex-shrink: 0;
+    justify-content: flex-end;
+  }
+
+  .header .header-1 .icons a {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .header .header-1 .icons .navbar-icon {
+    width: 2.6rem;
+    height: 2.6rem;
+    filter: brightness(0) invert(1);
+    flex-shrink: 0;
+  }
+
+  .user-info span {
+    display: none !important;
+  }
+
+  .header .header-1 .from-box .search-button i {
+    color: var(--black);
+    font-size: 1.6rem;
+  }
+
+  #search-btn {
+    display: none;
+  }
+}
+
+@media (max-width: 450px) {
+  .header .header-1 .logo .logo-text {
+    font-size: 2.4rem;
+  }
+  
+  .header .header-1 {
+    gap: 0.8rem 0.5rem;
+    padding: 1rem 0.6rem;
+  }
+
+  .header .header-1 .icons {
+    gap: 1rem;
+  }
+}
+
 /* Bottom navbar removed */
 .btn {
   color: #fff;
@@ -1019,7 +1559,16 @@ body {
     font-size: 2.6rem;
   }
 
+  .header .header-1 {
+    grid-template-columns: 1fr 1fr auto;
+    gap: 0.4rem;
+  }
+
+  .header .header-1 .from-box {
+    width: 100%;
+  }
 }
+
 /* ==========================
    Improvements: section headings + reviews styles
    - Make category/daily headings friendlier and compact
@@ -1164,42 +1713,9 @@ body {
   width: 100%;
 }
 
+
 /* Password Toggle shared styles */
 .password-wrapper {
   position: relative;
   display: block;
-  width: 100%;
-}
-
-.password-wrapper input {
-  padding-right: 1.5rem !important;
-}
-
-/* ========================== 
-   Utilities / Glassmorphism 
-   ========================== */ 
-.glass { 
-    background: rgba(255, 255, 255, 0.7) !important; 
-    backdrop-filter: blur(10px) saturate(180%); 
-    -webkit-backdrop-filter: blur(10px) saturate(180%); 
-    border: 1px solid rgba(255, 255, 255, 0.3) !important; 
-    border-radius: 12px; 
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07); 
-} 
- 
-.glass-dark { 
-    background: rgba(0, 0, 0, 0.4) !important; 
-    backdrop-filter: blur(10px) saturate(180%); 
-    -webkit-backdrop-filter: blur(10px) saturate(180%); 
-    border: 1px solid rgba(255, 255, 255, 0.1) !important; 
-    border-radius: 12px; 
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); 
-} 
- 
-.glass-card { 
-    background: rgba(255, 255, 255, 0.4); 
-    backdrop-filter: blur(4px); 
-    -webkit-backdrop-filter: blur(4px); 
-    border-radius: 12px; 
-    border: 1px solid rgba(255, 255, 255, 0.2); 
 }
