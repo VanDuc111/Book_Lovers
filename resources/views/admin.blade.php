@@ -39,6 +39,9 @@
     </script>
 
     <div class="admin-wrapper">
+        <!-- Top Loading Bar -->
+        <div id="top-loading-bar"></div>
+
         <!-- Sidebar Overlay for mobile -->
         <div id="sidebar-overlay"></div>
 

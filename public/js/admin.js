@@ -22,8 +22,45 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  const topLoadingBar = document.getElementById("top-loading-bar");
+
+  function startLoading() {
+    if (topLoadingBar) {
+      topLoadingBar.classList.remove("hide", "finish");
+      // Force reflow
+      void topLoadingBar.offsetWidth;
+      topLoadingBar.classList.add("loading");
+    }
+  }
+
+  function stopLoading() {
+    if (topLoadingBar) {
+      topLoadingBar.classList.add("finish");
+      setTimeout(() => {
+        topLoadingBar.classList.add("hide");
+        setTimeout(() => {
+          topLoadingBar.classList.remove("loading", "finish", "hide");
+          topLoadingBar.style.width = "0";
+        }, 500);
+      }, 300);
+    }
+  }
+
+  function renderSkeletonTable(rows = 5, cols = 4) {
+    let html = "";
+    for (let i = 0; i < rows; i++) {
+      html += "<tr>";
+      for (let j = 0; j < cols; j++) {
+        html += `<td><div class="skeleton-loader skeleton-text"></div></td>`;
+      }
+      html += "</tr>";
+    }
+    return html;
+  }
+
   function loadContent(section) {
-    contentArea.innerHTML = "<p>Đang tải...</p>";
+    // Không làm mới trắng màn hình, dùng Loading Bar ở trên
+    startLoading();
 
     switch (section) {
       case "dashboard":
@@ -184,12 +221,8 @@ document.addEventListener("DOMContentLoaded", () => {
       booksEl.textContent = Array.isArray(books) ? books.length : "—";
       ordersEl.textContent = Array.isArray(orders) ? orders.length : "—";
       reviewsEl.textContent = Array.isArray(reviews) ? reviews.length : "—";
-    } catch (err) {
-      console.error("Lỗi khi tải số liệu dashboard:", err);
-      setError(usersEl);
-      setError(booksEl);
-      setError(ordersEl);
-      setError(reviewsEl);
+    } finally {
+      stopLoading();
     }
   }
 
@@ -207,7 +240,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 <button class="btn btn-danger" id="deleteBookGlobalBtn" disabled>Xóa</button>
               </div>
               <div id="bookListContainer">
-                  <p>Đang tải danh sách sách...</p>
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Hình ảnh</th>
+                          <th>Tiêu đề</th>
+                          <th>Tác giả</th>
+                          <th>Giá</th>
+                          <th>Kho</th>
+                        </tr>
+                      </thead>
+                      <tbody>${renderSkeletonTable(5, 6)}</tbody>
+                    </table>
+                  </div>
               </div>
             <div id="bookFormContainer" style="display: none;">
                 <h3>Thêm/Sửa Sách</h3>
@@ -244,8 +291,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         <textarea class="form-control" id="description" name="description"></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="image">URL Hình ảnh</label>
-                        <input type="text" class="form-control" id="image" name="image">
+                        <label for="image">Hình ảnh</label>
+                        <input type="file" class="form-control file-input" id="image" name="image" accept="image/*">
                     </div>
                     <button type="submit" class="btn btn-success" id="saveBookBtn">Lưu</button>
                     <button type="button" class="btn btn-secondary ml-2" id="cancelBookBtn">Hủy</button>
@@ -307,7 +354,8 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch((error) => {
           bookListContainer.innerHTML = `<div class="alert alert-danger">Lỗi khi tải dữ liệu sách.</div>`;
           console.error("Lỗi tải dữ liệu sách:", error);
-        });
+        })
+        .finally(() => stopLoading());
     }
 
     // tải thể loại trước khi hiển thị sách
@@ -459,14 +507,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    function addBook(bookData) {
+    function addBook(formData) {
       const url = "/api/books";
-      delete bookData.bookID; // Loại bỏ bookID khi thêm mới
 
       fetch(url, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(bookData),
+        body: formData,
       })
         .then((response) => response.json())
         .then((data) => {
@@ -484,14 +530,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Cập nhật sách
-    function updateBook(bookData) {
-      const url = `/api/books/${bookData.bookID}`;
-      console.log("Update Book Data:", bookData);
+    function updateBook(formData) {
+      const bookID = formData.get("bookID");
+      const url = `/api/books/${bookID}`;
+
+      formData.append("_method", "PUT");
 
       fetch(url, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(bookData),
+        method: "POST",
+        body: formData,
       })
         .then((response) => response.json())
         .then((data) => {
@@ -512,26 +559,10 @@ document.addEventListener("DOMContentLoaded", () => {
       event.preventDefault();
       const formData = new FormData(this);
 
-      console.log("bookIdInput.value before FormData:", bookIdInput.value); // Kiểm tra giá trị trước FormData
-
-      const bookData = {
-        bookID: formData.get("bookID"),
-        title: formData.get("title"),
-        author: formData.get("author"),
-        publisher: formData.get("publisher"),
-        categoryName: formData.get("categoryName"),
-        bookPrice: formData.get("bookPrice"),
-        stock: parseInt(formData.get("stock")),
-        description: formData.get("description"),
-        image: formData.get("image"),
-      };
-
-      console.log("bookData before PUT:", bookData); // Kiểm tra bookData trước PUT
-
       if (bookIdInput.value) {
-        updateBook(bookData);
+        updateBook(formData);
       } else {
-        addBook(bookData);
+        addBook(formData);
       }
     });
 
@@ -567,7 +598,19 @@ document.addEventListener("DOMContentLoaded", () => {
           <button class="btn btn-danger" id="deleteUserGlobalBtn" disabled>Xóa</button>
         </div>
         <div id="userListContainer">
-          <p>Đang tải danh sách người dùng...</p>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên</th>
+                    <th>Email</th>
+                    <th>Vai trò</th>
+                  </tr>
+              </thead>
+              <tbody>${renderSkeletonTable(5, 4)}</tbody>
+            </table>
+          </div>
         </div>
             <div id="userFormContainer" style="display: none;">
                 <h3>Thêm/Sửa Người dùng</h3>
@@ -630,7 +673,8 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch((error) => {
           userListContainer.innerHTML = `<div class="alert alert-danger">Lỗi khi tải dữ liệu người dùng.</div>`;
           console.error("Lỗi tải dữ liệu người dùng:", error);
-        });
+        })
+        .finally(() => stopLoading());
     }
 
     // Render bảng người dùng với chức năng tìm kiếm
@@ -841,7 +885,18 @@ document.addEventListener("DOMContentLoaded", () => {
           <button class="btn btn-danger" id="deleteCategoryGlobalBtn" disabled>Xóa</button>
         </div>
         <div id="categoryListContainer">
-          <p>Đang tải danh sách thể loại...</p>
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên Thể loại</th>
+                    <th>Mô tả</th>
+                  </tr>
+              </thead>
+              <tbody>${renderSkeletonTable(5, 3)}</tbody>
+            </table>
+          </div>
         </div>
         <div id="categoryFormContainer" style="display: none;">
           <h3>Thêm/Sửa Thể loại</h3>
@@ -900,7 +955,8 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch((error) => {
           categoryListContainer.innerHTML = `<div class="alert alert-danger">Lỗi khi tải dữ liệu thể loại.</div>`;
           console.error("Lỗi tải dữ liệu thể loại:", error);
-        });
+        })
+        .finally(() => stopLoading());
     }
 
     function renderCategoryTable() {
@@ -1081,7 +1137,22 @@ document.addEventListener("DOMContentLoaded", () => {
     contentArea.innerHTML = `
             <h2>Quản lý Đơn hàng</h2>
             <div id="orderListContainer">
-                <p>Đang tải danh sách đơn hàng...</p>
+                <div class="table-responsive">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Người dùng</th>
+                        <th>Ngày đặt</th>
+                        <th>Tổng tiền</th>
+                        <th>Địa chỉ</th>
+                        <th>Trạng thái</th>
+                        <th>Hành động</th>
+                      </tr>
+                    </thead>
+                    <tbody>${renderSkeletonTable(5, 7)}</tbody>
+                  </table>
+                </div>
             </div>
         `;
 
@@ -1099,7 +1170,8 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch((error) => {
           orderListContainer.innerHTML = `<div class="alert alert-danger">Lỗi khi tải dữ liệu đơn hàng.</div>`;
           console.error("Lỗi tải dữ liệu đơn hàng:", error);
-        });
+        })
+        .finally(() => stopLoading());
     }
 
     function renderOrderTable() {
@@ -1298,7 +1370,21 @@ document.addEventListener("DOMContentLoaded", () => {
     contentArea.innerHTML = `
             <h2>Quản lý Đánh giá</h2>
             <div id="reviewListContainer">
-                <p>Đang tải danh sách đánh giá...</p>
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Sách</th>
+                      <th>Người dùng</th>
+                      <th>Điểm</th>
+                      <th>Bình luận</th>
+                      <th>Thời gian</th>
+                    </tr>
+                  </thead>
+                  <tbody>${renderSkeletonTable(5, 6)}</tbody>
+                </table>
+              </div>
             </div>
         `;
 
@@ -1316,7 +1402,8 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch((error) => {
           reviewListContainer.innerHTML = `<div class="alert alert-danger">Lỗi khi tải dữ liệu đánh giá.</div>`;
           console.error("Lỗi tải dữ liệu đánh giá:", error);
-        });
+        })
+        .finally(() => stopLoading());
     }
 
     function renderReviewTable() {

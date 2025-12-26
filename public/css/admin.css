@@ -288,6 +288,67 @@ body {
     border-bottom: 1px solid #f0f0f0;
 }
 
+/* Forms Styling */
+#bookFormContainer, #userFormContainer, #categoryFormContainer {
+    background: var(--white);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    margin-top: var(--spacing-md);
+}
+
+#bookFormContainer h3, #userFormContainer h3, #categoryFormContainer h3 {
+    margin-bottom: var(--spacing-lg);
+    font-weight: 700;
+    color: var(--black);
+}
+
+.form-group {
+    margin-bottom: var(--spacing-md);
+}
+
+.form-group label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--gray-dark);
+}
+
+/* Action buttons spacing */
+#bookForm button[type="submit"], 
+#bookForm button[type="button"],
+#userForm button[type="submit"], 
+#userForm button[type="button"],
+#categoryForm button[type="submit"], 
+#categoryForm button[type="button"] {
+    margin-top: var(--spacing-md);
+}
+
+/* File Input Styling */
+.file-input {
+    padding: 0.5rem 0.8rem;
+    height: auto;
+    font-size: 1.3rem;
+    border: 1px dashed var(--gray-light);
+    background: #fafafa;
+    cursor: pointer;
+}
+
+.file-input::-webkit-file-upload-button {
+    background: var(--orange);
+    color: var(--white);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.4rem;
+    margin-right: 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.file-input::-webkit-file-upload-button:hover {
+    background: #e5533d;
+}
+
 /* Sidebar Toggle & Overlay */
 .sidebar-toggle {
     display: none;
@@ -406,3 +467,57 @@ body {
         text-overflow: ellipsis;
     }
 }
+
+/* Skeleton Loading Animation */
+@keyframes shimmer {
+    0% { background-position: -468px 0; }
+    100% { background-position: 468px 0; }
+}
+
+.skeleton-loader {
+    background: #f6f7f8;
+    background-image: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+    background-repeat: no-repeat;
+    background-size: 800px 104px;
+    display: inline-block;
+    position: relative;
+    animation: shimmer 1.5s infinite linear forwards;
+}
+
+.skeleton-text {
+    height: 1.2rem;
+    width: 100%;
+    border-radius: 4px;
+}
+
+.skeleton-title {
+    height: 2.4rem;
+    width: 200px;
+    margin-bottom: 1.5rem;
+}
+
+/* Top Loading Bar */
+#top-loading-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: var(--orange);
+    z-index: 1100;
+    transition: width 0.3s ease;
+}
+
+#top-loading-bar.loading {
+    width: 70%;
+}
+
+#top-loading-bar.finish {
+    width: 100%;
+}
+
+#top-loading-bar.hide {
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+

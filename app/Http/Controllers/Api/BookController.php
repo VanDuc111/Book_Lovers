@@ -61,6 +61,13 @@ class BookController extends Controller
        // if we receive categoryName instead of ID.
        $data = $request->all();
        
+       if ($request->hasFile('image')) {
+           $file = $request->file('image');
+           $filename = time() . '_' . $file->getClientOriginalName();
+           $file->move(public_path('assets/images'), $filename);
+           $data['image'] = $filename;
+       }
+
        if (isset($data['categoryName']) && !isset($data['categoryID'])) {
            $cat = \App\Models\Category::where('categoryName', $data['categoryName'])->first();
            if ($cat) $data['categoryID'] = $cat->categoryID;
@@ -76,6 +83,14 @@ class BookController extends Controller
         if (!$book) return response()->json(['error' => 'Not found'], 404);
 
         $data = $request->all();
+
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('assets/images'), $filename);
+            $data['image'] = $filename;
+        }
+
          if (isset($data['categoryName'])) {
            $cat = \App\Models\Category::where('categoryName', $data['categoryName'])->first();
            if ($cat) $data['categoryID'] = $cat->categoryID;

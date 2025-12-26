@@ -121,6 +121,262 @@ input[type="submit"],
   font-size: var(--btn-font-size);
 }
 
+/* ==========================
+    Forms / Modals
+    --------------------------
+    Login, register and generic form component styles
+    ========================== */
+
+.login-form-container {
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  right: -105%;
+}
+
+.login-form-container.active {
+  right: 0;
+}
+
+.login-form-container form {
+  width: 40rem;
+  border: var(--border);
+  background: #ffffff;
+  padding: 2rem;
+  margin: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: var(--box-shadow);
+}
+
+.login-form-container form h3 {
+  text-align: center;
+  color: var(--black);
+  text-transform: uppercase;
+  font-size: 2.5rem;
+}
+
+.login-form-container form span {
+  font-size: 1.5rem;
+  color: var(--black);
+  display: block;
+  margin-top: 1rem;
+}
+
+.login-form-container form .box {
+  margin-top: 1rem;
+  padding: 1rem 1.2rem;
+  font-size: 1.6rem;
+  color: var(--black);
+  text-decoration: none;
+  border: var(--border);
+  border-radius: 0.5rem;
+  width: 100%;
+}
+
+.login-form-container form .check-box {
+  margin: 1rem 0;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.login-form-container form .check-box label {
+  font-size: 1.5rem;
+  color: var(--light-color);
+  cursor: pointer;
+}
+
+.login-form-container form .btn {
+  width: 100%;
+  text-align: center;
+  margin: 1.2rem 0;
+}
+
+.login-form-container form .btn:hover {
+  color: #ffffff;
+  background-color: var(--dark-color);
+}
+
+.login-form-container form p {
+  display: inline-block;
+  color: var(--black);
+  font-size: 1.5rem;
+}
+
+.login-form-container form p a {
+  color: var(--orange);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.login-form-container #close-login-btn {
+  position: absolute;
+  top: 1.5rem;
+  right: 2.5rem;
+  cursor: pointer;
+  font-size: 5rem;
+}
+
+/* Combined auth containers: shared styles for login/register (keep distinct z-index below) */
+.login-form-container,
+.register-form-container {
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  right: -105%;
+}
+
+.login-form-container {
+  z-index: 10000;
+}
+.register-form-container {
+  z-index: 10001;
+}
+
+.login-form-container.active,
+.register-form-container.active {
+  right: 0;
+}
+
+/* Shared form styles */
+.login-form-container form,
+.register-form-container form {
+  width: 40rem;
+  border: var(--border);
+  background: #ffffff;
+  padding: 2rem;
+  margin: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: var(--box-shadow);
+}
+
+.login-form-container form h3,
+.register-form-container form h3 {
+  text-align: center;
+  color: var(--black);
+  text-transform: uppercase;
+  font-size: 2.5rem;
+}
+
+.login-form-container form span,
+.register-form-container form span {
+  font-size: 1.5rem;
+  color: var(--black);
+  display: block;
+  margin-top: 1rem;
+}
+
+.login-form-container form .box,
+.register-form-container form .box {
+  margin-top: 1rem;
+  padding: 1rem 1.2rem;
+  font-size: 1.6rem;
+  color: var(--black);
+  text-decoration: none;
+  border: var(--border);
+  border-radius: 0.5rem;
+  width: 100%;
+}
+
+.login-form-container form .check-box,
+.register-form-container form .check-box {
+  margin: 1rem 0;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.login-form-container form .check-box label,
+.register-form-container form .check-box label {
+  font-size: 1.5rem;
+  color: var(--light-color);
+  cursor: pointer;
+}
+
+.login-form-container form .btn,
+.register-form-container form .btn {
+  width: 100%;
+  text-align: center;
+  margin: 1.2rem 0;
+}
+
+.login-form-container form .btn:hover,
+.register-form-container form .btn:hover {
+  color: #ffffff;
+  background-color: var(--dark-color);
+}
+
+.login-form-container form p,
+.register-form-container form p {
+  display: inline-block;
+  color: var(--black);
+  font-size: 1.5rem;
+}
+
+.login-form-container form p a,
+.register-form-container form p a {
+  color: var(--orange);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* duplicate register-form-container removed; shared styles used above */
+
+/* Password toggle wrapper (consolidated) */
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-wrapper input[type="password"],
+.password-wrapper input[type="text"] {
+  width: 100%;
+  padding-right: 3.8rem;
+  box-sizing: border-box;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: var(--black);
+  cursor: pointer;
+  padding: 0.4rem;
+  width: auto !important;
+  min-width: 2.6rem;
+  height: 2.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  box-shadow: none !important;
+  background: rgba(255, 255, 255, 0);
+}
+
+.login-form-container form .password-wrapper .password-toggle,
+.register-form-container form .password-wrapper .password-toggle,
+.form-container .password-wrapper .password-toggle {
+  width: 3.2rem !important;
+  min-width: 3.2rem !important;
+  height: 3.2rem !important;
+  padding: 0 !important;
+  font-size: 1.2rem !important;
+}
+
 .home .row .content .btn {
   font-size: 1.2rem;
   padding: 1rem 1.8rem;
@@ -352,6 +608,15 @@ section {
   text-decoration: underline;
 }
 
+.form-container p a {
+  color: var(--orange);
+  font-weight: 500;
+  font-size: 1.3rem;
+  text-decoration: none;
+}
+.form-container p a:hover {
+  text-decoration: underline;
+}
 
 .daily-recommended .daily-recommended-list .box .image img {
   height: var(--card-img-h);
@@ -791,8 +1056,6 @@ body {
   }
 }
 
-@media (max-width: 768px) {
-
 @media (max-width: 500px) {
   .reviews .col-md-4 {
     max-width: 90%;
@@ -808,6 +1071,16 @@ body {
   width: 100%;
 }
 
+/* Password Toggle shared styles */
+.password-wrapper {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.password-wrapper input {
+  padding-right: 1.5rem !important;
+}
 
 /* ========================== 
    Utilities / Glassmorphism 
