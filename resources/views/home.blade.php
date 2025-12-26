@@ -5,20 +5,19 @@
 @section('content')
     <!-- home section start -->
     <section class="home" id="home">
-      <div class="row">
-        <div class="content">
+      <div class="row align-items-center">
+        <div class="col-md-5 content">
           <h3>Ưu đãi lên đến 30%!</h3>
           <p>Danh sách nổi bật</p>
-          <a href="book-list.html" class="btn">Mua ngay!</a>
+          <a href="book-list" class="btn">Mua ngay!</a>
         </div>
 
-        <div class="swiper home-books-list">
+        <div class="col-md-7 swiper home-books-list">
           <div class="swiper-wrapper" id="home-books-wrapper">
             <div class="swiper-slide loading-message">
               Đang tải danh sách nổi bật...
             </div>
           </div>
-          <!-- Image removed as it is missing from assets -->
         </div>
       </div>
     </section>

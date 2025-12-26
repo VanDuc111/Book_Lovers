@@ -1,0 +1,26 @@
+<svg width="1024" height="572" viewBox="0 0 1024 572" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1024" height="572" fill="#F8F9FA"/>
+  
+  <!-- Subtle Brick Pattern -->
+  <defs>
+    <pattern id="brick" x="0" y="0" width="80" height="30" patternUnits="userSpaceOnUse">
+      <rect width="78" height="28" x="1" y="1" fill="#FFFFFF" rx="1"/>
+    </pattern>
+    <linearGradient id="shelfGrad" x1="512" y1="360" x2="512" y2="385" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#E2E8F0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="572" fill="url(#brick)" opacity="0.6"/>
+  
+  <!-- Shadow for the shelf -->
+  <rect x="450" y="380" width="550" height="15" fill="#000000" opacity="0.05" rx="2"/>
+  
+  <!-- Perfectly Horizontal Straight Shelf -->
+  <rect x="450" y="360" width="550" height="25" fill="url(#shelfGrad)" rx="2"/>
+  <rect x="450" y="360" width="550" height="2" fill="#FFFFFF" opacity="0.8"/>
+  
+  <!-- Decorative Bracket subtle -->
+  <rect x="550" y="385" width="10" height="15" fill="#E2E8F0" rx="1"/>
+  <rect x="850" y="385" width="10" height="15" fill="#E2E8F0" rx="1"/>
+</svg>

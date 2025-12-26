@@ -6,15 +6,15 @@
 // Initialize home swiper; keep reference so we can update after populating slides
 var homeSwiper = new Swiper(".home-books-list", {
     loop: true,
-    centeredSlides: false,
+    centeredSlides: true,
     autoplay: {
-        delay: 5000,
+        delay: 4000,
         disableOnInteraction: false,
     },
     breakpoints: {
-        0: { slidesPerView: 1, spaceBetween: 10 },
-        768: { slidesPerView: 2, spaceBetween: 20 },
-        1024: { slidesPerView: 3, spaceBetween: 50 },
+        0: { slidesPerView: 2, spaceBetween: 10 },
+        768: { slidesPerView: 3, spaceBetween: 20 },
+        1200: { slidesPerView: 3, spaceBetween: 30 },
     },
 });
 
@@ -132,20 +132,13 @@ var swiper = new Swiper(".sach-van-hoc-list", {
 
     breakpoints: {
         0: {
-            slidesPerView: 1,
-
-        },
-        450: {
             slidesPerView: 2,
-
         },
         768: {
             slidesPerView: 3,
-
         },
         1024: {
             slidesPerView: 4,
-
         },
     },
 });
@@ -205,9 +198,6 @@ var swiperDailyRecommended = new Swiper(".daily-recommended-list", {
     },
     breakpoints: {
         0: {
-            slidesPerView: 1,
-        },
-        640: {
             slidesPerView: 2,
         },
         768: {

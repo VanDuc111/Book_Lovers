@@ -48,9 +48,8 @@
         <!-- Sidebar -->
         <nav id="sidebar">
             <div class="sidebar-header">
-                <a href="{{ route('home') }}" class="logo">
-                    <img src="{{ asset('assets/icons/book-1.svg') }}" class="logo-icon" alt="Logo" style="filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(341deg) brightness(102%) contrast(101%); width: 3.5rem; height: 3.5rem;">
-                    <span class="logo-text">Book<span class="logo-accent">Lovers</span></span>
+                <a href="{{ route('home') }}" class="logo-brand">
+                    <img src="{{ asset('assets/images/logo-full.svg') }}" alt="BookLovers Logo" class="brand-logo">
                 </a>
             </div>
 

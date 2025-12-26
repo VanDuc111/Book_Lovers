@@ -23,9 +23,8 @@
     <div id="site-header">
         <header class="header">
             <div class="header-1">
-                <a href="{{ route('home') }}" class="logo" id="logo" aria-label="BookLovers">
-                    <i class="fas fa-book-open logo-icon"></i>
-                    <span class="logo-text">Book<span class="logo-accent">Lovers</span></span>
+                <a href="{{ route('home') }}" class="logo-brand" id="logo" aria-label="BookLovers">
+                    <img src="{{ asset('assets/images/logo-full.svg') }}" alt="BookLovers Logo" class="brand-logo">
                 </a>
 
                 <!-- Category -->
