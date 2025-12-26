@@ -44,64 +44,75 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Hàm để hiển thị thông tin sách lên trang
     function displayBookDetails(book) {
-      bookDetailsContainer.innerHTML = `
-                <div class="card mb-3">
-                    <div class="row g-0">
-                        <div class="col-md-4">
-                            <img src="${
-                              book.image || "placeholder.jpg"
-                            }" class="img-fluid rounded-start" alt="${
-        book.title
-      }">
-                        </div>
-                        <div class="col-md-8">
-                            <div class="card-body">
-                                <h5 class="card-title">${book.title}</h5>
-                                <p class="card-text">Tác giả: ${book.author}</p>
-                                <p class="card-text">Nhà xuất bản: ${
-                                  book.publisher
-                                }</p>
-                                <p class="card-text">Thể loại: ${
-                                  book.categoryName
-                                }</p>
-                                <p class="card-text">Giá: ${book.bookPrice.toLocaleString(
-                                  "vi-VN",
-                                  { style: "currency", currency: "VND" }
-                                )}</p>
-                                <p class="card-text">Số lượng trong kho: ${
-                                  book.stock
-                                }</p>
-                                <p class="card-text">Mô tả:</p>
-                                <p class="card-text">${
-                                  book.description || "Không có mô tả."
-                                }</p>
-                                <div class="d-flex align-items-center mb-3">
-                                    <label for="quantity" class="me-2">Số lượng:</label>
-                                    <button class="btn btn-sm btn-outline-secondary decrease-quantity">-</button>
-                                    <input type="number" id="quantity" class="form-control form-control-sm quantity-input" value="1" min="1" max ="100" style="width: 60px;">
-                                    <button class="btn btn-sm btn-outline-secondary increase-quantity">+</button>
-                                </div>
-                                <button id="addToCartBtn" class="btn btn-primary">Thêm vào giỏ hàng</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-      // sự kiện click cho nút "Thêm vào giỏ hàng"
-      document
-        .getElementById("addToCartBtn")
-        .addEventListener("click", function () {
-          addToCart(book.bookID);
-        });
+      const formattedPrice = book.bookPrice.toLocaleString("vi-VN", {
+        style: "currency",
+        currency: "VND",
+      });
+
+      // Update basic fields
+      document.getElementById("breadcrumb-category").textContent = book.categoryName || 'Sách';
+      document.getElementById("book-image").src = book.image || "/assets/images/placeholder.png";
+      document.getElementById("book-image").alt = book.title;
+      document.getElementById("book-title").textContent = book.title;
+      document.getElementById("book-author").textContent = book.author;
+      document.getElementById("book-publisher").textContent = book.publisher;
+      document.getElementById("book-category").textContent = book.categoryName;
+      document.getElementById("book-description").textContent = book.description || "Chưa có mô tả chi tiết cho sản phẩm này.";
+      document.getElementById("book-price").textContent = formattedPrice;
+      
+      const stockStatus = document.getElementById("book-stock-status");
+      if (book.stock > 0) {
+        stockStatus.textContent = "Còn hàng";
+        stockStatus.className = "text-success fw-bold";
+      } else {
+        stockStatus.textContent = "Hết hàng";
+        stockStatus.className = "text-danger fw-bold";
+      }
+      
+      document.getElementById("book-stock-count").textContent = `${book.stock} sản phẩm có sẵn`;
+      
+      const quantityInput = document.getElementById("quantity");
+      if (quantityInput) {
+        quantityInput.max = book.stock;
+      }
+
+      // Show content with animation
+      const content = document.getElementById("book-details-content");
+      if (content) {
+        content.classList.add("loaded");
+      }
+
+      // Add event listeners (assuming they are already in the file or added here)
+      setupActionListeners(book);
 
       // Load review summary + reviews for this book
       loadReviewsForBook(book.bookID);
+    }
+
+    function setupActionListeners(book) {
+       // sự kiện click cho nút "Thêm vào giỏ hàng"
+       const addBtn = document.getElementById("addToCartBtn");
+       if (addBtn) {
+         // Remove old clone to avoid multiple listeners if re-called
+         const newAddBtn = addBtn.cloneNode(true);
+         addBtn.parentNode.replaceChild(newAddBtn, addBtn);
+         newAddBtn.addEventListener("click", () => addToCart(book.bookID));
+       }
+
+       const buyBtn = document.getElementById("buyNowBtn");
+       if (buyBtn) {
+         const newBuyBtn = buyBtn.cloneNode(true);
+         buyBtn.parentNode.replaceChild(newBuyBtn, buyBtn);
+         newBuyBtn.addEventListener("click", () => addToCart(book.bookID, true));
+       }
+
       // Sự kiện cho nút tăng giảm số lượng
       const decreaseButton = document.querySelector(".decrease-quantity");
       const increaseButton = document.querySelector(".increase-quantity");
       const quantityInput = document.querySelector(".quantity-input");
 
       if (decreaseButton) {
+        decreaseButton.onclick = null;
         decreaseButton.addEventListener("click", function () {
           let currentValue = parseInt(quantityInput.value);
           if (currentValue > 1) {
@@ -111,29 +122,31 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       if (increaseButton) {
+        increaseButton.onclick = null;
         increaseButton.addEventListener("click", function () {
           let currentValue = parseInt(quantityInput.value);
           if (book.stock > currentValue) {
             quantityInput.value = currentValue + 1;
           } else {
-            alert(`Số lượng trong kho chỉ còn ${book.stock}.`);
+            showToast(`Số lượng trong kho chỉ còn ${book.stock}.`, "warning");
           }
         });
       }
 
       if (quantityInput) {
+        quantityInput.onchange = null;
         quantityInput.addEventListener("change", function () {
           let currentValue = parseInt(this.value);
           if (isNaN(currentValue) || currentValue < 1) {
             this.value = 1;
           } else if (currentValue > book.stock) {
             this.value = book.stock;
-            alert(`Số lượng tối đa là ${book.stock}.`);
+            showToast(`Số lượng tối đa là ${book.stock}.`, "warning");
           }
         });
       }
     }
-    function addToCart(bookId) {
+    function addToCart(bookId, isBuyNow = false) {
       const userId = getUserId();
       const quantityInput = document.getElementById("quantity");
 
@@ -147,8 +160,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
       if (!userId) {
         // Người dùng chưa đăng nhập, chuyển hướng đến trang đăng nhập
-        alert("Bạn cần đăng nhập để thêm sản phẩm vào giỏ hàng.");
-        window.location.href = "/login";
+        showToast("Bạn cần đăng nhập để thực hiện hành động này.", "warning");
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 1500);
         return; // Dừng thực hiện hàm nếu chưa đăng nhập
       }
 
@@ -163,13 +178,20 @@ document.addEventListener("DOMContentLoaded", function () {
       })
         .then((response) => response.json())
         .then((data) => {
-          alert(
-            data.message ||
-              (data.error
-                ? "Lỗi: " + data.error
-                : "Thêm vào giỏ hàng thành công!")
-          );
-          window.location.href = "/cart";
+          if (isBuyNow) {
+            window.location.href = "/cart";
+          } else {
+            const isError = data.error;
+            showToast(
+              data.message || (isError ? "Lỗi: " + data.error : "Thêm vào giỏ hàng thành công!"),
+              isError ? "danger" : "success"
+            );
+            if (!isError) {
+              setTimeout(() => {
+                window.location.href = "/cart";
+              }, 1200);
+            }
+          }
         })
         .catch((error) => {
           console.error("Lỗi khi thêm vào giỏ hàng:", error);

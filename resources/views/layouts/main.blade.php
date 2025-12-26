@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{{ asset('css/header.css') }}">
     <link rel="stylesheet" href="{{ asset('css/footer.css') }}">
     <link rel="stylesheet" href="{{ asset('css/book-list.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/toast.css') }}">
     
     <!-- Swiper CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
@@ -119,6 +120,8 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script type="module" src="{{ asset('js/common.js') }}"></script>
     <script src="{{ asset('js/login.js') }}"></script>
+    <script src="{{ asset('js/toast.js') }}"></script>
+    <div id="toast-container"></div>
     <script type="module">
         import { addHeader, addFooter } from "{{ asset('js/common.js') }}";
         addHeader();
