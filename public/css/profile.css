@@ -12,17 +12,23 @@
 
 /* Sidebar Styling */
 .profile-sidebar {
-    flex: 0 0 28rem;
-    padding: 2rem;
+    flex: 0 0 30rem;
+    padding: 2.5rem;
     position: sticky;
     top: 10rem;
+    background: rgba(255, 255, 255, 0.9) !important;
+    backdrop-filter: blur(15px);
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
 .user-profile-header {
     text-align: center;
     margin-bottom: 3rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 1.2rem;
+    border: 1px solid rgba(255,255,255,0.8);
 }
 
 .avatar-container {
@@ -85,33 +91,38 @@
     font-size: 1.5rem;
     font-weight: 500;
     color: var(--black);
+    background: rgba(255, 255, 255, 0.5);
+    margin-bottom: 0.8rem;
     transition: 0.3s;
     cursor: pointer;
+    border: 1px solid rgba(255,255,255,0.3);
 }
 
 .profile-nav-item i {
-    width: 2rem;
+    width: 2.5rem;
     text-align: center;
     font-size: 1.8rem;
-    color: var(--light-color);
+    color: var(--orange);
 }
 
 .profile-nav-item:hover {
-    background: rgba(255, 99, 71, 0.1);
+    background: rgba(255, 255, 255, 0.9);
     color: var(--orange);
-}
-
-.profile-nav-item:hover i {
-    color: var(--orange);
+    transform: translateX(5px);
 }
 
 .profile-nav-item.active {
     background: var(--orange);
     color: #fff;
+    box-shadow: 0 4px 15px rgba(255, 99, 71, 0.3);
 }
 
 .profile-nav-item.active i {
     color: #fff;
+}
+
+.profile-nav-item i {
+    color: var(--orange);
 }
 
 /* Main Content Styling */
@@ -121,7 +132,10 @@
 
 .content-pane {
     display: none;
-    padding: 3rem;
+    padding: 4rem;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
 .content-pane.active {
@@ -139,10 +153,11 @@
 }
 
 .content-header h2 {
-    font-size: 2.4rem;
+    font-size: 3rem;
     color: var(--black);
     text-align: left;
     margin-bottom: 0.5rem;
+    font-weight: 700;
 }
 
 .content-header p {

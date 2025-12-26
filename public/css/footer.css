@@ -1,0 +1,73 @@
+/* ==========================
+    Footer / Contact Styles
+   ========================== */
+
+.footer-section {
+  background: var(--orange);
+  color: #fff;
+  padding: 5rem 0;
+}
+
+#site-footer {
+  width: 100%;
+  display: block;
+  overflow: hidden;
+  background: var(--orange);
+}
+
+.footer-section .icons {
+  display: flex;
+  align-items: flex-start;
+  padding: 1.5rem;
+  gap: 1.5rem;
+}
+
+.footer-section .icons i {
+  font-size: 3rem;
+  color: #fff;
+  opacity: 0.9;
+  padding-top: 0.4rem;
+}
+
+.footer-section .icons h3 {
+  color: #fff;
+  font-size: 2.2rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.footer-section .icons p {
+  color: #fff;
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.9;
+  line-height: 1.6;
+}
+
+.footer-section .icons p:last-child {
+  margin-bottom: 0;
+}
+
+/* ==========================
+    Mobile Responsive Footer
+   ========================== */
+
+@media (max-width: 768px) {
+  .footer-section {
+    padding: 3rem 0;
+  }
+  
+  .footer-section .icons {
+    padding: 1rem;
+    gap: 1.2rem;
+  }
+
+  .footer-section .icons h3 {
+    font-size: 1.8rem;
+  }
+
+  .footer-section .icons p {
+    font-size: 1.3rem;
+  }
+}
+

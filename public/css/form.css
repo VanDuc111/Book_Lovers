@@ -1,62 +1,79 @@
+/* ========================== 
+   Form Containers
+   Used in login.blade.php / register.blade.php
+   ========================== */
+
 .form-container {
-    width: 360px;
-    margin: 50px auto;
-    padding: calc(var(--spacing, 1.6rem));
-    border: 1px solid rgba(0,0,0,0.08);
+    width: 40rem;
+    max-width: 90%;
+    margin: 5rem auto;
+    padding: 2.5rem;
+    border: var(--border, 0.1rem solid rgba(0, 0, 0, 0.1));
     border-radius: 0.8rem;
     background: #fff;
+    box-shadow: var(--box-shadow, 0 0.5rem 1rem rgba(0, 0, 0, 0.1));
 }
 
 .form-container h2 {
     text-align: center;
-    font-size: 2.4rem;
-    margin-bottom: 1.2rem;
+    color: var(--black, #444);
+    text-transform: uppercase;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    font-weight: 700;
 }
 
 .form-container label {
     display: block;
-    margin-bottom: 0.6rem;
-    font-size: 1.15rem;
-    color: #333;
+    margin-bottom: 0.8rem;
+    font-size: 1.4rem;
+    color: var(--black, #444);
+    font-weight: 500;
 }
 
 .form-container input[type="email"],
 .form-container input[type="text"],
 .form-container input[type="password"] {
     width: 100%;
-    padding: 0.9rem;
-    margin-bottom: calc(var(--spacing, 1.6rem) / 2);
-    border: 1px solid rgba(0,0,0,0.08);
+    padding: 1.2rem;
+    margin-bottom: 2rem;
+    border: var(--border, 0.1rem solid rgba(0, 0, 0, 0.1));
     border-radius: 0.5rem;
-    font-size: 1.05rem;
+    font-size: 1.5rem;
+    color: var(--black, #444);
 }
 
-.form-container button[type="submit"], .form-container .btn {
+.form-container button[type="submit"], 
+.form-container .btn {
     width: 100%;
-    padding: var(--btn-padding-vertical, 0.9rem) var(--btn-padding-horizontal, 1.4rem);
-    background-color: var(--orange, #ee5513);
-    color: white;
+    text-align: center;
+    padding: 1.2rem;
+    background-color: var(--orange, #ff6347);
+    color: #fff;
     border: none;
-    border-radius: var(--btn-radius, 0.7rem);
+    border-radius: var(--btn-radius, 0.8rem);
     cursor: pointer;
-    font-size: 1.15rem;
-    box-shadow: var(--btn-shadow, 0 6px 14px rgba(0,0,0,0.08));
-    margin-top: 1rem;
+    font-size: 1.6rem;
+    font-weight: 600;
+    box-shadow: var(--btn-shadow, 0 6px 14px rgba(0, 0, 0, 0.08));
+    transition: background-color 0.2s linear;
 }
 
-.form-container button[type="submit"]:hover, .form-container .btn:hover {
-    background-color: var(--dark-color);
+.form-container button[type="submit"]:hover, 
+.form-container .btn:hover {
+    background-color: var(--dark-color, #ff4500);
 }
 
 .form-container p {
     text-align: center;
     margin-top: 2rem;
+    font-size: 1.4rem;
+    color: var(--light-color, #666);
 }
 
 .form-container p a {
-    color: var(--orange);
-    font-weight: 500;
-    font-size: 1.4rem;
+    color: var(--orange, #ff6347);
+    font-weight: 600;
     text-decoration: none;
 }
 
@@ -64,4 +81,73 @@
     text-decoration: underline;
 }
 
-.form-container { margin-bottom: 4rem; }
+/* ========================== 
+   Password Wrapper & Toggle
+   ========================== */
+
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Note: Input styles for password inside form-container are handled above */
+
+/* ========================== 
+   Legacy Auth Modals (Optional)
+   Only left here for backward compatibility
+   ========================== */
+
+.login-form-container,
+.register-form-container {
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  right: -105%;
+  transition: 0.4s linear;
+  z-index: 10000;
+}
+
+.register-form-container {
+  z-index: 10001;
+}
+
+.login-form-container.active,
+.register-form-container.active {
+  right: 0;
+}
+
+.login-form-container form,
+.register-form-container form {
+  width: 40rem;
+  border: var(--border);
+  background: #ffffff;
+  padding: 2rem;
+  margin: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: var(--box-shadow);
+}
+
+.login-form-container form h3,
+.register-form-container form h3 {
+  text-align: center;
+  color: var(--black);
+  text-transform: uppercase;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.login-form-container form .box,
+.register-form-container form .box {
+  margin-top: 1rem;
+  padding: 1rem 1.2rem;
+  font-size: 1.6rem;
+  color: var(--black);
+  border: var(--border);
+  border-radius: 0.5rem;
+  width: 100%;
+}

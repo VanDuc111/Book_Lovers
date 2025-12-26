@@ -38,66 +38,87 @@
       }
     </script>
 
-    <div class="container-fluid">
-      <div class="row">
-        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
-          <div class="sidebar-sticky">
-            <div class="py-4 text-center sidebar">
+    <div class="admin-wrapper">
+        <!-- Sidebar Overlay for mobile -->
+        <div id="sidebar-overlay"></div>
+
+        <!-- Sidebar -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
                 <a href="{{ route('home') }}" class="logo">
-                     <i class="fas fa-book-open logo-icon"></i>
-                     <span class="logo-text">Book<span class="logo-accent">Lovers</span></span>
+                    <img src="{{ asset('assets/icons/book-1.svg') }}" class="logo-icon" alt="Logo" style="filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(341deg) brightness(102%) contrast(101%); width: 3.5rem; height: 3.5rem;">
+                    <span class="logo-text">Book<span class="logo-accent">Lovers</span></span>
                 </a>
             </div>
-            <ul class="nav flex-column">
-              <li class="nav-item">
-                <a class="nav-link active" href="#" data-section="dashboard">
-                  <i class="fas fa-tachometer-alt"></i> Dashboard
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#" data-section="manage-books">
-                  <i class="fas fa-book"></i> Quản lý Sách
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#" data-section="manage-users">
-                  <i class="fas fa-users"></i> Quản lý Người dùng
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#" data-section="manage-categories">
-                  <i class="fas fa-list"></i> Quản lý Thể loại
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#" data-section="manage-orders">
-                  <i class="fas fa-shopping-cart"></i> Quản lý Đơn hàng
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#" data-section="manage-reviews">
-                  <i class="fas fa-star"></i> Quản lý Đánh giá
-                </a>
-              </li>
+
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" data-section="dashboard">
+                        <img src="{{ asset('assets/icons/dashboard.svg') }}" class="nav-icon" alt="Dashboard">
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-section="manage-books">
+                        <img src="{{ asset('assets/icons/book-1.svg') }}" class="nav-icon" alt="Books">
+                        <span>Quản lý Sách</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-section="manage-users">
+                        <img src="{{ asset('assets/icons/people.svg') }}" class="nav-icon" alt="Users">
+                        <span>Quản lý Người dùng</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-section="manage-categories">
+                        <img src="{{ asset('assets/icons/category.svg') }}" class="nav-icon" alt="Categories">
+                        <span>Quản lý Thể loại</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-section="manage-orders">
+                        <img src="{{ asset('assets/icons/shopping-cart.svg') }}" class="nav-icon" alt="Orders">
+                        <span>Quản lý Đơn hàng</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-section="manage-reviews">
+                        <img src="{{ asset('assets/icons/star.svg') }}" class="nav-icon" alt="Reviews">
+                        <span>Quản lý Đánh giá</span>
+                    </a>
+                </li>
             </ul>
-            <div class="mt-5 px-3">
-                <button id="admin-logout-btn" class="btn btn-outline-danger w-100">Đăng xuất</button>
+
+            <div class="sidebar-footer">
+                <button id="admin-logout-btn" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Đăng xuất</span>
+                </button>
             </div>
-          </div>
         </nav>
 
-        <main role="main" class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-          <div
-            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
-          >
-            <h1 class="h2" id="section-title">Dashboard</h1>
-          </div>
+        <!-- Main Content -->
+        <div id="main-content">
+            <header class="admin-topbar">
+                <div class="topbar-left">
+                    <button id="sidebar-toggle" class="sidebar-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h1 id="section-title">Dashboard</h1>
+                </div>
+                <div class="admin-profile">
+                    <span class="admin-name">Admin</span>
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=ff6347&color=fff" alt="Admin" class="admin-avatar">
+                </div>
+            </header>
 
-          <div id="content-area">
-            <p>Chào mừng đến với trang quản trị.</p>
-          </div>
-        </main>
-      </div>
+            <div class="container-fluid py-4">
+                <div id="content-area">
+                    <p>Chào mừng đến với trang quản trị.</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -109,18 +130,8 @@
     <script src="{{ asset('js/login.js') }}"></script>
     <script src="{{ asset('js/admin.js') }}"></script>
     <script>
-        // Update section title based on click
-        document.querySelectorAll('#sidebar .nav-link').forEach(link => {
-            link.addEventListener('click', function() {
-                document.getElementById('section-title').textContent = this.textContent.trim();
-            });
-        });
-        
-        // Admin logout
-        document.getElementById('admin-logout-btn').addEventListener('click', () => {
-             localStorage.removeItem('user');
-             window.location.href = "{{ url('login') }}";
-        });
+        const loginUrl = "{{ url('login') }}";
     </script>
+
   </body>
 </html>

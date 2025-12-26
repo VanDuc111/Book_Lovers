@@ -2,6 +2,25 @@
 document.addEventListener("DOMContentLoaded", () => {
   const sidebarLinks = document.querySelectorAll("#sidebar .nav-link");
   const contentArea = document.getElementById("content-area");
+  const sidebar = document.getElementById("sidebar");
+  const sidebarToggle = document.getElementById("sidebar-toggle");
+  const sidebarOverlay = document.getElementById("sidebar-overlay");
+  const sectionTitle = document.getElementById("section-title");
+
+  // Sidebar Toggle logic for mobile
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener("click", () => {
+      sidebar.classList.add("active");
+      sidebarOverlay.classList.add("active");
+    });
+  }
+
+  if (sidebarOverlay) {
+    sidebarOverlay.addEventListener("click", () => {
+      sidebar.classList.remove("active");
+      sidebarOverlay.classList.remove("active");
+    });
+  }
 
   function loadContent(section) {
     contentArea.innerHTML = "<p>Đang tải...</p>";
@@ -15,7 +34,9 @@ document.addEventListener("DOMContentLoaded", () => {
                             <div class="col-12 col-sm-6 col-md-3 mb-3">
                                 <div class="card card-summary">
                                     <div class="card-body d-flex align-items-center gap-3">
-                                        <div class="icon-wrap text-primary"><i class="fas fa-users fa-2x"></i></div>
+                                        <div class="icon-wrap text-primary">
+                                          <img src="/assets/icons/people.svg" style="width: 2.5rem; height: 2.5rem;">
+                                        </div>
                                         <div>
                                             <div class="summary-number" id="count-users">...</div>
                                             <div class="summary-label">Người dùng</div>
@@ -26,7 +47,9 @@ document.addEventListener("DOMContentLoaded", () => {
                             <div class="col-12 col-sm-6 col-md-3 mb-3">
                                 <div class="card card-summary">
                                     <div class="card-body d-flex align-items-center gap-3">
-                                        <div class="icon-wrap text-success"><i class="fas fa-book fa-2x"></i></div>
+                                        <div class="icon-wrap text-success">
+                                          <img src="/assets/icons/book-1.svg" style="width: 2.5rem; height: 2.5rem; filter: invert(27%) sepia(51%) saturate(2878%) hue-rotate(130deg) brightness(95%) contrast(101%);">
+                                        </div>
                                         <div>
                                             <div class="summary-number" id="count-books">...</div>
                                             <div class="summary-label">Sách</div>
@@ -37,7 +60,9 @@ document.addEventListener("DOMContentLoaded", () => {
                             <div class="col-12 col-sm-6 col-md-3 mb-3">
                                 <div class="card card-summary">
                                     <div class="card-body d-flex align-items-center gap-3">
-                                        <div class="icon-wrap text-warning"><i class="fas fa-shopping-cart fa-2x"></i></div>
+                                        <div class="icon-wrap text-warning">
+                                          <img src="/assets/icons/shopping-cart.svg" style="width: 2.5rem; height: 2.5rem; filter: invert(76%) sepia(87%) saturate(354%) hue-rotate(352deg) brightness(101%) contrast(102%);">
+                                        </div>
                                         <div>
                                             <div class="summary-number" id="count-orders">...</div>
                                             <div class="summary-label">Đơn hàng</div>
@@ -48,7 +73,9 @@ document.addEventListener("DOMContentLoaded", () => {
                             <div class="col-12 col-sm-6 col-md-3 mb-3">
                                 <div class="card card-summary">
                                     <div class="card-body d-flex align-items-center gap-3">
-                                        <div class="icon-wrap text-danger"><i class="fas fa-star fa-2x"></i></div>
+                                        <div class="icon-wrap text-danger">
+                                          <img src="/assets/icons/star.svg" style="width: 2.5rem; height: 2.5rem; filter: invert(34%) sepia(93%) saturate(1633%) hue-rotate(338deg) brightness(97%) contrast(92%);">
+                                        </div>
                                         <div>
                                             <div class="summary-number" id="count-reviews">...</div>
                                             <div class="summary-label">Đánh giá</div>
@@ -79,23 +106,44 @@ document.addEventListener("DOMContentLoaded", () => {
         contentArea.innerHTML = "<p>Nội dung không tồn tại.</p>";
     }
 
+    // Update active state in sidebar
     sidebarLinks.forEach((link) => {
       link.classList.remove("active");
       if (link.getAttribute("data-section") === section) {
         link.classList.add("active");
+        // Update topbar title
+        if (sectionTitle) {
+          const span = link.querySelector("span");
+          sectionTitle.textContent = span ? span.textContent : "Dashboard";
+        }
       }
     });
+
+    // Close sidebar on mobile after navigation
+    if (window.innerWidth <= 991) {
+      sidebar.classList.remove("active");
+      sidebarOverlay.classList.remove("active");
+    }
   }
 
   sidebarLinks.forEach((link) => {
     link.addEventListener("click", (event) => {
-      event.preventDefault();
       const section = link.getAttribute("data-section");
       if (section) {
+        event.preventDefault();
         loadContent(section);
       }
     });
   });
+
+  // Admin logout
+  const logoutBtn = document.getElementById("admin-logout-btn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", () => {
+      localStorage.removeItem("user");
+      window.location.href = window.loginUrl || "/login";
+    });
+  }
 
   // Tải nội dung dashboard mặc định khi trang được tải
   loadContent("dashboard");
@@ -276,7 +324,7 @@ document.addEventListener("DOMContentLoaded", () => {
       bookListContainer.innerHTML = `
         <div class="mb-2"><input id="bookSearch" class="form-control" placeholder="Tìm theo ID hoặc tiêu đề..."></div>
         <div class="table-responsive">
-          <table class="table table-striped">
+          <table class="table">
             <thead>
               <tr>
                 <th>ID</th>
@@ -606,7 +654,7 @@ document.addEventListener("DOMContentLoaded", () => {
       userListContainer.innerHTML = `
         <div class="mb-2"><input id="userSearch" class="form-control" placeholder="Tìm theo ID hoặc tên..."></div>
         <div class="table-responsive">
-          <table class="table table-striped">
+          <table class="table">
             <thead>
               <tr>
                   <th>ID</th>
@@ -864,7 +912,7 @@ document.addEventListener("DOMContentLoaded", () => {
       categoryListContainer.innerHTML = `
         <div class="mb-2"><input id="categorySearch" class="form-control" placeholder="Tìm theo ID hoặc tên thể loại..."></div>
         <div class="table-responsive">
-          <table class="table table-striped">
+          <table class="table">
             <thead>
               <tr>
                   <th>ID</th>
@@ -1063,7 +1111,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
         <div class="mb-2"><input id="orderSearch" class="form-control" placeholder="Tìm theo ID hoặc ID người dùng..."></div>
         <div class="table-responsive">
-          <table class="table table-striped">
+          <table class="table">
             <thead>
               <tr>
                 <th>ID</th>
@@ -1283,7 +1331,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>
         <div class="mb-2"><input id="reviewSearch" class="form-control" placeholder="Tìm theo ID, ID sách hoặc ID người dùng..."></div>
         <div class="table-responsive">
-          <table class="table table-striped">
+          <table class="table">
             <thead>
               <tr>
                 <th>ID</th>
