@@ -15,6 +15,7 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
     <link rel="stylesheet" href="{{ asset('css/admin.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/toast.css') }}" />
   </head>
 
   <body>
@@ -129,8 +130,9 @@
       integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
       crossorigin="anonymous"
     ></script>
-    <script src="{{ asset('js/login.js') }}"></script>
+    <script src="{{ asset('js/toast.js') }}"></script>
     <script src="{{ asset('js/admin.js') }}"></script>
+    <div id="toast-container"></div>
     <script>
         const loginUrl = "{{ url('login') }}";
     </script>

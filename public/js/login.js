@@ -23,12 +23,12 @@ function runLoginJS() {
                             window.location.href = '/';
                     }
                 } else {
-                    alert(data.message);
+                    showToast(data.message, "danger");
                 }
             })
             .catch(error => {
                 console.error('Lỗi đăng nhập:', error);
-                alert('Đã xảy ra lỗi khi đăng nhập.');
+                showToast('Đã xảy ra lỗi khi đăng nhập.', "danger");
             });
     }
 

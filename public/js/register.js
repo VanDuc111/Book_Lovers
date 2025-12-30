@@ -9,20 +9,23 @@ document
     const confirmPassword = document.getElementById("confirmPassword").value;
 
     if (password !== confirmPassword) {
-      alert("Mật khẩu xác nhận không khớp.");
+      showToast("Mật khẩu xác nhận không khớp.", "warning");
       return;
     }
 
     if (!username.trim()) {
       // Kiểm tra xem tên người dùng có rỗng không
-      alert("Vui lòng nhập tên người dùng.");
+      showToast("Vui lòng nhập tên người dùng.", "warning");
       return;
     }
+
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     fetch("/api/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "X-CSRF-TOKEN": csrfToken,
       },
       body: JSON.stringify({
         name: username,
@@ -33,14 +36,16 @@ document
       .then((response) => response.json())
       .then((data) => {
         if (data.success) {
-          alert("Đăng ký thành công!");
-          window.location.href = "/login";
+          showToast("Đăng ký thành công! Đang chuyển hướng...", "success");
+          setTimeout(() => {
+             window.location.href = "/login";
+          }, 1500);
         } else {
-          alert("Đăng ký thất bại: " + data.message);
+          showToast("Đăng ký thất bại: " + data.message, "danger");
         }
       })
       .catch((error) => {
         console.error("Lỗi:", error);
-        alert("Đã xảy ra lỗi khi đăng ký.");
+        showToast("Đã xảy ra lỗi khi đăng ký.", "danger");
       });
   });

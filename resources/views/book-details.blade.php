@@ -171,5 +171,4 @@
 
 @section('scripts')
     <script type="module" src="{{ asset('js/book-details.js') }}"></script>
-    <script src="{{ asset('js/login.js') }}"></script>
 @endsection

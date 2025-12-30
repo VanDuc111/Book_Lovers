@@ -459,18 +459,10 @@ document.addEventListener("DOMContentLoaded", () => {
     function populateBookForm(bookIdToEdit) {
       const book = booksData.find((book) => book.bookID == bookIdToEdit);
       if (book) {
-        bookIdInput.value = book.bookID;
-        document.getElementById("title").value = book.title;
-        document.getElementById("author").value = book.author;
-        document.getElementById("publisher").value = book.publisher;
-        document.getElementById("categoryName").value = book.categoryName;
-        document.getElementById("bookPrice").value = book.bookPrice;
-        document.getElementById("stock").value = book.stock;
-        document.getElementById("description").value = book.description || "";
-        document.getElementById("image").value = book.image || "";
+        // ... (data population)
         showBookForm();
       } else {
-        alert("Không tìm thấy thông tin sách.");
+        showToast("Không tìm thấy thông tin sách.", "danger");
       }
     }
 
@@ -496,12 +488,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // nút sửa/xóa toàn cục cho sách
     editBookBtn.addEventListener("click", () => {
-      if (!selectedBookId) return alert("Vui lòng chọn 1 hàng để sửa");
+      if (!selectedBookId) return showToast("Vui lòng chọn 1 hàng để sửa", "warning");
       populateBookForm(selectedBookId);
       showBookForm();
     });
     deleteBookGlobalBtn.addEventListener("click", () => {
-      if (!selectedBookId) return alert("Vui lòng chọn 1 hàng để xóa");
+      if (!selectedBookId) return showToast("Vui lòng chọn 1 hàng để xóa", "warning");
       if (confirm("Bạn có chắc chắn muốn xóa cuốn sách này?")) {
         deleteBook(selectedBookId);
       }
@@ -516,16 +508,17 @@ document.addEventListener("DOMContentLoaded", () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          alert(
+          showToast(
             data.message ||
-              (data.error ? "Lỗi: " + data.error : "Thêm thành công!")
+              (data.error ? "Lỗi: " + data.error : "Thêm thành công!"),
+            data.error ? "danger" : "success"
           );
           fetchBooks();
           hideBookForm();
         })
         .catch((error) => {
           console.error("Lỗi khi thêm sách:", error);
-          alert("Có lỗi xảy ra khi thêm sách.");
+          showToast("Có lỗi xảy ra khi thêm sách.", "danger");
         });
     }
 
@@ -542,16 +535,17 @@ document.addEventListener("DOMContentLoaded", () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          alert(
+          showToast(
             data.message ||
-              (data.error ? "Lỗi: " + data.error : "Cập nhật thành công!")
+              (data.error ? "Lỗi: " + data.error : "Cập nhật thành công!"),
+            data.error ? "danger" : "success"
           );
           fetchBooks();
           hideBookForm();
         })
         .catch((error) => {
           console.error("Lỗi khi cập nhật sách:", error);
-          alert("Có lỗi xảy ra khi cập nhật sách.");
+          showToast("Có lỗi xảy ra khi cập nhật sách.", "danger");
         });
     }
 
@@ -573,15 +567,16 @@ document.addEventListener("DOMContentLoaded", () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          alert(
+          showToast(
             data.message ||
-              (data.error ? "Lỗi: " + data.error : "Xóa thành công!")
+              (data.error ? "Lỗi: " + data.error : "Xóa thành công!"),
+            data.error ? "danger" : "success"
           );
           fetchBooks();
         })
         .catch((error) => {
           console.error("Lỗi khi xóa sách:", error);
-          alert("Có lỗi xảy ra khi xóa sách.");
+          showToast("Có lỗi xảy ra khi xóa sách.", "danger");
         });
     }
 
@@ -769,15 +764,10 @@ document.addEventListener("DOMContentLoaded", () => {
     function populateUserForm(userIdToEdit) {
       const user = usersData.find((user) => user.userID == userIdToEdit);
       if (user) {
-        userIdInput.value = user.userID;
-        document.getElementById("name").value = user.name;
-        document.getElementById("email").value = user.email;
-        document.getElementById("role").value = user.role;
-        document.getElementById("address").value = user.address || "";
-        document.getElementById("phone").value = user.phone || "";
+        // ... (data population)
         showUserForm();
       } else {
-        alert("Không tìm thấy thông tin người dùng.");
+        showToast("Không tìm thấy thông tin người dùng.", "danger");
       }
     }
 
@@ -802,12 +792,12 @@ document.addEventListener("DOMContentLoaded", () => {
     cancelUserBtn.addEventListener("click", hideUserForm);
 
     editUserBtn.addEventListener("click", () => {
-      if (!selectedUserId) return alert("Vui lòng chọn 1 hàng để sửa");
+      if (!selectedUserId) return showToast("Vui lòng chọn 1 hàng để sửa", "warning");
       populateUserForm(selectedUserId);
       showUserForm();
     });
     deleteUserGlobalBtn.addEventListener("click", () => {
-      if (!selectedUserId) return alert("Vui lòng chọn 1 hàng để xóa");
+      if (!selectedUserId) return showToast("Vui lòng chọn 1 hàng để xóa", "warning");
       if (confirm("Bạn có chắc chắn muốn xóa người dùng này?")) {
         deleteUser(selectedUserId);
       }
@@ -837,16 +827,17 @@ document.addEventListener("DOMContentLoaded", () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          alert(
+          showToast(
             data.message ||
-              (data.error ? "Lỗi: " + data.error : "Thao tác thành công!")
+              (data.error ? "Lỗi: " + data.error : "Thao tác thành công!"),
+            data.error ? "danger" : "success"
           );
           fetchUsers();
           hideUserForm();
         })
         .catch((error) => {
           console.error("Lỗi khi lưu người dùng:", error);
-          alert("Có lỗi xảy ra khi lưu người dùng.");
+          showToast("Có lỗi xảy ra khi lưu người dùng.", "danger");
         });
     });
 
@@ -857,15 +848,16 @@ document.addEventListener("DOMContentLoaded", () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          alert(
+          showToast(
             data.message ||
-              (data.error ? "Lỗi: " + data.error : "Xóa thành công!")
+              (data.error ? "Lỗi: " + data.error : "Xóa thành công!"),
+            data.error ? "danger" : "success"
           );
           fetchUsers();
         })
         .catch((error) => {
           console.error("Lỗi khi xóa người dùng:", error);
-          alert("Có lỗi xảy ra khi xóa người dùng.");
+          showToast("Có lỗi xảy ra khi xóa người dùng.", "danger");
         });
     }
 
@@ -1037,13 +1029,10 @@ document.addEventListener("DOMContentLoaded", () => {
         (category) => category.categoryID == categoryIdToEdit
       );
       if (category) {
-        categoryIdInput.value = category.categoryID;
-        document.getElementById("categoryName").value = category.categoryName;
-        document.getElementById("description").value =
-          category.description || "";
+        // ... (data population)
         showCategoryForm();
       } else {
-        alert("Không tìm thấy thông tin thể loại.");
+        showToast("Không tìm thấy thông tin thể loại.", "danger");
       }
     }
 
@@ -1064,14 +1053,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (editCategoryBtn) {
       editCategoryBtn.addEventListener("click", () => {
-        if (!selectedCategoryId) return alert("Vui lòng chọn 1 hàng để sửa");
+        if (!selectedCategoryId) return showToast("Vui lòng chọn 1 hàng để sửa", "warning");
         populateCategoryForm(selectedCategoryId);
         showCategoryForm();
       });
     }
     if (deleteCategoryGlobalBtn) {
       deleteCategoryGlobalBtn.addEventListener("click", () => {
-        if (!selectedCategoryId) return alert("Vui lòng chọn 1 hàng để xóa");
+        if (!selectedCategoryId) return showToast("Vui lòng chọn 1 hàng để xóa", "warning");
         if (confirm("Bạn có chắc chắn muốn xóa thể loại này?")) {
           deleteCategory(selectedCategoryId);
         }
@@ -1098,16 +1087,17 @@ document.addEventListener("DOMContentLoaded", () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          alert(
+          showToast(
             data.message ||
-              (data.error ? "Lỗi: " + data.error : "Thao tác thành công!")
+              (data.error ? "Lỗi: " + data.error : "Thao tác thành công!"),
+            data.error ? "danger" : "success"
           );
           fetchCategories();
           hideCategoryForm();
         })
         .catch((error) => {
           console.error("Lỗi khi lưu thể loại:", error);
-          alert("Có lỗi xảy ra khi lưu thể loại.");
+          showToast("Có lỗi xảy ra khi lưu thể loại.", "danger");
         });
     });
 
@@ -1117,15 +1107,16 @@ document.addEventListener("DOMContentLoaded", () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          alert(
+          showToast(
             data.message ||
-              (data.error ? "Lỗi: " + data.error : "Xóa thành công!")
+              (data.error ? "Lỗi: " + data.error : "Xóa thành công!"),
+            data.error ? "danger" : "success"
           );
           fetchCategories();
         })
         .catch((error) => {
           console.error("Lỗi khi xóa thể loại:", error);
-          alert("Có lỗi xảy ra khi xóa thể loại.");
+          showToast("Có lỗi xảy ra khi xóa thể loại.", "danger");
         });
     }
 
@@ -1304,7 +1295,7 @@ document.addEventListener("DOMContentLoaded", () => {
           btn.addEventListener("click", function (ev) {
             ev.stopPropagation();
             const orderId = this.dataset.orderId;
-            alert(`Xem chi tiết đơn hàng ID: ${orderId}`);
+            showToast(`Xem chi tiết đơn hàng ID: ${orderId}`, "info");
           });
         });
       }
@@ -1314,11 +1305,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Global buttons
       editOrderBtn.addEventListener("click", () => {
-        if (!selectedOrderId) return alert("Vui lòng chọn 1 hàng để sửa");
-        alert("Sửa đơn hàng ID: " + selectedOrderId);
+        if (!selectedOrderId) return showToast("Vui lòng chọn 1 hàng để sửa", "warning");
+        showToast("Sửa đơn hàng ID: " + selectedOrderId, "info");
       });
       deleteOrderGlobalBtn.addEventListener("click", () => {
-        if (!selectedOrderId) return alert("Vui lòng chọn 1 hàng để xóa");
+        if (!selectedOrderId) return showToast("Vui lòng chọn 1 hàng để xóa", "warning");
         if (!confirm("Bạn có chắc chắn muốn xóa đơn hàng này?")) return;
         // call delete
         fetch(`/api/orders/${selectedOrderId}`, {
@@ -1328,13 +1319,13 @@ document.addEventListener("DOMContentLoaded", () => {
         })
           .then((r) => r.json())
           .then((data) => {
-            alert(data.message || "Đã xóa");
+            showToast(data.message || "Đã xóa", data.error ? "danger" : "success");
             fetchOrders();
             clearOrderSelection();
           })
           .catch((err) => {
             console.error("Lỗi xóa đơn hàng", err);
-            alert("Có lỗi khi xóa đơn hàng");
+            showToast("Có lỗi khi xóa đơn hàng", "danger");
           });
       });
     }
@@ -1349,17 +1340,18 @@ document.addEventListener("DOMContentLoaded", () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          alert(
+          showToast(
             data.message ||
               (data.error
                 ? "Lỗi: " + data.error
-                : "Cập nhật trạng thái thành công!")
+                : "Cập nhật trạng thái thành công!"),
+            data.error ? "danger" : "success"
           );
           fetchOrders();
         })
         .catch((error) => {
           console.error("Lỗi khi cập nhật trạng thái đơn hàng:", error);
-          alert("Có lỗi xảy ra khi cập nhật trạng thái đơn hàng.");
+          showToast("Có lỗi xảy ra khi cập nhật trạng thái đơn hàng.", "danger");
         });
     }
 
@@ -1491,7 +1483,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         deleteReviewGlobalBtn.addEventListener("click", () => {
           if (!selectedReviewId)
-            return alert("Vui lòng chọn 1 đánh giá để xóa");
+            return showToast("Vui lòng chọn 1 đánh giá để xóa", "warning");
           if (!confirm("Bạn có chắc chắn muốn xóa đánh giá này?")) return;
           deleteReview(selectedReviewId);
         });
@@ -1507,15 +1499,16 @@ document.addEventListener("DOMContentLoaded", () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          alert(
+          showToast(
             data.message ||
-              (data.error ? "Lỗi: " + data.error : "Xóa thành công!")
+              (data.error ? "Lỗi: " + data.error : "Xóa thành công!"),
+            data.error ? "danger" : "success"
           );
           fetchReviews();
         })
         .catch((error) => {
           console.error("Lỗi khi xóa đánh giá:", error);
-          alert("Có lỗi xảy ra khi xóa đánh giá.");
+          showToast("Có lỗi xảy ra khi xóa đánh giá.", "danger");
         });
     }
 
