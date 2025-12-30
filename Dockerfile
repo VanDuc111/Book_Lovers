@@ -7,17 +7,18 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libzip-dev \
+    libicu-dev \
     zip \
     unzip \
-    libzip-dev \
     nodejs \
     npm
 
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+# Install PHP extensions (Added intl for Laravel 11/12)
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip intl
 
 # Enable Apache mod_rewrite
 RUN a2enmod rewrite
@@ -28,11 +29,12 @@ WORKDIR /var/www/html
 # Copy application files
 COPY . .
 
-# Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# Install Composer from official image (Cleaner & Faster)
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader
+# --no-scripts: Tránh lỗi khi artisan chạy mà chưa có env/database
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
 
 # Install NPM dependencies and build assets
 RUN npm install && npm run build

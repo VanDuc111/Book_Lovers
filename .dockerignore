@@ -1,0 +1,13 @@
+.git
+.env
+node_modules
+vendor
+public/storage
+storage/*.key
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+storage/logs/*
+Dockerfile
+render.yaml
+.dockerignore
