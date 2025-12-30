@@ -2,6 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 
+Route::get('/health', function () {
+    return response()->json(['status' => 'ok', 'php_version' => phpversion()]);
+});
+
 Route::get('/', function () {
     return view('home');
 })->name('home');
@@ -50,3 +54,4 @@ Route::get('/admin', function () {
 Route::any('/api/api.php', [App\Http\Controllers\LegacyApiController::class, 'handle']);
 Route::post('/api/login.php', [App\Http\Controllers\Api\AuthController::class, 'login']);
 Route::post('/api/register.php', [App\Http\Controllers\Api\AuthController::class, 'register']);
+Route::post('/api/register', [App\Http\Controllers\Api\AuthController::class, 'register']);

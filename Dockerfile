@@ -40,7 +40,9 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --no-script
 RUN npm install && npm run build
 
 # Set permissions for Laravel
+RUN mkdir -p /var/www/html/storage/logs /var/www/html/storage/framework/views /var/www/html/storage/framework/sessions /var/www/html/storage/framework/cache/data /var/www/html/bootstrap/cache
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Update Apache configuration to point to /public
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
