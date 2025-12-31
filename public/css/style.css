@@ -801,7 +801,8 @@ select:focus,
   display: flex;
   align-items: stretch;
 }
-.sach-van-hoc .sach-van-hoc-list .box {
+.sach-van-hoc .sach-van-hoc-list .box,
+.daily-recommended .daily-recommended-list .box {
   transition: transform 220ms ease, box-shadow 220ms ease;
   overflow: hidden;
   border-radius: 0.8rem;
@@ -825,11 +826,13 @@ select:focus,
   display: block;
   transition: transform 320ms ease;
 }
-.sach-van-hoc .sach-van-hoc-list .box:hover {
+.sach-van-hoc .sach-van-hoc-list .box:hover,
+.daily-recommended .daily-recommended-list .box:hover {
   transform: translateY(-6px);
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.06);
 }
-.sach-van-hoc .sach-van-hoc-list .box:hover .image img {
+.sach-van-hoc .sach-van-hoc-list .box:hover .image img,
+.daily-recommended .daily-recommended-list .box:hover .image img {
   transform: scale(1.04);
 }
 

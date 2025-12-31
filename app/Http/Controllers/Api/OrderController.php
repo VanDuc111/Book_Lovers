@@ -110,7 +110,7 @@ class OrderController extends Controller
             ->where('orders.userID', $userID)
             ->select('books.bookID', 'books.title', 'books.author', 'books.bookPrice', 'books.image', 'orders.order_date')
             ->distinct()
-            ->orderBy('order.order_date', 'desc')
+            ->orderBy('orders.order_date', 'desc')
             ->get();
 
         $books->map(function ($book) {

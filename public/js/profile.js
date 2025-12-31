@@ -140,4 +140,62 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = config.homeUrl || '/';
         });
     }
+
+    // --- Purchased Books Logic ---
+    const purchasedList = document.getElementById('purchased-books-list');
+    const purchasedEmpty = document.getElementById('purchased-books-empty');
+
+    function fetchPurchasedBooks() {
+        if (!purchasedList) return;
+
+        fetch(`/api/purchased-books?userID=${userID}`)
+            .then(res => res.json())
+            .then(books => {
+                purchasedList.innerHTML = '';
+                
+                if (!books || books.length === 0) {
+                    if (purchasedEmpty) purchasedEmpty.style.display = 'block';
+                    purchasedList.style.display = 'none';
+                    return;
+                }
+
+                if (purchasedEmpty) purchasedEmpty.style.display = 'none';
+                purchasedList.style.display = 'flex';
+
+                books.forEach(book => {
+                    const card = document.createElement('div');
+                    card.className = 'col-6 col-md-4 col-lg-3 mb-4';
+                    
+                    const orderDate = new Date(book.order_date).toLocaleDateString('vi-VN');
+                    
+                    card.innerHTML = `
+                        <div class="purchased-book-card">
+                            <div class="p-book-image-wrapper">
+                                <img src="${book.image || 'https://fakeimg.pl/200x300/f0f0f0/909090?text=No+Image'}" 
+                                     class="p-book-image" alt="${book.title}">
+                            </div>
+                            <div class="p-book-info">
+                                <a href="/book-details?id=${book.bookID}" class="p-book-title" title="${book.title}">${book.title}</a>
+                                <div class="p-book-author">${book.author || 'Đang cập nhật'}</div>
+                                <div class="p-book-date">
+                                    <i class="far fa-calendar-alt"></i>
+                                    Mua ngày: ${orderDate}
+                                </div>
+                                <div class="p-book-actions">
+                                    <a href="/book-details?id=${book.bookID}" class="btn btn-main btn-read-now">Mua lại</a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    purchasedList.appendChild(card);
+                });
+            })
+            .catch(err => {
+                console.error('Error fetching purchased books:', err);
+                if (purchasedList) purchasedList.innerHTML = '<p class="text-center text-danger">Lỗi khi tải danh sách sách.</p>';
+            });
+    }
+
+    // Call it after user data is fetched or on init
+    fetchPurchasedBooks();
 });

@@ -218,6 +218,7 @@
         flex: 1;
         width: 100%;
         position: static;
+        margin-bottom: 2rem;
     }
     .profile-nav {
         flex-direction: row;
@@ -236,4 +237,102 @@
     .form-group.full-width {
         grid-column: span 1;
     }
+}
+
+/* Purchased Books List Styling */
+#purchased-books-list {
+    margin-top: 2rem;
+}
+
+.purchased-book-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #f0f0f0;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+.purchased-book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.08);
+    border-color: var(--orange);
+}
+
+.p-book-image-wrapper {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 2/3;
+    margin-bottom: 1.5rem;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f8f9fa;
+}
+
+.p-book-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.p-book-info {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.p-book-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 0.5rem;
+    text-decoration: none;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.p-book-author {
+    font-size: 1.3rem;
+    color: var(--light-color);
+    margin-bottom: 1rem;
+}
+
+.p-book-date {
+    margin-top: auto;
+    font-size: 1.2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f5f5f5;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.p-book-date i {
+    font-size: 1.1rem;
+    color: #bbb;
+}
+
+.p-book-actions {
+    margin-top: 1.5rem;
+    display: flex;
+    gap: 1rem;
+}
+
+.btn-read-now {
+    flex: 1;
+    padding: 0.8rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
 }

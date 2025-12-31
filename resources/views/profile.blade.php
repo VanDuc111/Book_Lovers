@@ -136,10 +136,19 @@
                     <h2>Thư viện của tôi</h2>
                     <p>Xem toàn bộ các cuốn sách bạn đã mua và sở hữu</p>
                 </div>
-                <div class="text-center py-5">
+                
+                <div id="purchased-books-list" class="row g-4">
+                    <!-- JS will render books here -->
+                    <div class="text-center py-5 loading-spinner">
+                        <i class="fas fa-spinner fa-spin fa-3x text-muted"></i>
+                        <p class="mt-3">Đang tải tủ sách...</p>
+                    </div>
+                </div>
+
+                <div id="purchased-books-empty" style="display: none;" class="text-center py-5">
                     <i class="fas fa-book-reader fa-4x mb-3 text-muted" style="opacity: 0.3;"></i>
                     <p class="text-muted">Xem tủ sách cá nhân của bạn để bắt đầu đọc.</p>
-                    <a href="{{ url('purchased-books') }}" class="btn mt-3">Đi tới thư viện</a>
+                    <a href="{{ url('book-list') }}" class="btn btn-main mt-3">Đi tới thư viện</a>
                 </div>
             </div>
 
