@@ -127,6 +127,23 @@ input[type="submit"],
     Login, register and generic form component styles
     ========================== */
 
+/* Enhanced Global Input Focus */
+input:not([type="submit"]):not([type="button"]):not([type="checkbox"]):not([type="radio"]):not([type="file"]):focus,
+textarea:focus,
+select:focus,
+.header .header-1 .from-box:focus-within {
+  border-color: var(--orange) !important;
+  background-color: #fff;
+  box-shadow: 0 0 0 4px rgba(255, 99, 71, 0.1) !important;
+  outline: none !important;
+  transition: all 0.3s ease;
+}
+
+/* Specific adjustment for header search box wrapper */
+.header .header-1 .from-box {
+  transition: all 0.3s ease;
+}
+
 .login-form-container {
   background-color: rgba(255, 255, 255, 0.9);
   display: flex;

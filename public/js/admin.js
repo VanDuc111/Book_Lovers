@@ -459,7 +459,15 @@ document.addEventListener("DOMContentLoaded", () => {
     function populateBookForm(bookIdToEdit) {
       const book = booksData.find((book) => book.bookID == bookIdToEdit);
       if (book) {
-        // ... (data population)
+        bookIdInput.value = book.bookID;
+        document.getElementById("title").value = book.title;
+        document.getElementById("author").value = book.author;
+        document.getElementById("publisher").value = book.publisher;
+        document.getElementById("categoryName").value = book.categoryName;
+        document.getElementById("bookPrice").value = book.bookPrice;
+        document.getElementById("stock").value = book.stock;
+        document.getElementById("description").value = book.description || "";
+        // Note: For file inputs, we can't set value for security, usually show preview if needed
         showBookForm();
       } else {
         showToast("Không tìm thấy thông tin sách.", "danger");
@@ -587,11 +595,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function loadUsersManagement() {
     contentArea.innerHTML = `
         <h2>Quản lý Người dùng</h2>
-        <div class="mb-2 d-flex gap-2">
-          <button class="btn btn-primary" id="addUserBtn">Thêm Người dùng</button>
-          <button class="btn btn-secondary" id="editUserBtn" disabled>Sửa</button>
-          <button class="btn btn-danger" id="deleteUserGlobalBtn" disabled>Xóa</button>
-        </div>
         <div id="userListContainer">
           <div class="table-responsive">
             <table class="table">
@@ -607,54 +610,9 @@ document.addEventListener("DOMContentLoaded", () => {
             </table>
           </div>
         </div>
-            <div id="userFormContainer" style="display: none;">
-                <h3>Thêm/Sửa Người dùng</h3>
-                <form id="userForm">
-                    <input type="hidden" id="userId" name="userId">
-                    <div class="form-group">
-                        <label for="name">Tên</label>
-                        <input type="text" class="form-control" id="name" name="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Mật khẩu</label>
-                        <input type="password" class="form-control" id="password" name="password">
-                        <small class="form-text text-muted">Để trống nếu không muốn thay đổi.</small>
-                    </div>
-                    <div class="form-group">
-                        <label for="role">Vai trò</label>
-                        <select class="form-control" id="role" name="role" required>
-                            <option value="client">Khách hàng</option>
-                            <option value="admin">Quản trị viên</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="address">Địa chỉ</label>
-                        <input type="text" class="form-control" id="address" name="address">
-                    </div>
-                    <div class="form-group">
-                        <label for="phone">Số điện thoại</label>
-                        <input type="text" class="form-control" id="phone" name="phone">
-                    </div>
-                    <button type="submit" class="btn btn-success" id="saveUserBtn">Lưu</button>
-                    <button type="button" class="btn btn-secondary ml-2" id="cancelUserBtn">Hủy</button>
-                </form>
-            </div>
-        `;
+    `;
 
     const userListContainer = document.getElementById("userListContainer");
-    const addUserBtn = document.getElementById("addUserBtn");
-    const editUserBtn = document.getElementById("editUserBtn");
-    const deleteUserGlobalBtn = document.getElementById("deleteUserGlobalBtn");
-    const userFormContainer = document.getElementById("userFormContainer");
-    const userForm = document.getElementById("userForm");
-    const saveUserBtn = document.getElementById("saveUserBtn");
-    const cancelUserBtn = document.getElementById("cancelUserBtn");
-    const userIdInput = document.getElementById("userId");
-
     let usersData = [];
 
     // Lấy danh sách người dùng
@@ -670,18 +628,6 @@ document.addEventListener("DOMContentLoaded", () => {
           console.error("Lỗi tải dữ liệu người dùng:", error);
         })
         .finally(() => stopLoading());
-    }
-
-    // Render bảng người dùng với chức năng tìm kiếm
-    let selectedUserId = null;
-
-    function clearUserSelection() {
-      selectedUserId = null;
-      editUserBtn.disabled = true;
-      deleteUserGlobalBtn.disabled = true;
-      document
-        .querySelectorAll("#user-table-body tr")
-        .forEach((r) => r.classList.remove("table-active"));
     }
 
     function renderUserTable() {
@@ -709,7 +655,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const tbody = document.getElementById("user-table-body");
       const searchInput = document.getElementById("userSearch");
 
-      // Render các hàng dựa trên bộ lọc tìm kiếm
       function renderRows(filter = "") {
         const q = String(filter).trim().toLowerCase();
         const filtered = usersData.filter((user) => {
@@ -728,7 +673,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let rows = "";
         filtered.forEach((user) => {
           rows += `
-            <tr data-id="${user.userID}">
+            <tr>
               <td>${user.userID}</td>
               <td>${user.name}</td>
               <td>${user.email}</td>
@@ -736,129 +681,10 @@ document.addEventListener("DOMContentLoaded", () => {
             </tr>`;
         });
         tbody.innerHTML = rows;
-
-        tbody.querySelectorAll("tr[data-id]").forEach((tr) => {
-          tr.addEventListener("click", () => {
-            const id = tr.getAttribute("data-id");
-            if (selectedUserId === id) {
-              tr.classList.remove("table-active");
-              clearUserSelection();
-            } else {
-              document
-                .querySelectorAll("#user-table-body tr")
-                .forEach((r) => r.classList.remove("table-active"));
-              tr.classList.add("table-active");
-              selectedUserId = id;
-              editUserBtn.disabled = false;
-              deleteUserGlobalBtn.disabled = false;
-            }
-          });
-        });
       }
 
       searchInput.addEventListener("input", (e) => renderRows(e.target.value));
       renderRows();
-    }
-
-    // Điền dữ liệu người dùng vào form để chỉnh sửa
-    function populateUserForm(userIdToEdit) {
-      const user = usersData.find((user) => user.userID == userIdToEdit);
-      if (user) {
-        // ... (data population)
-        showUserForm();
-      } else {
-        showToast("Không tìm thấy thông tin người dùng.", "danger");
-      }
-    }
-
-    // Hiển thị/Ẩn form thêm/sửa người dùng
-    function showUserForm() {
-      userFormContainer.style.display = "block";
-      userListContainer.style.display = "none";
-    }
-
-    // Ẩn form và đặt lại trạng thái
-    function hideUserForm() {
-      userFormContainer.style.display = "none";
-      userListContainer.style.display = "block";
-      userForm.reset();
-      userIdInput.value = "";
-    }
-
-    addUserBtn.addEventListener("click", () => {
-      hideUserForm();
-      showUserForm();
-    });
-    cancelUserBtn.addEventListener("click", hideUserForm);
-
-    editUserBtn.addEventListener("click", () => {
-      if (!selectedUserId) return showToast("Vui lòng chọn 1 hàng để sửa", "warning");
-      populateUserForm(selectedUserId);
-      showUserForm();
-    });
-    deleteUserGlobalBtn.addEventListener("click", () => {
-      if (!selectedUserId) return showToast("Vui lòng chọn 1 hàng để xóa", "warning");
-      if (confirm("Bạn có chắc chắn muốn xóa người dùng này?")) {
-        deleteUser(selectedUserId);
-      }
-    });
-
-    userForm.addEventListener("submit", function (event) {
-      event.preventDefault();
-      const formData = new FormData(this);
-      const userData = {
-        userID: formData.get("userId"),
-        name: formData.get("name"),
-        email: formData.get("email"),
-        password: formData.get("password"),
-        role: formData.get("role"),
-        address: formData.get("address"),
-        phone: formData.get("phone"),
-      };
-      const method = userData.userID ? "PUT" : "POST";
-      const url = userData.userID ? `/api/users/${userData.userID}` : "/api/users";
-
-      fetch(url, {
-        method: method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          showToast(
-            data.message ||
-              (data.error ? "Lỗi: " + data.error : "Thao tác thành công!"),
-            data.error ? "danger" : "success"
-          );
-          fetchUsers();
-          hideUserForm();
-        })
-        .catch((error) => {
-          console.error("Lỗi khi lưu người dùng:", error);
-          showToast("Có lỗi xảy ra khi lưu người dùng.", "danger");
-        });
-    });
-
-    // Xóa người dùng
-    function deleteUser(userId) {
-      fetch(`/api/users/${userId}`, {
-        method: "DELETE",
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          showToast(
-            data.message ||
-              (data.error ? "Lỗi: " + data.error : "Xóa thành công!"),
-            data.error ? "danger" : "success"
-          );
-          fetchUsers();
-        })
-        .catch((error) => {
-          console.error("Lỗi khi xóa người dùng:", error);
-          showToast("Có lỗi xảy ra khi xóa người dùng.", "danger");
-        });
     }
 
     fetchUsers();
@@ -1029,7 +855,10 @@ document.addEventListener("DOMContentLoaded", () => {
         (category) => category.categoryID == categoryIdToEdit
       );
       if (category) {
-        // ... (data population)
+        categoryIdInput.value = category.categoryID;
+        document.getElementById("categoryName").value = category.categoryName;
+        document.getElementById("description").value =
+          category.description || "";
         showCategoryForm();
       } else {
         showToast("Không tìm thấy thông tin thể loại.", "danger");

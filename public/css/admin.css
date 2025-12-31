@@ -309,6 +309,24 @@ body {
     color: var(--gray-dark);
 }
 
+.form-group input,
+.form-group textarea,
+.form-group select,
+#main-content .form-control {
+    border: 1px solid #ddd;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus,
+#main-content .form-control:focus {
+    border-color: var(--orange) !important;
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(255, 99, 71, 0.1) !important;
+    outline: none !important;
+}
+
 /* Action buttons spacing */
 #bookForm button[type="submit"], 
 #bookForm button[type="button"],
