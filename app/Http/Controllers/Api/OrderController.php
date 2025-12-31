@@ -58,7 +58,7 @@ class OrderController extends Controller
 
             // Insert order items
             foreach ($items as $item) {
-                DB::table('order_item')->insert([
+                DB::table('order_items')->insert([
                     'orderID' => $order->orderID,
                     'bookID' => $item->bookID,
                     'quantity' => $item->quantity,
@@ -104,11 +104,11 @@ class OrderController extends Controller
         // Assuming models are set up: Order hasMany items, Item belongsTo Book
         // Or using DB facade for direct performance/simplicity matching legacy query
         
-        $books = DB::table('order')
-            ->join('order_item', 'order.orderID', '=', 'order_item.orderID')
-            ->join('book', 'order_item.bookID', '=', 'book.bookID')
-            ->where('order.userID', $userID)
-            ->select('book.bookID', 'book.title', 'book.author', 'book.bookPrice', 'book.image', 'order.order_date')
+        $books = DB::table('orders')
+            ->join('order_items', 'orders.orderID', '=', 'order_items.orderID')
+            ->join('books', 'order_items.bookID', '=', 'books.bookID')
+            ->where('orders.userID', $userID)
+            ->select('books.bookID', 'books.title', 'books.author', 'books.bookPrice', 'books.image', 'orders.order_date')
             ->distinct()
             ->orderBy('order.order_date', 'desc')
             ->get();

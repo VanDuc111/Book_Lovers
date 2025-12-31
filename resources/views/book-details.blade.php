@@ -22,7 +22,7 @@
           <!-- Left: Image Section -->
           <div class="col-lg-4 col-md-5 fade-in-up delay-1">
             <div class="book-details-image-section bg-white p-3 rounded shadow-sm text-center">
-              <img id="book-image" src="{{ asset('assets/images/placeholder.png') }}" 
+              <img id="book-image" src="https://fakeimg.pl/450x600/f0f0f0/909090?text=No+Image" 
                    class="img-fluid rounded" 
                    alt="Book Image"
                    style="max-height: 450px; width: auto; object-fit: contain;">
@@ -120,7 +120,7 @@
           </div>
 
           <div class="col-md-9 d-flex align-items-start justify-content-end">
-            <div id="review-auth-note" style="color: #666; text-align: right">
+            <div id="review-auth-note" style="color: #666; text-align: right; display: none;">
               Chỉ có thành viên mới có thể viết nhận xét. Vui lòng
               <a href="{{ url('login') }}">đăng nhập</a> hoặc
               <a href="{{ url('register') }}">đăng ký</a>.

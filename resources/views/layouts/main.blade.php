@@ -51,9 +51,6 @@
                         <img src="{{ asset('assets/icons/user.svg') }}" alt="User" class="navbar-icon">
                         <span id="welcome-message"></span>
                     </a>
-                    <button id="logout-btn" style="display: none">
-                        <i class="fas fa-sign-out-alt"></i>
-                    </button>
                 </div>
             </div>
 

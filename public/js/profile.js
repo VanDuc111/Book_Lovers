@@ -134,13 +134,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (logoutSidebar) {
         logoutSidebar.addEventListener('click', (e) => {
             e.preventDefault();
-            const logoutBtn = document.getElementById('logout-btn');
-            if (logoutBtn) {
-                logoutBtn.click();
-            } else {
-                localStorage.removeItem('userID');
-                window.location.href = config.homeUrl || '/';
-            }
+            // Clear local storage for the user session
+            localStorage.removeItem('user');
+            // Redirect to home
+            window.location.href = config.homeUrl || '/';
         });
     }
 });

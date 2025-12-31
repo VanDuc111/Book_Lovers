@@ -196,9 +196,18 @@
   gap: 0.8rem;
   font-weight: 600;
   white-space: nowrap;
+  transition: color 0.3s ease;
 }
 
-#welcome-message { font-size: 14px; }
+.user-info:hover, #login-btn:hover,
+.user-info:hover span, #login-btn:hover span {
+  color: var(--orange) !important;
+}
+
+#welcome-message { 
+  font-size: 14px; 
+  transition: color 0.3s ease;
+}
 
 #logout-btn {
   padding: 8px 16px;

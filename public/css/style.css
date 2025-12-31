@@ -99,13 +99,43 @@ html {
 .btn {
   color: #fff;
   background: var(--orange);
-  border: none;
-  font-size: var(--btn-font-size);
-  border-radius: var(--btn-radius);
+  font-size: 1.7rem;
+  font-weight: 500;
+  padding: 0.8rem 2.5rem;
+  border-radius: 0.5rem;
   cursor: pointer;
-  padding: var(--btn-padding-vertical) var(--btn-padding-horizontal);
-  box-shadow: var(--btn-shadow);
   display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  background: var(--dark-color);
+  letter-spacing: 0.1rem;
+}
+
+/* Common Premium Button Style */
+.btn-main {
+    display: inline-block;
+    padding: 1.2rem 2.5rem;
+    font-weight: 700;
+    font-size: 1.4rem;
+    background: var(--orange);
+    color: #fff !important;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 6px 16px rgba(255, 99, 71, 0.25);
+    transition: all 0.3s;
+    text-align: center;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-main:hover {
+    background: var(--dark-color);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(255, 99, 71, 0.35);
+    color: #fff !important;
 }
 
 /* ==========================

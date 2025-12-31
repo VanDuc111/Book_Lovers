@@ -43,7 +43,7 @@ function runLoginJS() {
             if (user) {
                 welcomeMessage.textContent = `Xin chào ${user.name}`;
                 welcomeMessage.style.display = 'inline';
-                logoutButton.style.display = 'inline';
+                if (logoutButton) logoutButton.style.display = 'inline';
 
                 // Thay đổi href thành profile.html và truyền userID
                 const userLink = document.getElementById('login-btn');
@@ -57,7 +57,7 @@ function runLoginJS() {
             } else {
                 welcomeMessage.textContent = 'Đăng nhập';
                 welcomeMessage.style.display = 'inline';
-                logoutButton.style.display = 'none';
+                if (logoutButton) logoutButton.style.display = 'none';
 
                 // Giữ nguyên href là login.html
                 const userLink = document.getElementById('login-btn');

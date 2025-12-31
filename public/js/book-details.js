@@ -13,6 +13,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const bookId = getBookIdFromUrl();
+    const userId = getUserId();
+
+    // Hide/Show auth note based on actual login state
+    const authNote = document.getElementById("review-auth-note");
+    if (authNote) {
+      authNote.style.display = userId ? "none" : "block";
+    }
 
     if (bookId) {
       // Nếu có ID sách trong URL, gọi API để lấy thông tin chi tiết
@@ -44,20 +51,46 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Hàm để hiển thị thông tin sách lên trang
     function displayBookDetails(book) {
-      const formattedPrice = book.bookPrice.toLocaleString("vi-VN", {
-        style: "currency",
-        currency: "VND",
-      });
+      // Format price: remove .00 and add VNĐ
+      const formattedPrice = new Intl.NumberFormat('vi-VN').format(book.bookPrice) + ' VNĐ';
 
       // Update basic fields
       document.getElementById("breadcrumb-category").textContent = book.categoryName || 'Sách';
-      document.getElementById("book-image").src = book.image || "/assets/images/placeholder.png";
+      document.getElementById("book-image").src = book.image || "https://fakeimg.pl/450x600/f0f0f0/909090?text=No+Image";
       document.getElementById("book-image").alt = book.title;
       document.getElementById("book-title").textContent = book.title;
       document.getElementById("book-author").textContent = book.author;
       document.getElementById("book-publisher").textContent = book.publisher;
       document.getElementById("book-category").textContent = book.categoryName;
-      document.getElementById("book-description").textContent = book.description || "Chưa có mô tả chi tiết cho sản phẩm này.";
+      
+      // Handle "See more / Show less" for description
+      const descEl = document.getElementById("book-description");
+      const fullDesc = book.description || "Chưa có mô tả chi tiết cho sản phẩm này.";
+      const charLimit = 350;
+
+      function updateDescription(isExpanded) {
+        if (isExpanded) {
+          descEl.innerHTML = fullDesc + ' <a href="#" id="see-less-link" style="color: #ff6347; font-weight: bold; text-decoration: none; margin-left: 5px;">Ẩn bớt</a>';
+          document.getElementById("see-less-link").addEventListener("click", function(e) {
+            e.preventDefault();
+            updateDescription(false);
+          });
+        } else {
+          if (fullDesc.length > charLimit) {
+            const shortDesc = fullDesc.substring(0, charLimit) + "... ";
+            descEl.innerHTML = shortDesc + '<a href="#" id="see-more-link" style="color: #ff6347; font-weight: bold; text-decoration: none;">Xem thêm</a>';
+            document.getElementById("see-more-link").addEventListener("click", function(e) {
+              e.preventDefault();
+              updateDescription(true);
+            });
+          } else {
+            descEl.textContent = fullDesc;
+          }
+        }
+      }
+
+      updateDescription(false);
+
       document.getElementById("book-price").textContent = formattedPrice;
       
       const stockStatus = document.getElementById("book-stock-status");
