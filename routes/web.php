@@ -10,6 +10,26 @@ Route::get('/', function () {
     return view('home');
 })->name('home');
 
+// Route bí mật để chạy migrate dành cho gói Render Free
+Route::get('/setup-database', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+        return "Chúc mừng! Database đã được thiết lập xong. <br> Kết quả: " . \Illuminate\Support\Facades\Artisan::output();
+    } catch (\Exception $e) {
+        return "Lỗi khi chạy migrate: " . $e->getMessage();
+    }
+});
+
+// Kiểm tra kết nối DB
+Route::get('/check-db', function () {
+    try {
+        \Illuminate\Support\Facades\DB::connection()->getPdo();
+        return "Kết nối Aiven Database: THÀNH CÔNG!";
+    } catch (\Exception $e) {
+        return "Kết nối Aiven Database: THẤT BẠI. Lỗi: " . $e->getMessage();
+    }
+});
+
 Route::get('/book-list', function () {
     return view('book-list');
 })->name('book-list');
