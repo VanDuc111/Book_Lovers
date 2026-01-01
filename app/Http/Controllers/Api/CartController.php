@@ -30,6 +30,7 @@ class CartController extends Controller
                  'bookPrice' => $item->book->bookPrice,
                  'image' => $item->book->image,
                  'quantity' => $item->quantity,
+                 'stock' => $item->book->stock, // Thêm stock để FE kiểm tra
              ];
         });
 
@@ -46,9 +47,18 @@ class CartController extends Controller
 
         $cart = Cart::firstOrCreate(['userID' => $userID], ['created_at' => now()]);
         
+        $book = Book::find($bookID);
+        if (!$book) return response()->json(['error' => 'Sách không tồn tại'], 404);
+
         $cartItem = CartItem::where('cartID', $cart->cartID)->where('bookID', $bookID)->first();
+        $totalRequested = ($cartItem ? $cartItem->quantity : 0) + $quantity;
+
+        if ($totalRequested > $book->stock) {
+            return response()->json(['error' => "Số lượng vượt quá tồn kho (Còn lại: {$book->stock})"], 400);
+        }
+
         if ($cartItem) {
-            $cartItem->quantity += $quantity;
+            $cartItem->quantity = $totalRequested;
             $cartItem->save();
         } else {
             CartItem::create([
@@ -58,18 +68,28 @@ class CartController extends Controller
             ]);
         }
 
-        return response()->json(['message' => 'Item added to cart']);
+        return response()->json(['message' => 'Đã thêm vào giỏ hàng']);
     }
 
     public function update(Request $request, $id)
     {
-        $cartItem = CartItem::find($id);
+        $cartItem = CartItem::where('cartItemID', $id)->with('book')->first();
         if ($cartItem) {
-            $cartItem->quantity = $request->quantity;
+            $newQuantity = (int)$request->quantity;
+            
+            // Kiểm tra tồn kho
+            if ($newQuantity > $cartItem->book->stock) {
+                return response()->json([
+                    'error' => "Số lượng vượt quá tồn kho (Còn lại: {$cartItem->book->stock})",
+                    'stock' => $cartItem->book->stock
+                ], 400);
+            }
+
+            $cartItem->quantity = $newQuantity;
             $cartItem->save();
-            return response()->json(['message' => 'Cart updated']);
+            return response()->json(['message' => 'Cập nhật giỏ hàng thành công']);
         }
-        return response()->json(['error' => 'Item not found'], 404);
+        return response()->json(['error' => 'Không tìm thấy sản phẩm trong giỏ'], 404);
     }
 
     public function destroy($id) 

@@ -48,7 +48,7 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
-    cartTotalElement.textContent = new Intl.NumberFormat('vi-VN').format(total) + " VNĐ";
+    cartTotalElement.textContent = new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 0 }).format(total) + " VNĐ";
   }
 
   function displayCartItems(cartItems) {
@@ -65,8 +65,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const row = document.createElement("tr");
       const subtotal = item.bookPrice * item.quantity;
 
-      const formattedPrice = new Intl.NumberFormat('vi-VN').format(item.bookPrice);
-      const formattedSubtotal = new Intl.NumberFormat('vi-VN').format(subtotal);
+      const formattedPrice = new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 0 }).format(Number(item.bookPrice));
+      const formattedSubtotal = new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 0 }).format(Number(subtotal));
 
       row.innerHTML = `
                 <td><input type="checkbox" class="select-item" data-cartitemid="${item.cartItemID}"></td>
@@ -123,13 +123,44 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Quantity update
     document.querySelectorAll(".quantity-btn").forEach((btn) => {
-      btn.onclick = function() {
+      btn.onclick = function(e) {
         const id = this.dataset.id;
         const currentQty = parseInt(this.dataset.qty);
-        let newQty = this.classList.contains('plus') ? currentQty + 1 : currentQty - 1;
+        const isPlus = this.classList.contains('plus');
+        const item = currentCartItems.find(i => i.cartItemID == id);
         
-        if (newQty < 1) return;
+        let newQty = isPlus ? currentQty + 1 : currentQty - 1;
+
+        // Visual feedback
+        this.classList.add('clicked');
+        setTimeout(() => this.classList.remove('clicked'), 200);
+
+        if (!isPlus && newQty < 1) return;
+        if (isPlus && item && newQty > item.stock) {
+            showToast(`Chỉ còn ${item.stock} sản phẩm trong kho.`, "warning");
+            return;
+        }
+
+        // Optimistic Update: Cập nhật UI ngay lập tức
+        const row = this.closest('tr');
+        if (row) {
+            const input = row.querySelector('.quantity-input');
+            const subtotalEl = row.querySelector('.cart-item-subtotal');
+            if (input) input.value = newQty;
+            
+            // Cập nhật Subtotal ảo
+            if (subtotalEl && item) {
+                const newSubtotal = item.bookPrice * newQty;
+                subtotalEl.textContent = Number(newSubtotal).toLocaleString('vi-VN', { maximumFractionDigits: 0 }) + " VNĐ";
+            }
+            
+            // Cập nhật Dataset để tránh click dồn dập bị sai số
+            const buttons = row.querySelectorAll('.quantity-btn');
+            buttons.forEach(b => b.dataset.qty = newQty);
+        }
+
         updateQuantity(id, newQty);
+        updateSelectedTotal(); // Tính toán lại tổng tiền ngay lập tức
       }
     });
 
@@ -163,10 +194,20 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     .then(r => r.json())
     .then(data => {
-        if (data.error) showToast(data.error, "danger");
-        else fetchCart();
+        if (data.error) {
+            showToast(data.error, "danger");
+            fetchCart(); // Rollback nếu lỗi bằng cách fetch lại dữ liệu mới nhất
+        } else {
+            // Cập nhật lại list item cục bộ để sync dữ liệu
+            const item = currentCartItems.find(i => i.cartItemID == cartItemId);
+            if (item) item.quantity = quantity;
+            updateSelectedTotal();
+        }
     })
-    .catch(err => console.error("Update Qty Error", err));
+    .catch(err => {
+        console.error("Update Qty Error", err);
+        fetchCart(); // Rollback
+    });
   }
 
   function deleteCartItem(cartItemId) {

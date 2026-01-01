@@ -71,7 +71,7 @@ function displayVanHocBooks(books, containerElement) {
     <div class="content">
         <h3>${book.title ?? 'Không có tiêu đề'}</h3>
         <br>
-        <div class="price">${book.bookPrice ? book.bookPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : 'Chưa rõ'}</div>
+        <div class="price">${book.bookPrice ? Number(book.bookPrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }) : 'Chưa rõ'}</div>
         <br>
     </div>
 `;
@@ -172,7 +172,7 @@ function displayDailyRecommendedBooks(books, containerElement) {
     <div class="content">
         <h3>${book.title ?? 'Không có tiêu đề'}</h3>
         <br>
-        <div class="price">${book.bookPrice ? book.bookPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : 'Chưa rõ'}</div>
+        <div class="price">${book.bookPrice ? Number(book.bookPrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }) : 'Chưa rõ'}</div>
         <br>
     </div>
 `;

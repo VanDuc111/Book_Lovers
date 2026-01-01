@@ -39,10 +39,14 @@ class OrderController extends Controller
         $user = User::find($userID);
         if (!$user) return response()->json(['error' => 'User not found'], 404);
 
-        // Calculate total
+        // Calculate total and validate stock
         $items = CartItem::whereIn('cartItemID', $cartItemIDs)->with('book')->get();
         $total = 0;
+        
         foreach($items as $item) {
+             if ($item->quantity > $item->book->stock) {
+                 return response()->json(['error' => "Sản phẩm '{$item->book->title}' vượt quá tồn kho (Còn lại: {$item->book->stock})"], 400);
+             }
              $total += $item->quantity * $item->book->bookPrice;
         }
 
@@ -56,7 +60,7 @@ class OrderController extends Controller
                 'order_status' => 'Pending'
             ]);
 
-            // Insert order items
+            // Insert order items and deduct stock
             foreach ($items as $item) {
                 DB::table('order_items')->insert([
                     'orderID' => $order->orderID,
@@ -64,16 +68,19 @@ class OrderController extends Controller
                     'quantity' => $item->quantity,
                     'price' => $item->book->bookPrice
                 ]);
+
+                // Deduct stock
+                DB::table('books')->where('bookID', $item->bookID)->decrement('stock', $item->quantity);
             }
 
             // Clear cart items
             CartItem::whereIn('cartItemID', $cartItemIDs)->delete();
 
             DB::commit();
-            return response()->json(['success' => true, 'message' => 'Order placed successfully', 'orderID' => $order->orderID]);
+            return response()->json(['success' => true, 'message' => 'Đặt hàng thành công!', 'orderID' => $order->orderID]);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+            return response()->json(['success' => false, 'error' => 'Có lỗi xảy ra trong quá trình xử lý đơn hàng.'], 500);
         }
     }
 

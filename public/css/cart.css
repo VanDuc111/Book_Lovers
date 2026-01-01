@@ -225,6 +225,16 @@ table.cart-table thead th {
     font-size: 1.2rem;
     color: var(--black);
     cursor: pointer;
+    transition: transform 0.1s ease, color 0.1s;
+}
+
+.quantity-btn:hover {
+    color: var(--orange);
+}
+
+.quantity-btn.clicked {
+    transform: scale(0.8);
+    color: var(--orange);
 }
 
 .quantity-input {

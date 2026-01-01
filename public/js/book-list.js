@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
         books.forEach(book => {
             const bookCard = document.createElement('div');
-            bookCard.className = 'col-md-3 mb-4 book-card';
+            bookCard.className = 'col-6 col-md-4 col-lg-3 mb-4 book-card';
             bookCard.dataset.bookid = book.bookID;
 
             bookCard.innerHTML = `
@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                     <div class="card-body">
                         <h5 class="card-title">${book.title ?? 'Không có tiêu đề'}</h5>
                         <p class="card-text">Tác giả: ${book.author ?? 'Không có tác giả'}</p>
-                        <p class="card-text">Giá: ${book.bookPrice ? book.bookPrice.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }) : 'Chưa rõ'}</p>
+                        <p class="card-text price">${book.bookPrice ? Number(book.bookPrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }) : 'Chưa rõ'}</p>
                     </div>
                 </div>
             `;

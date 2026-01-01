@@ -54,14 +54,6 @@
                 </div>
             </div>
 
-            <div class="header-2">
-                <div class="navbar">
-                    <a href="{{ route('home') }}">Trang Chủ</a>
-                    <a href="{{ url('purchased-books') }}">Sách đã mua</a>
-                    <a href="{{ url('reviews') }}">Đánh giá</a>
-                    <a href="{{ url('book-list') }}">Toàn bộ</a>
-                </div>
-            </div>
         </header>
     </div>
 

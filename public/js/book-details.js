@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Hàm để hiển thị thông tin sách lên trang
     function displayBookDetails(book) {
       // Format price: remove .00 and add VNĐ
-      const formattedPrice = new Intl.NumberFormat('vi-VN').format(book.bookPrice) + ' VNĐ';
+      const formattedPrice = new Intl.NumberFormat('vi-VN', { maximumFractionDigits: 0 }).format(Number(book.bookPrice)) + ' VNĐ';
 
       // Update basic fields
       document.getElementById("breadcrumb-category").textContent = book.categoryName || 'Sách';
