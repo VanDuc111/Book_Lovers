@@ -70,6 +70,10 @@ Route::get('/admin', function () {
     return view('admin');
 });
 
+Route::get('/checkout', function () {
+    return view('checkout');
+});
+
 // Legacy API Routes
 Route::any('/api/api.php', [App\Http\Controllers\LegacyApiController::class, 'handle']);
 Route::post('/api/login.php', [App\Http\Controllers\Api\AuthController::class, 'login']);

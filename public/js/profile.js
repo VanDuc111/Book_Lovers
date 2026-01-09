@@ -1,6 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
     const config = window.profileConfig || {};
-    const userID = new URLSearchParams(window.location.search).get('userID');
+    let userID = new URLSearchParams(window.location.search).get('userID');
+    
+    // If userID is not in URL, try to get it from localStorage
+    if (!userID) {
+        const user = JSON.parse(localStorage.getItem('user'));
+        userID = user ? user.userID : null;
+    }
     
     if (!userID) {
         window.location.href = config.loginUrl || '/login';
@@ -23,19 +29,43 @@ document.addEventListener('DOMContentLoaded', () => {
     navItems.forEach(item => {
         item.addEventListener('click', function() {
             const targetId = this.getAttribute('data-target');
-            if (!targetId) return;
-
-            navItems.forEach(nav => nav.classList.remove('active'));
-            this.classList.add('active');
-
-            contentPanes.forEach(pane => {
-                pane.classList.remove('active');
-                if (pane.id === targetId) {
-                    pane.classList.add('active');
-                }
-            });
+            switchTab(targetId);
         });
     });
+
+    function switchTab(targetId) {
+        if (!targetId) return;
+
+        navItems.forEach(nav => {
+            nav.classList.remove('active');
+            if (nav.getAttribute('data-target') === targetId) {
+                nav.classList.add('active');
+            }
+        });
+
+        contentPanes.forEach(pane => {
+            pane.classList.remove('active');
+            if (pane.id === targetId) {
+                pane.classList.add('active');
+            }
+        });
+    }
+
+    // Check for tab in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const initialTab = urlParams.get('tab') || urlParams.get('target');
+    if (initialTab) {
+        // Map common tab names to element IDs
+        const tabMap = {
+            'orders': 'my-orders',
+            'profile': 'profile-info',
+            'purchased': 'purchased-books-pane',
+            'wishlist': 'wishlist',
+            'password': 'change-password'
+        };
+        const targetId = tabMap[initialTab] || initialTab;
+        switchTab(targetId);
+    }
 
     // Fetch User Data
     if (config.apiUrl) {

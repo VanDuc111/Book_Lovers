@@ -56,7 +56,11 @@ class OrderController extends Controller
                 'userID' => $userID,
                 'order_date' => now(),
                 'total_amount' => $total,
-                'shipping_address' => $user->address ?? 'Default Address',
+                'shipping_address' => $request->shipping_address ?? $user->address,
+                'receiver_name' => $request->receiver_name ?? $user->name,
+                'receiver_phone' => $request->receiver_phone ?? $user->phone,
+                'payment_method' => $request->payment_method ?? 'cod',
+                'note' => $request->note,
                 'order_status' => 'Pending'
             ]);
 

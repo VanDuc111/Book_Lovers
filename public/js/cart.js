@@ -230,25 +230,9 @@ document.addEventListener("DOMContentLoaded", function () {
       showToast("Vui lòng chọn ít nhất một sản phẩm để thanh toán.", "warning");
       return;
     }
-    processCheckout(selectedItems);
-  }
-
-  function processCheckout(ids) {
-    fetch("/api/checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ cartItemIDs: ids, userID: userId }),
-    })
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.error) {
-            showToast("Lỗi: " + data.error, "danger");
-        } else {
-            showToast("Thanh toán thành công! Đơn hàng đã được tạo.", "success");
-            fetchCart();
-        }
-      })
-      .catch((err) => showToast("Lỗi khi thanh toán", "danger"));
+    
+    // Chuyển sang trang thanh toán mới với danh sách ID sản phẩm đã chọn
+    window.location.href = `/checkout?items=${selectedItems.join(',')}`;
   }
 
   const checkoutBtn = document.getElementById("checkout-all-btn");

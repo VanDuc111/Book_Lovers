@@ -15,6 +15,10 @@ class Order extends Model
         'order_date',
         'total_amount',
         'shipping_address',
+        'payment_method',
+        'receiver_name',
+        'receiver_phone',
+        'note',
         'order_status',
     ];
 
