@@ -171,6 +171,90 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+
+    // --- Orders Logic ---
+    const ordersList = document.getElementById('orders-list');
+    const ordersEmpty = document.getElementById('orders-empty');
+
+    function fetchOrders() {
+        if (!ordersList) return;
+
+        fetch(`/api/orders?userID=${userID}`)
+            .then(res => res.json())
+            .then(orders => {
+                // Remove loading spinner
+                const loadingSpinner = ordersList.querySelector('.loading-spinner');
+                if (loadingSpinner) loadingSpinner.remove();
+                
+                if (!orders || orders.length === 0) {
+                    ordersList.style.display = 'none';
+                    if (ordersEmpty) ordersEmpty.style.display = 'block';
+                    return;
+                }
+
+                if (ordersEmpty) ordersEmpty.style.display = 'none';
+                ordersList.style.display = 'block';
+
+                // Create orders HTML
+                let ordersHTML = '<div class="orders-container">';
+                
+                orders.forEach(order => {
+                    const date = new Date(order.order_date);
+                    const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+                    const amount = Math.round(order.total_amount).toLocaleString('vi-VN');
+                    
+                    // Status badge color
+                    let statusClass = 'badge-secondary';
+                    if (order.order_status === 'Pending') statusClass = 'badge-warning';
+                    else if (order.order_status === 'Processing') statusClass = 'badge-info';
+                    else if (order.order_status === 'Shipped') statusClass = 'badge-primary';
+                    else if (order.order_status === 'Delivered') statusClass = 'badge-success';
+                    else if (order.order_status === 'Cancelled') statusClass = 'badge-danger';
+                    
+                    ordersHTML += `
+                        <div class="order-card">
+                            <div class="order-header">
+                                <div class="order-id">
+                                    <i class="fas fa-receipt"></i>
+                                    <span>Đơn hàng #${order.orderID}</span>
+                                </div>
+                                <span class="order-status ${statusClass}">${order.order_status}</span>
+                            </div>
+                            <div class="order-body">
+                                <div class="order-info-row">
+                                    <i class="far fa-calendar-alt"></i>
+                                    <span>${formattedDate}</span>
+                                </div>
+                                <div class="order-info-row">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    <span>${amount} ₫</span>
+                                </div>
+                                <div class="order-info-row">
+                                    <i class="fas fa-credit-card"></i>
+                                    <span>${order.payment_method || 'COD'}</span>
+                                </div>
+                                ${order.shipping_address ? `
+                                <div class="order-info-row">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>${order.shipping_address}</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                ordersHTML += '</div>';
+                ordersList.innerHTML = ordersHTML;
+            })
+            .catch(err => {
+                console.error('Error fetching orders:', err);
+                const loadingSpinner = ordersList.querySelector('.loading-spinner');
+                if (loadingSpinner) loadingSpinner.remove();
+                ordersList.innerHTML = '<p class="text-center text-danger">Lỗi khi tải danh sách đơn hàng.</p>';
+            });
+    }
+
     // --- Purchased Books Logic ---
     const purchasedList = document.getElementById('purchased-books-list');
     const purchasedEmpty = document.getElementById('purchased-books-empty');
@@ -226,6 +310,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
-    // Call it after user data is fetched or on init
+    // Call on init
+    fetchOrders();
     fetchPurchasedBooks();
 });
+

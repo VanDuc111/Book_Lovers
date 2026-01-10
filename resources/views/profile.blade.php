@@ -117,13 +117,22 @@
                 </button>
             </div>
 
-            <!-- Orders Pane (Placeholder) -->
+            <!-- Orders Pane -->
             <div id="my-orders" class="content-pane glass">
                 <div class="content-header">
                     <h2>Lịch sử đơn hàng</h2>
                     <p>Theo dõi trạng thái và quản lý các đơn hàng bạn đã đặt</p>
                 </div>
-                <div class="text-center py-5">
+                
+                <div id="orders-list">
+                    <!-- Loading spinner -->
+                    <div class="text-center py-5 loading-spinner">
+                        <i class="fas fa-spinner fa-spin fa-3x text-muted"></i>
+                        <p class="mt-3">Đang tải đơn hàng...</p>
+                    </div>
+                </div>
+                
+                <div id="orders-empty" style="display: none;" class="text-center py-5">
                     <i class="fas fa-shopping-bag fa-4x mb-3 text-muted" style="opacity: 0.3;"></i>
                     <p class="text-muted">Bạn chưa có đơn hàng nào.</p>
                     <a href="{{ url('book-list') }}" class="btn mt-3">Mua sắm ngay</a>

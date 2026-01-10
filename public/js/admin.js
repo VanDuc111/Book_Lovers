@@ -999,12 +999,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function renderOrderTable() {
       orderListContainer.innerHTML = `
-        <div class="mb-2 d-flex gap-2">
-          <button class="btn btn-primary" id="addOrderBtn">Thêm Đơn (nếu cần)</button>
-          <button class="btn btn-secondary" id="editOrderBtn" disabled>Sửa</button>
-          <button class="btn btn-danger" id="deleteOrderGlobalBtn" disabled>Xóa</button>
+        <div class="mb-3 d-flex gap-2 flex-wrap align-items-center">
+          <button class="btn btn-info" id="viewOrderDetailsBtn" disabled>Xem chi tiết</button>
+          <select class="form-control" id="statusFilter" style="width: auto;">
+            <option value="">Tất cả trạng thái</option>
+            <option value="Pending">Đang chờ xử lý</option>
+            <option value="Processing">Đang xử lý</option>
+            <option value="Shipped">Đã giao</option>
+            <option value="Delivered">Đã hoàn thành</option>
+            <option value="Cancelled">Đã hủy</option>
+          </select>
+          <input type="date" class="form-control" id="dateFilter" style="width: auto;" placeholder="Lọc theo ngày">
         </div>
-        <div class="mb-2"><input id="orderSearch" class="form-control" placeholder="Tìm theo ID hoặc ID người dùng..."></div>
+        <div class="mb-2"><input id="orderSearch" class="form-control" placeholder="Tìm theo ID, tên khách hàng, hoặc SĐT..."></div>
         <div class="table-responsive">
           <table class="table">
             <thead>
@@ -1025,10 +1032,9 @@ document.addEventListener("DOMContentLoaded", () => {
           </table>
         </div>`;
 
-      const editOrderBtn = document.getElementById("editOrderBtn");
-      const deleteOrderGlobalBtn = document.getElementById(
-        "deleteOrderGlobalBtn"
-      );
+      const viewOrderDetailsBtn = document.getElementById("viewOrderDetailsBtn");
+      const statusFilter = document.getElementById("statusFilter");
+      const dateFilter = document.getElementById("dateFilter");
       const tbody = document.getElementById("order-table-body");
       const searchInput = document.getElementById("orderSearch");
 
@@ -1036,21 +1042,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
       function clearOrderSelection() {
         selectedOrderId = null;
-        editOrderBtn.disabled = true;
-        deleteOrderGlobalBtn.disabled = true;
+        viewOrderDetailsBtn.disabled = true;
         document
           .querySelectorAll("#order-table-body tr")
           .forEach((r) => r.classList.remove("table-active"));
       }
 
-      function renderRows(filter = "") {
+      function renderRows(filter = "", statusFilterValue = "", dateFilterValue = "") {
         const q = String(filter).trim().toLowerCase();
         const filtered = ordersData.filter((order) => {
-          if (!q) return true;
-          return (
+          // Text search filter
+          const matchesSearch = !q || (
             String(order.orderID).toLowerCase().includes(q) ||
-            String(order.userID).toLowerCase().includes(q)
+            String(order.userID).toLowerCase().includes(q) ||
+            (order.receiver_name && order.receiver_name.toLowerCase().includes(q)) ||
+            (order.receiver_phone && order.receiver_phone.includes(q))
           );
+          
+          // Status filter
+          const matchesStatus = !statusFilterValue || order.order_status === statusFilterValue;
+          
+          // Date filter
+          let matchesDate = true;
+          if (dateFilterValue) {
+            const orderDate = new Date(order.order_date).toISOString().split('T')[0];
+            matchesDate = orderDate === dateFilterValue;
+          }
+          
+          return matchesSearch && matchesStatus && matchesDate;
         });
 
         if (filtered.length === 0) {
@@ -1096,19 +1115,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 }">
                   <option value="Pending" ${
                     order.order_status === "Pending" ? "selected" : ""
-                  }>Đang chờ xử lý</option>
+                  }>Pending</option>
                   <option value="Processing" ${
                     order.order_status === "Processing" ? "selected" : ""
-                  }>Đang xử lý</option>
+                  }>Processing</option>
                   <option value="Shipped" ${
                     order.order_status === "Shipped" ? "selected" : ""
-                  }>Đã giao</option>
+                  }>Shipped</option>
                   <option value="Delivered" ${
                     order.order_status === "Delivered" ? "selected" : ""
-                  }>Đã hoàn thành</option>
+                  }>Delivered</option>
                   <option value="Cancelled" ${
                     order.order_status === "Cancelled" ? "selected" : ""
-                  }>Đã hủy</option>
+                  }>Cancelled</option>
                 </select>
               </td>
             </tr>`;
@@ -1128,8 +1147,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 .forEach((r) => r.classList.remove("table-active"));
               tr.classList.add("table-active");
               selectedOrderId = id;
-              editOrderBtn.disabled = false;
-              deleteOrderGlobalBtn.disabled = false;
+              viewOrderDetailsBtn.disabled = false;
             }
           });
         });
@@ -1142,44 +1160,74 @@ document.addEventListener("DOMContentLoaded", () => {
             updateOrderStatus(orderId, newStatus);
           });
         });
-
-        // View details
-        tbody.querySelectorAll(".viewOrderDetailsBtn").forEach((btn) => {
-          btn.addEventListener("click", function (ev) {
-            ev.stopPropagation();
-            const orderId = this.dataset.orderId;
-            showToast(`Xem chi tiết đơn hàng ID: ${orderId}`, "info");
-          });
-        });
       }
 
-      searchInput.addEventListener("input", (e) => renderRows(e.target.value));
-      renderRows();
-
-      // Global buttons
-      editOrderBtn.addEventListener("click", () => {
-        if (!selectedOrderId) return showToast("Vui lòng chọn 1 hàng để sửa", "warning");
-        showToast("Sửa đơn hàng ID: " + selectedOrderId, "info");
+      // Filter event listeners
+      searchInput.addEventListener("input", (e) => {
+        renderRows(e.target.value, statusFilter.value, dateFilter.value);
       });
-      deleteOrderGlobalBtn.addEventListener("click", () => {
-        if (!selectedOrderId) return showToast("Vui lòng chọn 1 hàng để xóa", "warning");
-        if (!confirm("Bạn có chắc chắn muốn xóa đơn hàng này?")) return;
-        // call delete
-        fetch(`/api/orders/${selectedOrderId}`, {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          // body: JSON.stringify({ orderID: selectedOrderId }), // Resource controller uses URL ID
-        })
-          .then((r) => r.json())
-          .then((data) => {
-            showToast(data.message || "Đã xóa", data.error ? "danger" : "success");
-            fetchOrders();
-            clearOrderSelection();
-          })
-          .catch((err) => {
-            console.error("Lỗi xóa đơn hàng", err);
-            showToast("Có lỗi khi xóa đơn hàng", "danger");
-          });
+      
+      statusFilter.addEventListener("change", () => {
+        renderRows(searchInput.value, statusFilter.value, dateFilter.value);
+      });
+      
+      dateFilter.addEventListener("change", () => {
+        renderRows(searchInput.value, statusFilter.value, dateFilter.value);
+      });
+
+      // View details button handler
+      viewOrderDetailsBtn.addEventListener("click", () => {
+        if (!selectedOrderId) return;
+        const order = ordersData.find(o => o.orderID == selectedOrderId);
+        if (order) {
+          showOrderDetailsModal(order);
+        }
+      });
+
+      renderRows();
+    }
+
+    // Show order details in modal
+    function showOrderDetailsModal(order) {
+      const date = new Date(order.order_date);
+      const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+      const amount = Math.round(order.total_amount).toLocaleString('vi-VN');
+      
+      const modalHTML = `
+        <div class="modal-overlay" id="orderDetailsModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: flex; align-items: center; justify-content: center;">
+          <div class="modal-content" style="background: white; padding: 2rem; border-radius: 12px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+              <h3 style="margin: 0;">Chi tiết đơn hàng #${order.orderID}</h3>
+              <button onclick="document.getElementById('orderDetailsModal').remove()" style="background: none; border: none; font-size: 2rem; cursor: pointer;">&times;</button>
+            </div>
+            <div style="display: grid; gap: 1rem;">
+              <div><strong>Ngày đặt:</strong> ${formattedDate}</div>
+              <div><strong>Trạng thái:</strong> <span style="color: var(--orange);">${order.order_status}</span></div>
+              <div><strong>Tổng tiền:</strong> ${amount} ₫</div>
+              <hr>
+              <div><strong>Người nhận:</strong> ${order.receiver_name || 'N/A'}</div>
+              <div><strong>Số điện thoại:</strong> ${order.receiver_phone || 'N/A'}</div>
+              <div><strong>Địa chỉ giao hàng:</strong> ${order.shipping_address || 'N/A'}</div>
+              <div><strong>Phương thức thanh toán:</strong> ${order.payment_method || 'COD'}</div>
+              ${order.note ? `<div><strong>Ghi chú:</strong> ${order.note}</div>` : ''}
+              <hr>
+              <div><strong>Khách hàng ID:</strong> ${order.userID}</div>
+              ${order.user ? `<div><strong>Email:</strong> ${order.user.email || 'N/A'}</div>` : ''}
+            </div>
+            <div style="margin-top: 1.5rem; text-align: right;">
+              <button onclick="document.getElementById('orderDetailsModal').remove()" class="btn btn-secondary">Đóng</button>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.body.insertAdjacentHTML('beforeend', modalHTML);
+      
+      // Close on overlay click
+      document.getElementById('orderDetailsModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+          this.remove();
+        }
       });
     }
 

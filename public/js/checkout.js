@@ -206,11 +206,50 @@ function setupAddressSelection() {
         radio.addEventListener('change', function() {
             if (this.value === 'new') {
                 newAddressFields.style.display = 'block';
+                // Setup address completion detection
+                setupAddressCompletionDetection();
             } else {
                 newAddressFields.style.display = 'none';
             }
         });
     });
+}
+
+// Detect when user completes filling address fields
+function setupAddressCompletionDetection() {
+    const province = document.getElementById('province');
+    const district = document.getElementById('district');
+    const ward = document.getElementById('ward');
+    const address = document.getElementById('address');
+    
+    let hasAsked = false; // Only ask once per session
+    
+    const checkCompletion = () => {
+        if (hasAsked) return;
+        
+        const isComplete = province.value && district.value && ward.value && address.value.trim();
+        
+        if (isComplete) {
+            hasAsked = true;
+            const userId = getUserId();
+            const provinceText = province.selectedOptions[0].text;
+            const districtText = district.selectedOptions[0].text;
+            const wardText = ward.selectedOptions[0].text;
+            const fullAddress = `${address.value.trim()}, ${wardText}, ${districtText}, ${provinceText}`;
+            const phone = document.getElementById('phone').value.trim();
+            
+            // Show confirmation after a short delay for better UX
+            setTimeout(() => {
+                showSaveAddressConfirmation(userId, fullAddress, phone);
+            }, 500);
+        }
+    };
+    
+    // Listen to all address fields
+    province.addEventListener('change', checkCompletion);
+    district.addEventListener('change', checkCompletion);
+    ward.addEventListener('change', checkCompletion);
+    address.addEventListener('blur', checkCompletion);
 }
 
 // Handle place order
@@ -307,17 +346,12 @@ async function handlePlaceOrder() {
         const data = await response.json();
 
         if (data.success || data.orderID) {
-            // Save default address if using new address
-            if (addressType === 'new') {
-                await saveDefaultUserInfo(userId, fullAddress, receiverPhone);
-            }
-
             showToast('Đặt hàng thành công!', 'success');
             
             // Redirect to order success page or profile
             setTimeout(() => {
                 window.location.href = `/profile?userID=${userId}&tab=orders`;
-            }, 1500);
+            }, 2000);
         } else {
             showToast(data.error || 'Có lỗi xảy ra khi đặt hàng', 'danger');
             placeOrderBtn.disabled = false;
@@ -347,4 +381,90 @@ async function saveDefaultUserInfo(userId, address, phone) {
     } catch (error) {
         console.error('Error saving default user info:', error);
     }
+}
+
+// Show confirmation modal to save address as default
+function showSaveAddressConfirmation(userId, address, phone) {
+    // Remove existing modal if any
+    const existingModal = document.getElementById('saveAddressModal');
+    if (existingModal) existingModal.remove();
+    
+    const modalHTML = `
+        <div class="modal-overlay" id="saveAddressModal" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); z-index: 9999; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.2s ease;">
+            <div class="modal-content" style="background: white; padding: 2.5rem; border-radius: 16px; max-width: 480px; width: 90%; box-shadow: 0 8px 32px rgba(0,0,0,0.2); animation: slideUp 0.3s ease;">
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #ff6347 0%, #ff4520 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                        <svg width="32" height="32" fill="white" viewBox="0 0 24 24">
+                            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                        </svg>
+                    </div>
+                    <h3 style="margin: 0 0 0.5rem 0; color: #333; font-size: 1.8rem; font-weight: 700;">Lưu địa chỉ mặc định?</h3>
+                    <p style="margin: 0; color: #666; font-size: 1.35rem; line-height: 1.6;">
+                        Bạn có muốn lưu địa chỉ này làm mặc định<br>cho các lần mua hàng sau không?
+                    </p>
+                </div>
+                <div style="background: #f8f9fa; padding: 1.2rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                    <p style="margin: 0; font-size: 1.3rem; color: #555; line-height: 1.5; word-break: break-word;">${address}</p>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button id="saveAddressNo" style="flex: 1; padding: 1rem; font-size: 1.4rem; font-weight: 600; border: 2px solid #ddd; background: white; color: #666; border-radius: 8px; cursor: pointer; transition: all 0.2s ease;">
+                        Không, cảm ơn
+                    </button>
+                    <button id="saveAddressYes" style="flex: 1; padding: 1rem; font-size: 1.4rem; font-weight: 600; border: none; background: linear-gradient(135deg, #ff6347 0%, #ff4520 100%); color: white; border-radius: 8px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(255, 99, 71, 0.3);">
+                        Có, lưu ngay
+                    </button>
+                </div>
+            </div>
+        </div>
+        <style>
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes slideUp {
+                from { transform: translateY(20px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+            #saveAddressNo:hover {
+                background: #f8f9fa;
+                border-color: #999;
+                transform: translateY(-1px);
+            }
+            #saveAddressYes:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(255, 99, 71, 0.4);
+            }
+            #saveAddressNo:active, #saveAddressYes:active {
+                transform: translateY(0);
+            }
+        </style>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+    
+    const modal = document.getElementById('saveAddressModal');
+    const yesBtn = document.getElementById('saveAddressYes');
+    const noBtn = document.getElementById('saveAddressNo');
+    
+    yesBtn.addEventListener('click', async () => {
+        yesBtn.innerHTML = '<span style="opacity: 0.7;">Đang lưu...</span>';
+        yesBtn.disabled = true;
+        await saveDefaultUserInfo(userId, address, phone);
+        modal.style.animation = 'fadeOut 0.2s ease';
+        setTimeout(() => modal.remove(), 200);
+        showToast('Đã lưu địa chỉ mặc định!', 'success');
+    });
+    
+    noBtn.addEventListener('click', () => {
+        modal.style.animation = 'fadeOut 0.2s ease';
+        setTimeout(() => modal.remove(), 200);
+    });
+    
+    // Close on overlay click
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.animation = 'fadeOut 0.2s ease';
+            setTimeout(() => modal.remove(), 200);
+        }
+    });
 }

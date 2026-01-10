@@ -336,3 +336,129 @@
     text-transform: none;
     letter-spacing: 0;
 }
+
+/* Orders List Styling */
+.orders-container {
+    display: grid;
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.order-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem;
+    border: 1px solid #f0f0f0;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.order-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    border-color: var(--orange);
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #f5f5f5;
+}
+
+.order-id {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--black);
+}
+
+.order-id i {
+    color: var(--orange);
+    font-size: 1.8rem;
+}
+
+.order-status {
+    padding: 0.6rem 1.2rem;
+    border-radius: 20px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-warning {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.badge-info {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.badge-primary {
+    background: #cce5ff;
+    color: #004085;
+}
+
+.badge-success {
+    background: #d4edda;
+    color: #155724;
+}
+
+.badge-danger {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.badge-secondary {
+    background: #e2e3e5;
+    color: #383d41;
+}
+
+.order-body {
+    display: grid;
+    gap: 1rem;
+}
+
+.order-info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    font-size: 1.4rem;
+    color: #555;
+}
+
+.order-info-row i {
+    width: 2rem;
+    text-align: center;
+    color: var(--orange);
+    margin-top: 0.2rem;
+    flex-shrink: 0;
+}
+
+.order-info-row span {
+    flex: 1;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .order-card {
+        padding: 1.5rem;
+    }
+    
+    .order-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .order-status {
+        align-self: flex-start;
+    }
+}
