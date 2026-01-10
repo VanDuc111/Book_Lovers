@@ -23,12 +23,16 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
+
     // Load user info and cart items
     loadUserInfo();
     loadOrderItems(cartItemIDs);
 
     // Province/District/Ward cascading
     setupLocationSelectors();
+
+    // Address type selection
+    setupAddressSelection();
 
     // Place order button
     document.getElementById('place-order-btn').addEventListener('click', handlePlaceOrder);
@@ -42,10 +46,26 @@ async function loadUserInfo() {
         const user = await response.json();
         
         if (user) {
+            // Store user data globally
+            window.userData = user;
+            
+            // Fill form fields
             document.getElementById('fullName').value = user.name || '';
             document.getElementById('phone').value = user.phone || '';
             document.getElementById('email').value = user.email || '';
-            document.getElementById('address').value = user.address || '';
+            
+            // Show default address preview if exists
+            const defaultAddressPreview = document.getElementById('defaultAddressPreview');
+            if (user.address && user.phone) {
+                defaultAddressPreview.textContent = `${user.address} - ${user.phone}`;
+            } else if (user.address) {
+                defaultAddressPreview.textContent = user.address;
+            } else {
+                defaultAddressPreview.textContent = 'Chưa có địa chỉ mặc định';
+                // Auto select new address if no default
+                document.querySelector('input[name="addressType"][value="new"]').checked = true;
+                document.getElementById('newAddressFields').style.display = 'block';
+            }
         }
     } catch (error) {
         console.error('Error loading user info:', error);
@@ -177,19 +197,65 @@ function setupLocationSelectors() {
     });
 }
 
+// Setup address selection (default vs new)
+function setupAddressSelection() {
+    const addressTypeRadios = document.querySelectorAll('input[name="addressType"]');
+    const newAddressFields = document.getElementById('newAddressFields');
+    
+    addressTypeRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.value === 'new') {
+                newAddressFields.style.display = 'block';
+            } else {
+                newAddressFields.style.display = 'none';
+            }
+        });
+    });
+}
+
 // Handle place order
 async function handlePlaceOrder() {
+    // Get address type
+    const addressType = document.querySelector('input[name="addressType"]:checked')?.value;
+    
     // Validate form
     const fullName = document.getElementById('fullName').value.trim();
     const phone = document.getElementById('phone').value.trim();
-    const province = document.getElementById('province').value;
-    const district = document.getElementById('district').value;
-    const ward = document.getElementById('ward').value;
-    const address = document.getElementById('address').value.trim();
     const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value;
-
-    if (!fullName || !phone || !province || !district || !ward || !address) {
-        showToast('Vui lòng điền đầy đủ thông tin giao hàng', 'warning');
+    
+    let fullAddress;
+    let receiverPhone;
+    
+    if (addressType === 'default') {
+        // Use default address from user data
+        if (!window.userData || !window.userData.address) {
+            showToast('Bạn chưa có địa chỉ mặc định. Vui lòng chọn "Địa chỉ mới"', 'warning');
+            return;
+        }
+        fullAddress = window.userData.address;
+        receiverPhone = window.userData.phone || phone;
+    } else {
+        // Use new address from form
+        const province = document.getElementById('province').value;
+        const district = document.getElementById('district').value;
+        const ward = document.getElementById('ward').value;
+        const address = document.getElementById('address').value.trim();
+        
+        if (!province || !district || !ward || !address) {
+            showToast('Vui lòng điền đầy đủ thông tin giao hàng', 'warning');
+            return;
+        }
+        
+        // Build full address
+        const provinceText = document.getElementById('province').selectedOptions[0].text;
+        const districtText = document.getElementById('district').selectedOptions[0].text;
+        const wardText = document.getElementById('ward').selectedOptions[0].text;
+        fullAddress = `${address}, ${wardText}, ${districtText}, ${provinceText}`;
+        receiverPhone = phone;
+    }
+    
+    if (!fullName || !receiverPhone) {
+        showToast('Vui lòng điền đầy đủ thông tin người nhận', 'warning');
         return;
     }
 
@@ -199,17 +265,13 @@ async function handlePlaceOrder() {
     }
 
     // Phone validation
-    const phoneRegex = /^(0|\+84)[0-9]{9,10}$/;
-    if (!phoneRegex.test(phone)) {
+    const phoneRegex = /^(0|\\+84)[0-9]{9,10}$/;
+    if (!phoneRegex.test(receiverPhone)) {
         showToast('Số điện thoại không hợp lệ', 'warning');
         return;
     }
 
-    // Build full address
-    const provinceText = document.getElementById('province').selectedOptions[0].text;
-    const districtText = document.getElementById('district').selectedOptions[0].text;
-    const wardText = document.getElementById('ward').selectedOptions[0].text;
-    const fullAddress = `${address}, ${wardText}, ${districtText}, ${provinceText}`;
+
 
     const note = document.getElementById('note').value.trim();
 
@@ -225,7 +287,7 @@ async function handlePlaceOrder() {
         payment_method: paymentMethod,
         note: note,
         receiver_name: fullName,
-        receiver_phone: phone
+        receiver_phone: receiverPhone
     };
 
     // Disable button
@@ -245,6 +307,11 @@ async function handlePlaceOrder() {
         const data = await response.json();
 
         if (data.success || data.orderID) {
+            // Save default address if using new address
+            if (addressType === 'new') {
+                await saveDefaultUserInfo(userId, fullAddress, receiverPhone);
+            }
+
             showToast('Đặt hàng thành công!', 'success');
             
             // Redirect to order success page or profile
@@ -261,5 +328,23 @@ async function handlePlaceOrder() {
         showToast('Có lỗi xảy ra khi đặt hàng', 'danger');
         placeOrderBtn.disabled = false;
         placeOrderBtn.innerHTML = '<i class="fas fa-lock"></i> Đặt hàng';
+    }
+}
+
+// Save default user info (address and phone)
+async function saveDefaultUserInfo(userId, address, phone) {
+    try {
+        await fetch(`/api/users/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                address: address,
+                phone: phone
+            })
+        });
+    } catch (error) {
+        console.error('Error saving default user info:', error);
     }
 }

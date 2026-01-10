@@ -36,16 +36,37 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="province">Tỉnh/Thành phố <span class="required">*</span></label>
-                            <select id="province" class="form-control">
-                                <option value="">-- Chọn Tỉnh/Thành phố --</option>
-                                <option value="hanoi">Hà Nội</option>
-                                <option value="hcm">TP. Hồ Chí Minh</option>
-                                <option value="danang">Đà Nẵng</option>
-                                <option value="haiphong">Hải Phòng</option>
-                                <option value="cantho">Cần Thơ</option>
-                            </select>
+                            <label>Chọn địa chỉ giao hàng <span class="required">*</span></label>
+                            <div class="address-options">
+                                <label class="address-option">
+                                    <input type="radio" name="addressType" value="default" checked>
+                                    <div class="address-option-content">
+                                        <div class="address-option-title">Địa chỉ mặc định</div>
+                                        <div class="address-option-desc" id="defaultAddressPreview">Sử dụng địa chỉ đã lưu</div>
+                                    </div>
+                                </label>
+                                <label class="address-option">
+                                    <input type="radio" name="addressType" value="new">
+                                    <div class="address-option-content">
+                                        <div class="address-option-title">Địa chỉ mới</div>
+                                        <div class="address-option-desc">Nhập địa chỉ giao hàng mới</div>
+                                    </div>
+                                </label>
+                            </div>
                         </div>
+
+                        <div id="newAddressFields">
+                            <div class="form-group">
+                                <label for="province">Tỉnh/Thành phố <span class="required">*</span></label>
+                                <select id="province" class="form-control">
+                                    <option value="">-- Chọn Tỉnh/Thành phố --</option>
+                                    <option value="hanoi">Hà Nội</option>
+                                    <option value="hcm">TP. Hồ Chí Minh</option>
+                                    <option value="danang">Đà Nẵng</option>
+                                    <option value="haiphong">Hải Phòng</option>
+                                    <option value="cantho">Cần Thơ</option>
+                                </select>
+                            </div>
 
                         <div class="form-row">
                             <div class="form-group">
@@ -62,15 +83,18 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="address">Địa chỉ cụ thể <span class="required">*</span></label>
-                            <input type="text" id="address" class="form-control" placeholder="Số nhà, tên đường...">
+                            <div class="form-group">
+                                <label for="address">Địa chỉ cụ thể <span class="required">*</span></label>
+                                <input type="text" id="address" class="form-control" placeholder="Số nhà, tên đường...">
+                            </div>
                         </div>
 
                         <div class="form-group">
                             <label for="note">Ghi chú đơn hàng</label>
                             <textarea id="note" class="form-control" rows="3" placeholder="Ghi chú thêm (tùy chọn)..."></textarea>
                         </div>
+
+
                     </div>
                 </div>
 
@@ -143,7 +167,8 @@
                 <div class="summary-sticky">
                     <div class="checkout-card">
                         <div class="card-header">
-                            <i class="fas fa-shopping-bag"></i>
+                            <img src="{{ asset('assets/icons/shopping-bag.svg') }}"
+                             alt="Shopping Bag" class ="card-header-icon">
                             <h3>Đơn hàng của bạn</h3>
                         </div>
                         <div class="card-body">
@@ -176,7 +201,7 @@
                             </div>
 
                             <button class="btn-checkout" id="place-order-btn">
-                                <i class="fas fa-lock"></i>
+                                <img src="{{ asset('assets/icons/shopping-bag.svg') }}" alt="Shopping Bag" class="btn-icon">
                                 Đặt hàng
                             </button>
 
