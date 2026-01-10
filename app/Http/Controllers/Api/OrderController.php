@@ -22,7 +22,25 @@ class OrderController extends Controller
         if ($userID) {
             $query->where('userID', $userID);
         }
-        return response()->json($query->orderBy('order_date', 'desc')->get());
+        
+        // Get all orders with complete information
+        $orders = $query->orderBy('order_date', 'desc')->get();
+        
+        return response()->json($orders->map(function($order) {
+            return [
+                'orderID' => $order->orderID,
+                'userID' => $order->userID,
+                'order_date' => $order->order_date,
+                'total_amount' => $order->total_amount,
+                'shipping_address' => $order->shipping_address,
+                'receiver_name' => $order->receiver_name,
+                'receiver_phone' => $order->receiver_phone,
+                'payment_method' => $order->payment_method,
+                'note' => $order->note,
+                'order_status' => $order->order_status,
+                'user' => $order->user
+            ];
+        }));
     }
     
     // Checkout (Create Order)

@@ -962,15 +962,18 @@ document.addEventListener("DOMContentLoaded", () => {
                     <thead>
                       <tr>
                         <th>ID</th>
-                        <th>Người dùng</th>
-                        <th>Ngày đặt</th>
-                        <th>Tổng tiền</th>
+                        <th>User</th>
+                        <th>Ngày</th>
+                        <th>Tiền</th>
                         <th>Địa chỉ</th>
+                        <th>Người nhận</th>
+                        <th>SĐT</th>
+                        <th>TT</th>
+                        <th>Ghi chú</th>
                         <th>Trạng thái</th>
-                        <th>Hành động</th>
                       </tr>
                     </thead>
-                    <tbody>${renderSkeletonTable(5, 7)}</tbody>
+                    <tbody>${renderSkeletonTable(5, 10)}</tbody>
                   </table>
                 </div>
             </div>
@@ -1007,12 +1010,15 @@ document.addEventListener("DOMContentLoaded", () => {
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Người dùng (ID)</th>
-                <th>Ngày đặt</th>
-                <th>Tổng tiền</th>
-                <th>Địa chỉ giao hàng</th>
+                <th>User</th>
+                <th>Ngày</th>
+                <th>Tiền</th>
+                <th>Địa chỉ</th>
+                <th>Người nhận</th>
+                <th>SĐT</th>
+                <th>TT</th>
+                <th>Ghi chú</th>
                 <th>Trạng thái</th>
-                <th>Hành động</th>
               </tr>
             </thead>
             <tbody id="order-table-body"></tbody>
@@ -1048,19 +1054,42 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         if (filtered.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="7" class="text-center">Không tìm thấy kết quả.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="10" class="text-center">Không tìm thấy kết quả.</td></tr>`;
           return;
         }
 
         let rows = "";
         filtered.forEach((order) => {
+          // Format date compactly (dd/mm/yyyy HH:MM)
+          const date = new Date(order.order_date);
+          const formattedDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+          
+          // Format amount without decimals
+          const amount = Math.round(order.total_amount).toLocaleString('vi-VN');
+          
+          // Truncate long address
+          const address = order.shipping_address || "";
+          const shortAddress = address.length > 25 ? address.substring(0, 25) + '...' : address;
+          
+          // Truncate receiver name
+          const receiverName = order.receiver_name || "";
+          const shortReceiverName = receiverName.length > 15 ? receiverName.substring(0, 15) + '...' : receiverName;
+          
+          // Truncate note
+          const note = order.note || "";
+          const shortNote = note.length > 15 ? note.substring(0, 15) + '...' : note;
+          
           rows += `
-            <tr data-id="${order.orderID}">
+            <tr data-id="${order.orderID}" title="Địa chỉ: ${address}${note ? '\nGhi chú: ' + note : ''}">
               <td>${order.orderID}</td>
               <td>${order.userID}</td>
-              <td>${new Date(order.order_date).toLocaleString()}</td>
-              <td>${order.total_amount}</td>
-              <td>${order.shipping_address || ""}</td>
+              <td>${formattedDate}</td>
+              <td>${amount}</td>
+              <td title="${address}">${shortAddress}</td>
+              <td title="${receiverName}">${shortReceiverName}</td>
+              <td>${order.receiver_phone || ""}</td>
+              <td>${order.payment_method || "COD"}</td>
+              <td title="${note}">${shortNote}</td>
               <td>
                 <select class="form-control order-status-select" data-order-id="${
                   order.orderID
@@ -1081,11 +1110,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     order.order_status === "Cancelled" ? "selected" : ""
                   }>Đã hủy</option>
                 </select>
-              </td>
-              <td>
-                <button class="btn btn-sm btn-info viewOrderDetailsBtn" data-order-id="${
-                  order.orderID
-                }">Xem chi tiết</button>
               </td>
             </tr>`;
         });
