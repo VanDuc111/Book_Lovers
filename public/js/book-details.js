@@ -305,24 +305,25 @@ document.addEventListener("DOMContentLoaded", function () {
           if (Array.isArray(reviews) && reviews.length > 0) {
             reviews.forEach((rv) => {
               const item = document.createElement("div");
-              item.className = "d-flex mb-4";
+              item.className = "d-flex mb-4 pb-4";
+              item.style.borderBottom = "1px solid #f0f0f0";
               const leftCol = document.createElement("div");
-              leftCol.style.width = "120px";
+              leftCol.style.width = "140px";
               leftCol.style.textAlign = "left";
-              leftCol.innerHTML = `<div style="font-weight:700">${
+              leftCol.innerHTML = `<div style="font-weight:700; font-size:1.5rem; color:#333">${
                 (rv.userName || "Người dùng").split(" ")[0]
-              }</div><div style="color:#888;font-size:0.9rem">${new Date(
+              }</div><div style="color:#999; font-size:1.3rem">${new Date(
                 rv.created_at
               ).toLocaleDateString("vi-VN")}</div>`;
               const rightCol = document.createElement("div");
               rightCol.style.flex = "1";
-              rightCol.innerHTML = `<div class="mb-2"><span class="text-warning">${"★".repeat(
+              rightCol.innerHTML = `<div class="mb-2" style="font-size:1.8rem"><span class="text-warning">${"★".repeat(
                 rv.rating
               )}${"☆".repeat(
                 5 - rv.rating
-              )}</span></div><div style="color:#333;line-height:1.6">${
+              )}</span></div><div style="color:#333; line-height:1.7; font-size:1.5rem; margin-bottom:1rem">${
                 rv.comment ? escapeHtml(rv.comment) : ""
-              }</div><div class="mt-2" style="color:#777;font-size:0.95rem"><span class="me-3"><i class="fa fa-thumbs-up"></i> Thích</span><span><i class="fa fa-flag"></i> Báo cáo</span></div>`;
+              }</div><div class="mt-2" style="color:#999; font-size:1.3rem"><span class="me-3" style="cursor:pointer; transition: color 0.2s" onmouseover="this.style.color='#ff6347'" onmouseout="this.style.color='#999'"><i class="fa fa-heart"></i> <span class="like-count">0</span></span></div>`;
               item.appendChild(leftCol);
               item.appendChild(rightCol);
               list.appendChild(item);
@@ -333,6 +334,160 @@ document.addEventListener("DOMContentLoaded", function () {
           }
         })
         .catch((err) => console.error("Reviews load error", err));
+    }
+
+    // Check if user has purchased this book
+    function checkUserPurchased(bookId, userId) {
+      if (!userId) return;
+
+      fetch(`/api/purchased-books?userID=${userId}&bookID=${bookId}`)
+        .then(res => res.json())
+        .then(books => {
+          const writeReviewBtn = document.getElementById('write-review-btn');
+          const purchaseNote = document.getElementById('review-purchase-note');
+          
+          if (books && books.length > 0) {
+            // User has purchased this book - show write review button
+            if (writeReviewBtn) writeReviewBtn.style.display = 'inline-block';
+            if (purchaseNote) purchaseNote.style.display = 'none';
+          } else {
+            // User hasn't purchased - show purchase note
+            if (writeReviewBtn) writeReviewBtn.style.display = 'none';
+            if (purchaseNote) purchaseNote.style.display = 'block';
+          }
+        })
+        .catch(err => console.error('Error checking purchase:', err));
+    }
+
+    // Setup review form handlers
+    function setupReviewForm(bookId, userId) {
+      const writeReviewBtn = document.getElementById('write-review-btn');
+      const reviewForm = document.getElementById('write-review-form');
+      const cancelBtn = document.getElementById('cancel-review-btn');
+      const submitBtn = document.getElementById('submit-review-btn');
+      const starRatingInput = document.getElementById('star-rating-input');
+      const selectedRatingInput = document.getElementById('selected-rating');
+      const reviewComment = document.getElementById('review-comment');
+
+      // Show/hide form
+      if (writeReviewBtn) {
+        writeReviewBtn.addEventListener('click', () => {
+          reviewForm.style.display = 'block';
+          writeReviewBtn.style.display = 'none';
+        });
+      }
+
+      if (cancelBtn) {
+        cancelBtn.addEventListener('click', () => {
+          reviewForm.style.display = 'none';
+          writeReviewBtn.style.display = 'inline-block';
+          // Reset form
+          selectedRatingInput.value = '0';
+          reviewComment.value = '';
+          updateStarDisplay(0);
+        });
+      }
+
+      // Star rating interaction
+      if (starRatingInput) {
+        const stars = starRatingInput.querySelectorAll('i');
+        stars.forEach(star => {
+          star.addEventListener('click', function() {
+            const rating = parseInt(this.dataset.rating);
+            selectedRatingInput.value = rating;
+            updateStarDisplay(rating);
+          });
+
+          star.addEventListener('mouseenter', function() {
+            const rating = parseInt(this.dataset.rating);
+            highlightStars(rating);
+          });
+        });
+
+        starRatingInput.addEventListener('mouseleave', () => {
+          const currentRating = parseInt(selectedRatingInput.value) || 0;
+          highlightStars(currentRating);
+        });
+      }
+
+      function highlightStars(rating) {
+        const stars = starRatingInput.querySelectorAll('i');
+        stars.forEach((star, index) => {
+          if (index < rating) {
+            star.style.color = '#f4b400';
+          } else {
+            star.style.color = '#ddd';
+          }
+        });
+      }
+
+      function updateStarDisplay(rating) {
+        highlightStars(rating);
+      }
+
+      // Submit review
+      if (submitBtn) {
+        submitBtn.addEventListener('click', async () => {
+          const rating = parseInt(selectedRatingInput.value);
+          const comment = reviewComment.value.trim();
+
+          if (rating === 0) {
+            showToast('Vui lòng chọn số sao đánh giá', 'warning');
+            return;
+          }
+
+          if (!comment) {
+            showToast('Vui lòng nhập nhận xét của bạn', 'warning');
+            return;
+          }
+
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+
+          try {
+            const response = await fetch('/api/reviews', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                bookID: bookId,
+                userID: userId,
+                rating: rating,
+                comment: comment
+              })
+            });
+
+            const data = await response.json();
+
+            if (data.success || data.reviewID) {
+              showToast('Cảm ơn bạn đã đánh giá!', 'success');
+              // Reset form
+              reviewForm.style.display = 'none';
+              writeReviewBtn.style.display = 'none'; // Hide button after review
+              selectedRatingInput.value = '0';
+              reviewComment.value = '';
+              updateStarDisplay(0);
+              // Reload reviews
+              loadReviewsForBook(bookId);
+            } else {
+              showToast(data.error || 'Có lỗi xảy ra khi gửi đánh giá', 'danger');
+            }
+          } catch (error) {
+            console.error('Error submitting review:', error);
+            showToast('Có lỗi xảy ra khi gửi đánh giá', 'danger');
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Gửi đánh giá';
+          }
+        });
+      }
+    }
+
+    // Call check purchased and setup form if user is logged in
+    if (bookId && userId) {
+      checkUserPurchased(bookId, userId);
+      setupReviewForm(bookId, userId);
     }
 
     function escapeHtml(str) {

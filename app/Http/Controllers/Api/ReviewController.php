@@ -87,13 +87,13 @@ class ReviewController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'bookID' => 'required|exists:book,bookID',
-            'userID' => 'required|exists:user,userID',
+            'bookID' => 'required|exists:books,bookID',
+            'userID' => 'required|exists:users,userID',
             'rating' => 'required|integer|min:1|max:5',
         ]);
 
         $review = Review::create($request->all());
-        return response()->json(['message' => 'Review created', 'reviewID' => $review->reviewID]);
+        return response()->json(['success' => true, 'message' => 'Review created', 'reviewID' => $review->reviewID]);
     }
 
     public function destroy($id)

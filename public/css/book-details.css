@@ -88,11 +88,6 @@
   color: #dc3545;
 }
 
-#buyNowBtn:hover {
-  background: #c82333;
-  border-color: #bd2130;
-}
-
 /* Review & Rating Summary Section */
 .reviews-section {
   margin-top: 3rem;
@@ -139,6 +134,13 @@
   }
   #avg-rating-number {
     font-size: 2.6rem !important;
+  }
+  
+  /* Reduce book image height on mobile to show title better */
+  .book-details-image-section img {
+    max-height: 280px !important;
+    width: auto !important;
+    object-fit: contain !important;
   }
 }
 

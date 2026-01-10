@@ -112,7 +112,7 @@
                     </div>
                 </div>
 
-                <button type="button" class="btn save-profile-btn mt-4">
+                <button type="button" class="btn-main save-profile-btn mt-4">
                     <i class="fas fa-save me-2"></i> Lưu thay đổi
                 </button>
             </div>
@@ -200,7 +200,7 @@
                         <input type="password" id="new_password_confirmation" placeholder="Xác nhận mật khẩu mới">
                     </div>
 
-                    <button type="button" class="btn save-password-btn mt-3">
+                    <button type="button" class="btn-main save-password-btn mt-3">
                         <i class="fas fa-key me-2"></i> Cập nhật mật khẩu
                     </button>
                 </div>

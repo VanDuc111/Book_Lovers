@@ -125,6 +125,37 @@
               <a href="{{ url('login') }}">đăng nhập</a> hoặc
               <a href="{{ url('register') }}">đăng ký</a>.
             </div>
+            <div id="review-purchase-note" style="color: #666; text-align: right; display: none;">
+              Bạn cần mua sách này trước để có thể đánh giá.
+            </div>
+            <button id="write-review-btn" class="btn-main" style="display: none;">
+              <i class="fas fa-pen"></i> Viết đánh giá
+            </button>
+          </div>
+        </div>
+
+        <!-- Write Review Form (Hidden by default) -->
+        <div id="write-review-form" style="display: none; margin-top: 2rem; padding: 2rem; background: #f8f9fa; border-radius: 8px;">
+          <h4 style="margin-bottom: 1.5rem;">Đánh giá của bạn</h4>
+          <div class="mb-3">
+            <div id="star-rating-input" class="rating-stars-input" style="font-size: 2.5rem; color: #ddd; cursor: pointer;">
+              <i class="fa fa-star" data-rating="1"></i>
+              <i class="fa fa-star" data-rating="2"></i>
+              <i class="fa fa-star" data-rating="3"></i>
+              <i class="fa fa-star" data-rating="4"></i>
+              <i class="fa fa-star" data-rating="5"></i>
+            </div>
+            <input type="hidden" id="selected-rating" value="0">
+          </div>
+          <div class="mb-3">
+            <label for="review-comment" class="form-label fw-bold">Nhận xét của bạn:</label>
+            <textarea id="review-comment" class="form-control" rows="4" placeholder="Chia sẻ trải nghiệm của bạn về cuốn sách này..."></textarea>
+          </div>
+          <div class="d-flex gap-2">
+            <button id="submit-review-btn" class="btn-main">
+              <i class="fas fa-paper-plane"></i> Gửi đánh giá
+            </button>
+            <button id="cancel-review-btn" class="btn-secondary">Hủy</button>
           </div>
         </div>
 

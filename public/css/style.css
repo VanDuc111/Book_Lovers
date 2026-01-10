@@ -97,45 +97,95 @@ html {
 
 /* Bottom navbar removed */
 .btn {
-  color: #fff;
-  background: var(--orange);
-  font-size: 1.7rem;
-  font-weight: 500;
-  padding: 0.8rem 2.5rem;
-  border-radius: 0.5rem;
-  cursor: pointer;
   display: inline-block;
+  color: #fff;
+  background: linear-gradient(135deg, var(--orange) 0%, var(--dark-color) 100%);
+  font-size: 1.6rem;
+  font-weight: 600;
+  padding: 1.2rem 2.8rem;
+  border-radius: 50px;
+  cursor: pointer;
+  border: none;
+  text-align: center;
+  text-transform: none;
+  letter-spacing: 0.3px;
+  box-shadow: 0 6px 16px rgba(255, 99, 71, 0.3);
   transition: all 0.3s ease;
 }
 
 .btn:hover {
-  background: var(--dark-color);
-  letter-spacing: 0.1rem;
+  background: linear-gradient(135deg, var(--dark-color) 0%, #e63900 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(255, 99, 71, 0.4);
+  letter-spacing: 0.5px;
+  color: #fff;
+}
+
+.btn:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 99, 71, 0.3);
 }
 
 /* Common Premium Button Style */
 .btn-main {
     display: inline-block;
-    padding: 1.2rem 2.5rem;
-    font-weight: 700;
-    font-size: 1.4rem;
-    background: var(--orange);
+    padding: 1.2rem 2.8rem;
+    font-weight: 600;
+    font-size: 1.6rem;
+    background: linear-gradient(135deg, var(--orange) 0%, var(--dark-color) 100%);
     color: #fff !important;
     border: none;
-    border-radius: 8px;
-    box-shadow: 0 6px 16px rgba(255, 99, 71, 0.25);
-    transition: all 0.3s;
+    border-radius: 50px;
+    box-shadow: 0 6px 16px rgba(255, 99, 71, 0.3);
+    transition: all 0.3s ease;
     text-align: center;
     cursor: pointer;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    text-transform: none;
+    letter-spacing: 0.3px;
 }
 
 .btn-main:hover {
-    background: var(--dark-color);
+    background: linear-gradient(135deg, var(--dark-color) 0%, #e63900 100%);
     transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(255, 99, 71, 0.35);
+    box-shadow: 0 8px 20px rgba(255, 99, 71, 0.4);
     color: #fff !important;
+    letter-spacing: 0.5px;
+}
+
+.btn-main:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 99, 71, 0.3);
+}
+
+/* Secondary Button Style */
+.btn-secondary {
+    display: inline-block;
+    padding: 1.2rem 2.8rem;
+    font-weight: 600;
+    font-size: 1.6rem;
+    background: #f8f9fa;
+    color: #666 !important;
+    border: 2px solid #ddd;
+    border-radius: 50px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    text-align: center;
+    cursor: pointer;
+    text-transform: none;
+    letter-spacing: 0.3px;
+}
+
+.btn-secondary:hover {
+    background: #e9ecef;
+    border-color: #999;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    color: #444 !important;
+}
+
+.btn-secondary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 /* ==========================
@@ -498,14 +548,12 @@ select:focus,
   padding: 1.2rem 3.5rem;
   font-size: 1.8rem;
   border-radius: 3rem;
-  transition: 0.3s ease;
   box-shadow: 0 5px 15px rgba(255, 99, 71, 0.3);
 }
 
 .home .row .content .btn:hover {
   transform: translateY(-3px);
   box-shadow: 0 8px 20px rgba(255, 99, 71, 0.4);
-  background: var(--dark-color);
 }
 
 .home .row .home-books-list {

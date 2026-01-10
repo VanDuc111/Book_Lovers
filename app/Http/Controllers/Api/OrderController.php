@@ -125,29 +125,35 @@ class OrderController extends Controller
          return response()->json(['error' => 'ID required'], 400);
     }
     public function purchasedBooks(Request $request)
-    {
-        $userID = $request->userID;
-        if (!$userID) return response()->json(['error' => 'Missing userID'], 400);
+{
+    $userID = $request->userID;
+    if (!$userID) return response()->json(['error' => 'Missing userID'], 400);
 
-        // We need to join orders -> items -> books
-        // Assuming models are set up: Order hasMany items, Item belongsTo Book
-        // Or using DB facade for direct performance/simplicity matching legacy query
-        
-        $books = DB::table('orders')
-            ->join('order_items', 'orders.orderID', '=', 'order_items.orderID')
-            ->join('books', 'order_items.bookID', '=', 'books.bookID')
-            ->where('orders.userID', $userID)
-            ->select('books.bookID', 'books.title', 'books.author', 'books.bookPrice', 'books.image', 'orders.order_date')
-            ->distinct()
-            ->orderBy('orders.order_date', 'desc')
-            ->get();
-
-        $books->map(function ($book) {
-            $book->image = $this->fixImagePath($book->image);
-            return $book;
-        });
-
-        return response()->json($books);
+    // We need to join orders -> items -> books
+    // Assuming models are set up: Order hasMany items, Item belongsTo Book
+    // Or using DB facade for direct performance/simplicity matching legacy query
+    
+    $query = DB::table('orders')
+        ->join('order_items', 'orders.orderID', '=', 'order_items.orderID')
+        ->join('books', 'order_items.bookID', '=', 'books.bookID')
+        ->where('orders.userID', $userID);
+    
+    // Filter by specific bookID if provided (for checking if user purchased a specific book)
+    if ($request->has('bookID')) {
+        $query->where('books.bookID', $request->bookID);
     }
     
+    $books = $query
+        ->select('books.bookID', 'books.title', 'books.author', 'books.bookPrice', 'books.image', 'orders.order_date')
+        ->distinct()
+        ->orderBy('orders.order_date', 'desc')
+        ->get();
+
+    $books->map(function ($book) {
+        $book->image = $this->fixImagePath($book->image);
+        return $book;
+    });
+
+    return response()->json($books);
+}    
 }
