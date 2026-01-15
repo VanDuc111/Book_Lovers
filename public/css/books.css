@@ -13,7 +13,7 @@
   margin: 2rem 0;
   position: relative;
   overflow: hidden;
-  border-radius: 0.8rem;
+  border-radius: var(--radius-md);
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -25,7 +25,7 @@
 .daily-recommended .daily-recommended-list .box .image {
   padding: 1rem;
   border: none;
-  background: #f7f7f7;
+  background: var(--bg-light);
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -41,7 +41,7 @@
 .sach-van-hoc .sach-van-hoc-list .box .content,
 .daily-recommended .daily-recommended-list .box .content {
   padding: 1.5rem;
-  background: #fff;
+  background: var(--white);
   border: var(--border);
   border-top: 0;
   text-align: center;
@@ -49,13 +49,13 @@
 
 .sach-van-hoc .sach-van-hoc-list .box .content h3,
 .daily-recommended .daily-recommended-list .box .content h3 {
-  font-size: 1.2rem;
+  font-size: var(--fs-xs);
   color: var(--black);
 }
 
 .sach-van-hoc .sach-van-hoc-list .box .content .price,
 .daily-recommended .daily-recommended-list .box .content .price {
-  font-size: 1.2rem;
+  font-size: var(--fs-xs);
   color: var(--light-color);
   padding-top: 0.5rem;
 }
@@ -70,16 +70,16 @@
 .card,
 .sach-van-hoc .sach-van-hoc-list .box,
 .daily-recommended .daily-recommended-list .box {
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
-  border: 0.06rem solid rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-light);
+  border: var(--border);
 }
 
 /* Slider Row Specific Hover effects */
 .sach-van-hoc .sach-van-hoc-list .box,
 .daily-recommended .daily-recommended-list .box {
-  transition: transform 220ms ease, box-shadow 220ms ease;
+  transition: var(--transition);
   overflow: hidden;
-  border-radius: 0.8rem;
+  border-radius: var(--radius-md);
 }
 
 .sach-van-hoc .sach-van-hoc-list .box .image,
@@ -106,7 +106,7 @@
 .sach-van-hoc .sach-van-hoc-list .box:hover,
 .daily-recommended .daily-recommended-list .box:hover {
   transform: translateY(-6px);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-premium);
 }
 
 .sach-van-hoc .sach-van-hoc-list .box:hover .image img,

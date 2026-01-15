@@ -8,10 +8,10 @@
     max-width: 90%;
     margin: 5rem auto;
     padding: 2.5rem;
-    border: var(--border, 0.1rem solid rgba(0, 0, 0, 0.1));
-    border-radius: 0.8rem;
-    background: #fff;
-    box-shadow: var(--box-shadow, 0 0.5rem 1rem rgba(0, 0, 0, 0.1));
+    border: var(--border);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    box-shadow: var(--box-shadow);
 }
 
 .form-container h2 {
@@ -26,8 +26,8 @@
 .form-container label {
     display: block;
     margin-bottom: 0.8rem;
-    font-size: 1.4rem;
-    color: var(--black, #444);
+    font-size: var(--fs-sm);
+    color: var(--black);
     font-weight: 500;
 }
 
@@ -37,10 +37,10 @@
     width: 100%;
     padding: 1.2rem;
     margin-bottom: 2rem;
-    border: var(--border, 0.1rem solid rgba(0, 0, 0, 0.1));
-    border-radius: 0.5rem;
-    font-size: 1.5rem;
-    color: var(--black, #444);
+    border: var(--border);
+    border-radius: var(--radius-sm);
+    font-size: var(--fs-base);
+    color: var(--black);
 }
 
 .form-container button[type="submit"], 
@@ -67,8 +67,8 @@
 .form-container p {
     text-align: center;
     margin-top: 2rem;
-    font-size: 1.4rem;
-    color: var(--light-color, #666);
+    font-size: var(--fs-sm);
+    color: var(--light-color);
 }
 
 .form-container p a {

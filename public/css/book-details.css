@@ -7,7 +7,7 @@
   background: transparent;
   padding: 0;
   margin-bottom: 2rem;
-  font-size: 1.3rem;
+  font-size: var(--fs-xs);
 }
 
 .breadcrumb-item a {
@@ -22,22 +22,22 @@
 /* Modular Sections (Image & Info Blocks) */
 .book-details-image-section,
 .book-details-info-section {
-  border: 1px solid #f0f0f0;
-  transition: transform 0.3s ease;
-  background: #fff;
+  border: var(--border);
+  transition: var(--transition);
+  background: var(--white);
 }
 
 .book-title {
   line-height: 1.3;
   margin-top: 0;
-  font-size: 2.4rem;
+  font-size: var(--fs-h3);
   font-weight: 600;
-  color: #333;
+  color: var(--black);
 }
 
 /* Quantity Selector Component */
 .quantity-selector {
-  background: #fff;
+  background: var(--white);
   max-width: fit-content;
   display: flex;
   align-items: stretch;
@@ -65,7 +65,7 @@
   border-bottom: none !important;
   border-left: 1px solid #ececec !important;
   border-right: 1px solid #ececec !important;
-  background: #fff;
+  background: var(--white);
   width: 50px;
   height: auto;
   font-weight: 600;
@@ -97,13 +97,13 @@
 }
 
 #avg-rating-suffix {
-  font-size: 1.4rem;
+  font-size: var(--fs-sm);
   font-weight: 400;
 }
 
 #avg-stars i {
-  font-size: 1.6rem;
-  color: #f4b400;
+  font-size: var(--fs-base);
+  color: var(--rating-star, #f4b400);
   margin-right: 4px;
 }
 
@@ -128,7 +128,6 @@
     font-size: 2.6rem !important;
   }
   
-  /* Reduce book image height on mobile to show title better */
   .book-details-image-section img {
     max-height: 280px !important;
     width: auto !important;
@@ -140,19 +139,18 @@
 .related-books-wrapper {
   margin-top: 3rem;
   padding: 2.5rem;
-  background: #fff;
-  border: 1px solid #f0f0f0;
-  border-radius: 1.2rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  background: var(--white);
+  border: var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--box-shadow);
 }
 
-/* Enhancing standard book-card within the related books wrapper */
 .related-books-wrapper .book-card {
   padding: 0.8rem;
 }
 
 .related-books-wrapper .card {
-  border: 1px solid #f0f0f0;
+  border: var(--border);
 }
 
 /* Sync "View All" button with site premium style */
@@ -161,12 +159,12 @@
   font-weight: 600 !important;
   padding: 0.7rem 2.2rem !important;
   margin-top: 0 !important;
-  border-radius: 50px !important;
+  border-radius: var(--radius-pill) !important;
   text-decoration: none !important;
 }
 
 @media (max-width: 450px) {
-  /* No special stacking needed for header anymore as button moved to bottom */
+  
 }
 
 /* Animations */

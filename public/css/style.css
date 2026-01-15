@@ -1,34 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
+/* [Global Variables moved to variables.css] */
 
-/* ==========================
-    Variables
-    --------------------------
-    CSS custom properties and global constants
-    ========================== */
-:root {
-  --orange: #ff6347;
-  --blue: #5e5ef9;
-  --dark-color: #ff4500;
-  --black: #444;
-  --light-color: #666;
-  --border: 0.1rem solid rgba(0, 0, 0, 0.1);
-  --border-hover: 0.2rem solid var(--blue);
-  --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
-  /* Layout & sizing */
-  --spacing: 1.6rem;
-  --card-img-h: 26rem;
-
-  /* Buttons */
-  --btn-padding-vertical: 0.9rem;
-  --btn-padding-horizontal: 1.4rem;
-  --btn-font-size: 1.05rem;
-  --btn-radius: 0.8rem;
-  --btn-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
-  /* Scrollbar vars (merged from later block) */
-  --scroll-track: #f3f4f6;
-  --scroll-thumb: rgba(94, 94, 249, 0.16);
-  --scroll-thumb-hover: rgba(94, 94, 249, 0.28);
-}
 
 /* ==========================
     Base / Reset
@@ -41,7 +12,9 @@
   text-decoration: none;
   outline: none;
   border: none;
-  transition: all 0.2s linear;
+  transition: var(--transition);
+  transition-property: all;
+  transition-duration: 0.2s;
   transition: width none;
 }
 
@@ -66,8 +39,8 @@ html {
 }
 .no-data {
   text-align: center;
-  padding: 2rem;
-  color: #666;
+  padding: 2.2rem;
+  color: var(--light-color);
 }
 
 .rating-stars {
@@ -81,12 +54,12 @@ html {
 }
 
 .rating-stars .fa-star.checked {
-  color: #ffc107 !important;
+  color: var(--rating-star, #ffc107) !important;
 }
 .rating-stars .fa-star.checked svg,
 .rating-stars .fa-star.checked * {
-  fill: #ffc107 !important;
-  color: #ffc107 !important;
+  fill: var(--rating-star, #ffc107) !important;
+  color: var(--rating-star, #ffc107) !important;
 }
 
 .rating-stars.static {
@@ -98,19 +71,19 @@ html {
 /* Bottom navbar removed */
 .btn {
   display: inline-block;
-  color: #fff;
+  color: var(--white);
   background: linear-gradient(135deg, var(--orange) 0%, var(--dark-color) 100%);
-  font-size: 1.6rem;
+  font-size: var(--fs-large, 1.6rem);
   font-weight: 600;
-  padding: 1.2rem 2.8rem;
-  border-radius: 50px;
+  padding: var(--btn-padding-vertical) var(--btn-padding-horizontal);
+  border-radius: var(--radius-pill);
   cursor: pointer;
   border: none;
   text-align: center;
   text-transform: none;
   letter-spacing: 0.3px;
   box-shadow: 0 6px 16px rgba(255, 99, 71, 0.3);
-  transition: all 0.3s ease;
+  transition: var(--transition);
 }
 
 .btn:hover {
@@ -133,11 +106,11 @@ html {
     font-weight: 600;
     font-size: 1.6rem;
     background: linear-gradient(135deg, var(--orange) 0%, var(--dark-color) 100%);
-    color: #fff !important;
+    color: var(--white) !important;
     border: none;
-    border-radius: 50px;
+    border-radius: var(--radius-pill);
     box-shadow: 0 6px 16px rgba(255, 99, 71, 0.3);
-    transition: all 0.3s ease;
+    transition: var(--transition);
     text-align: center;
     cursor: pointer;
     text-transform: none;
@@ -160,15 +133,15 @@ html {
 /* Secondary Button Style */
 .btn-secondary {
     display: inline-block;
-    padding: 1.2rem 2.8rem;
+    padding: var(--btn-padding-vertical) var(--btn-padding-horizontal);
     font-weight: 600;
-    font-size: 1.6rem;
-    background: #f8f9fa;
-    color: #666 !important;
-    border: 2px solid #ddd;
-    border-radius: 50px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
+    font-size: var(--fs-large, 1.6rem);
+    background: var(--bg-light);
+    color: var(--light-color) !important;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-pill);
+    box-shadow: var(--shadow-light);
+    transition: var(--transition);
     text-align: center;
     cursor: pointer;
     text-transform: none;
@@ -226,6 +199,8 @@ input[type="submit"],
   background: var(--orange);
   color: var(--black);
   padding: 0.5rem 1.5rem;
+  font-size: var(--fs-h2, 2rem);
+  border-radius: var(--radius-sm);
 }
 
 .daily-recommended .daily-recommended-list {
@@ -233,11 +208,9 @@ input[type="submit"],
 }
 
 .daily-recommended .daily-recommended-list .box {
-  width: 25rem;
-  margin: 2rem 0;
   position: relative;
   overflow: hidden;
-  border-radius: 0.8rem;
+  border-radius: var(--radius-md);
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -439,7 +412,7 @@ body {
   }
 
   .home {
-    background: #f8f9fa !important;
+    background: var(--bg-gray) !important;
     background-image: none !important;
     padding: 4rem 2rem;
     height: auto !important;

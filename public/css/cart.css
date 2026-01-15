@@ -5,16 +5,16 @@
 }
 
 .cart-title {
-    font-size: 2.4rem;
+    font-size: var(--fs-h3);
     font-weight: 700;
     margin-bottom: 2rem;
     color: var(--black);
 }
 
 .cart-table-wrapper {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-light);
     overflow: hidden;
     margin-bottom: 2rem;
 }
@@ -24,21 +24,21 @@
 }
 
 table.cart-table thead th {
-    background: #fbfbfb;
+    background: var(--border-color-light);
     padding: 1.2rem 0.5rem;
-    font-size: 1.3rem !important;
-    color: #777;
+    font-size: var(--fs-xs) !important;
+    color: var(--light-color);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    border-bottom: 1px solid #eee;
+    border-bottom: var(--border);
     white-space: nowrap;
 }
 
 .cart-table tbody td {
     padding: 1.5rem 1rem;
     vertical-align: middle;
-    border-bottom: 1px solid #f5f5f5;
+    border-bottom: 1px solid var(--border-color-light);
 }
 
 /* Responsive for Mobile */
@@ -66,11 +66,11 @@ table.cart-table thead th {
     }
 
     .cart-table tr {
-        background: #fff;
-        border-radius: 12px;
+        background: var(--white);
+        border-radius: var(--radius-lg);
         padding: 1.2rem;
         margin-bottom: 1.2rem;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        box-shadow: var(--shadow-premium);
         position: relative;
     }
 
@@ -140,10 +140,10 @@ table.cart-table thead th {
         right: 0 !important;
         z-index: 9999 !important;
         border-radius: 20px 20px 0 0 !important;
-        box-shadow: 0 -10px 30px rgba(0,0,0,0.15) !important;
+        box-shadow: var(--shadow-medium) !important;
         padding: 1.2rem 1.5rem !important;
         margin: 0 !important;
-        background: #fff !important;
+        background: var(--white) !important;
         top: auto !important;
         width: 100% !important;
     }
@@ -174,16 +174,16 @@ table.cart-table thead th {
     width: 80px;
     height: 110px;
     object-fit: cover;
-    border-radius: 6px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-light);
 }
 
 .cart-item-title {
     color: var(--black);
     font-weight: 600;
-    font-size: 1.2rem;
+    font-size: var(--fs-xs);
     text-decoration: none;
-    transition: color 0.2s;
+    transition: var(--transition-fast);
 }
 
 .cart-item-title:hover {
@@ -198,7 +198,7 @@ table.cart-table thead th {
 .cart-item-subtotal {
     font-weight: 700;
     color: var(--orange);
-    font-size: 1.1rem;
+    font-size: var(--fs-sm);
 }
 
 /* Custom checkbox */
@@ -213,8 +213,8 @@ table.cart-table thead th {
 .quantity-control {
     display: flex;
     align-items: center;
-    border: 1px solid #ddd;
-    border-radius: 6px;
+    border: var(--border);
+    border-radius: var(--radius-sm);
     width: fit-content;
 }
 
@@ -279,20 +279,20 @@ table.cart-table thead th {
 
 /* Summary section */
 .cart-summary-card {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-light);
     padding: 2rem;
     position: sticky;
     top: 100px;
 }
 
 .summary-title {
-    font-size: 1.4rem;
+    font-size: var(--fs-sm);
     font-weight: 700;
     margin-bottom: 1.5rem;
     color: var(--black);
-    border-bottom: 2px solid #eee;
+    border-bottom: 2px solid var(--border-color-light);
     padding-bottom: 0.8rem;
 }
 
@@ -300,14 +300,14 @@ table.cart-table thead th {
     display: flex;
     justify-content: space-between;
     margin-bottom: 1rem;
-    font-size: 1.1rem;
+    font-size: var(--fs-sm);
 }
 
 .summary-total {
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--border-color-light);
     padding-top: 1rem;
     margin-top: 1rem;
-    font-size: 1.6rem;
+    font-size: var(--fs-large);
     font-weight: 800;
     color: var(--orange);
 }

@@ -10,23 +10,23 @@
 .card {
     height: 100%;
     border: none;
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     overflow: hidden;
-    background: #fff;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
+    background: var(--white);
+    box-shadow: var(--shadow-light);
+    transition: var(--transition);
     cursor: pointer;
 }
 
 .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-premium);
 }
 
 .card-img-top {
     height: 24rem;
     object-fit: cover;
-    transition: transform 0.5s ease;
+    transition: var(--transition);
 }
 
 .card:hover .card-img-top {

@@ -16,10 +16,10 @@
     padding: 2.5rem;
     position: sticky;
     top: 10rem;
-    background: rgba(255, 255, 255, 0.9) !important;
+    background: var(--bg-glass) !important;
     backdrop-filter: blur(15px);
-    border-radius: 1.5rem;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-medium);
 }
 
 .user-profile-header {
@@ -27,7 +27,7 @@
     margin-bottom: 3rem;
     padding: 2rem;
     background: rgba(255, 255, 255, 0.6);
-    border-radius: 1.2rem;
+    border-radius: var(--radius-lg);
     border: 1px solid rgba(255,255,255,0.8);
 }
 
@@ -43,7 +43,7 @@
     height: 100%;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #fff;
+    border: 3px solid var(--white);
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
@@ -65,14 +65,14 @@
 }
 
 .user-profile-header h3 {
-    font-size: 1.8rem;
+    font-size: var(--fs-md);
     font-weight: 700;
     color: var(--black);
     margin-bottom: 0.5rem;
 }
 
 .user-profile-header p {
-    font-size: 1.3rem;
+    font-size: var(--fs-sm);
     color: var(--light-color);
 }
 
@@ -87,13 +87,13 @@
     align-items: center;
     gap: 1.2rem;
     padding: 1.2rem 1.5rem;
-    border-radius: 1rem;
+    border-radius: var(--radius-md);
     font-size: 1.5rem;
     font-weight: 500;
     color: var(--black);
     background: rgba(255, 255, 255, 0.5);
     margin-bottom: 0.8rem;
-    transition: 0.3s;
+    transition: var(--transition);
     cursor: pointer;
     border: 1px solid rgba(255,255,255,0.3);
 }
@@ -113,7 +113,7 @@
 
 .profile-nav-item.active {
     background: var(--orange);
-    color: #fff;
+    color: var(--white);
     box-shadow: 0 4px 15px rgba(255, 99, 71, 0.3);
 }
 
@@ -134,8 +134,8 @@
     display: none;
     padding: 4rem;
     background: rgba(255, 255, 255, 0.95) !important;
-    border-radius: 1.5rem;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-medium);
 }
 
 .content-pane.active {
@@ -153,7 +153,7 @@
 }
 
 .content-header h2 {
-    font-size: 3rem;
+    font-size: var(--fs-h2);
     color: var(--black);
     text-align: left;
     margin-bottom: 0.5rem;
@@ -161,7 +161,7 @@
 }
 
 .content-header p {
-    font-size: 1.4rem;
+    font-size: var(--fs-sm);
     color: var(--light-color);
 }
 
@@ -191,17 +191,17 @@
 .form-group input {
     width: 100%;
     padding: 1.2rem 1.5rem;
-    border-radius: 1rem;
-    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: var(--radius-md);
+    border: var(--border);
     font-size: 1.5rem;
     background: rgba(255,255,255,0.8);
-    transition: 0.3s;
+    transition: var(--transition);
 }
 
 .form-group input:focus {
     border-color: var(--orange);
-    background: #fff;
-    box-shadow: 0 0 0 4px rgba(255, 99, 71, 0.1);
+    background: var(--white);
+    box-shadow: var(--focus-shadow);
 }
 
 .form-group input[readonly] {
@@ -245,20 +245,20 @@
 }
 
 .purchased-book-card {
-    background: #fff;
-    border-radius: 12px;
+    background: var(--white);
+    border-radius: var(--radius-lg);
     padding: 1.5rem;
     height: 100%;
     display: flex;
     flex-direction: column;
-    border: 1px solid #f0f0f0;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+    box-shadow: var(--shadow-light);
 }
 
 .purchased-book-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.08);
+    box-shadow: var(--shadow-premium);
     border-color: var(--orange);
 }
 
@@ -267,7 +267,7 @@
     width: 100%;
     aspect-ratio: 2/3;
     margin-bottom: 1.5rem;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     overflow: hidden;
     background: #f8f9fa;
 }
@@ -287,7 +287,7 @@
 }
 
 .p-book-title {
-    font-size: 1.5rem;
+    font-size: var(--fs-base);
     font-weight: 700;
     color: var(--black);
     margin-bottom: 0.5rem;
@@ -301,13 +301,13 @@
 }
 
 .p-book-author {
-    font-size: 1.3rem;
+    font-size: var(--fs-sm);
     color: var(--light-color);
     margin-bottom: 0.5rem;
 }
 
 .p-book-price {
-    font-size: 1.4rem;
+    font-size: var(--fs-sm);
     font-weight: 700;
     color: var(--orange);
     margin-bottom: 1rem;
@@ -318,10 +318,10 @@
 
 .p-book-date {
     margin-top: auto;
-    font-size: 1.2rem;
+    font-size: var(--fs-xs);
     padding-top: 1rem;
-    border-top: 1px solid #f5f5f5;
-    color: #888;
+    border-top: 1px solid var(--border-color-light);
+    color: var(--muted-color);
     display: flex;
     align-items: center;
     gap: 0.6rem;
@@ -355,17 +355,17 @@
 }
 
 .order-card {
-    background: #fff;
-    border-radius: 12px;
+    background: var(--white);
+    border-radius: var(--radius-lg);
     padding: 2rem;
-    border: 1px solid #f0f0f0;
-    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
     box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .order-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    box-shadow: var(--shadow-premium);
     border-color: var(--orange);
 }
 
@@ -375,7 +375,7 @@
     align-items: center;
     margin-bottom: 1.5rem;
     padding-bottom: 1.5rem;
-    border-bottom: 2px solid #f5f5f5;
+    border-bottom: 2px solid var(--border-color-light);
 }
 
 .order-id {
@@ -395,7 +395,7 @@
 .order-status {
     padding: 0.6rem 1.2rem;
     border-radius: 20px;
-    font-size: 1.2rem;
+    font-size: var(--fs-xs);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -418,12 +418,12 @@
 
 .badge-success {
     background: #d4edda;
-    color: #155724;
+    color: var(--success);
 }
 
 .badge-danger {
     background: #f8d7da;
-    color: #721c24;
+    color: var(--error);
 }
 
 .badge-secondary {

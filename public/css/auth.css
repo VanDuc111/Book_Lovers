@@ -10,15 +10,15 @@ textarea:focus,
 select:focus,
 .header .header-1 .from-box:focus-within {
   border-color: var(--orange) !important;
-  background-color: #fff;
-  box-shadow: 0 0 0 4px rgba(255, 99, 71, 0.1) !important;
+  background-color: var(--white);
+  box-shadow: var(--focus-shadow) !important;
   outline: none !important;
-  transition: all 0.3s ease;
+  transition: var(--transition);
 }
 
 /* Specific adjustment for header search box wrapper */
 .header .header-1 .from-box {
-  transition: all 0.3s ease;
+  transition: var(--transition);
 }
 
 .login-form-container {
@@ -40,10 +40,10 @@ select:focus,
 .login-form-container form {
   width: 40rem;
   border: var(--border);
-  background: #ffffff;
+  background: var(--white);
   padding: 2rem;
   margin: 2rem;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
   box-shadow: var(--box-shadow);
 }
 
@@ -55,7 +55,7 @@ select:focus,
 }
 
 .login-form-container form span {
-  font-size: 1.5rem;
+  font-size: var(--fs-base);
   color: var(--black);
   display: block;
   margin-top: 1rem;
@@ -64,11 +64,11 @@ select:focus,
 .login-form-container form .box {
   margin-top: 1rem;
   padding: 1rem 1.2rem;
-  font-size: 1.6rem;
+  font-size: var(--fs-base);
   color: var(--black);
   text-decoration: none;
   border: var(--border);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
   width: 100%;
 }
 
@@ -80,7 +80,7 @@ select:focus,
 }
 
 .login-form-container form .check-box label {
-  font-size: 1.5rem;
+  font-size: var(--fs-base);
   color: var(--light-color);
   cursor: pointer;
 }
@@ -99,7 +99,7 @@ select:focus,
 .login-form-container form p {
   display: inline-block;
   color: var(--black);
-  font-size: 1.5rem;
+  font-size: var(--fs-base);
 }
 
 .login-form-container form p a {
@@ -147,10 +147,10 @@ select:focus,
 .register-form-container form {
   width: 40rem;
   border: var(--border);
-  background: #ffffff;
+  background: var(--white);
   padding: 2rem;
   margin: 2rem;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
   box-shadow: var(--box-shadow);
 }
 
@@ -178,7 +178,7 @@ select:focus,
   color: var(--black);
   text-decoration: none;
   border: var(--border);
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
   width: 100%;
 }
 
@@ -244,7 +244,7 @@ select:focus,
   transform: translateY(-50%);
   background: transparent;
   border: none;
-  font-size: 1.2rem;
+  font-size: var(--fs-xs);
   color: var(--black);
   cursor: pointer;
   padding: 0.4rem;
@@ -254,7 +254,7 @@ select:focus,
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-sm);
   box-shadow: none !important;
   background: rgba(255, 255, 255, 0);
 }
