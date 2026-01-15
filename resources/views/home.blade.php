@@ -4,7 +4,7 @@
 
 @section('content')
     <!-- home section start -->
-    <section class="home" id="home">
+    <section class="home book-slider" id="home">
       <div class="row align-items-center">
         <div class="col-md-5 content">
           <h3>Ưu đãi lên đến 30%!</h3>
@@ -24,7 +24,7 @@
     <!-- home section ends -->
 
     <!-- sach-van-hoc section start -->
-    <section class="sach-van-hoc container" id="sach-van-hoc">
+    <section class="sach-van-hoc container book-slider" id="sach-van-hoc">
       <div class="heading"><span>Sách Thể Loại Văn Học</span></div>
 
       <div class="sach-van-hoc-list swiper">
@@ -40,7 +40,7 @@
     <!-- sach-van-hoc section ends -->
 
     <!-- daily-recommended section start -->
-    <section class="daily-recommended container" id="daily-recommended">
+    <section class="daily-recommended container book-slider" id="daily-recommended">
       <div class="heading"><span>Gợi Ý Hôm Nay</span></div>
       <div class="daily-recommended-list swiper">
         <div class="swiper-wrapper" id="daily-recommended-container">

@@ -1,0 +1,282 @@
+/* ==========================
+    Home Hero Section
+   ========================== */
+.home {
+  background: url('../assets/images/hero-bg.svg') no-repeat center right;
+  background-size: cover;
+  height: 57.2rem;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 0 9%;
+}
+
+.home::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0.95) 20%, rgba(255,255,255,0.2) 100%);
+  z-index: 1;
+}
+
+.home .row {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
+
+.home .row .content {
+  padding: 1rem 0;
+}
+
+.home .row .home-books-list {
+  padding: 0 1rem;
+  margin-top: 4rem;
+  flex: 1 1 42rem;
+  text-align: center;
+  overflow: hidden; 
+  height: 40rem; 
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 15%, black 100%);
+}
+
+.home .row .home-books-list .swiper-slide {
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  transform: scale(0.85);
+  opacity: 0.6;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-bottom: 2rem;
+}
+
+.home .row .home-books-list .swiper-slide-active {
+  transform: scale(1.15);
+  opacity: 1;
+  z-index: 10;
+}
+
+.home .row .home-books-list a img {
+  height: 32rem;
+  width: auto;
+  max-width: 100%;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  border-radius: 0.4rem;
+  display: block;
+  object-fit: contain;
+  background: transparent;
+}
+
+.home .row .content {
+  flex: 1 1 42rem;
+}
+
+.home .row .content h3 {
+  color: var(--black);
+  font-size: 4.5rem;
+}
+
+.home .row .content p {
+  color: var(--light-color);
+  font-size: 1.8rem;
+  line-height: 2;
+  padding: 1rem 0;
+}
+
+.home .row .content .btn {
+  margin-top: 1rem;
+  padding: 1.2rem 3.5rem;
+  font-size: 1.8rem;
+  border-radius: 3rem;
+  box-shadow: 0 5px 15px rgba(255, 99, 71, 0.3);
+}
+
+.home .row .content .btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(255, 99, 71, 0.4);
+}
+
+.home .row .home-books-list a:hover img {
+  transform: scale(1.1);
+}
+
+.home .row .home-books-list .stand {
+  width: 100%;
+  margin-top: -2rem;
+}
+
+@media (max-width: 768px) {
+  .home .row .content h3 {
+    color: var(--black);
+    font-size: 3.5rem;
+  }
+
+  .home .row .content {
+    text-align: center;
+  }
+}
+
+/* ==========================
+    Headings
+   ========================== */
+.heading {
+  text-align: left;
+  margin-bottom: 5rem;
+  position: relative;
+  padding-bottom: 1rem;
+  font-size: 3rem;
+  color: var(--orange);
+}
+
+.heading::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 100%;
+  height: 0.01rem;
+  background: rgba(0, 0, 0, 0.1);
+  z-index: -1;
+}
+
+.heading span {
+  background: var(--orange);
+  color: var(--black);
+  padding: 0.5rem 1.5rem;
+  border-radius: 0.6rem;
+  border: var(--border);
+  font-size: 2rem;
+}
+
+.sach-van-hoc .heading span,
+.daily-recommended .heading span,
+.home .heading span {
+  font-size: 2rem;
+  padding: 0.6rem 1.2rem;
+}
+
+/* ==========================
+    Specific Book Row Sections
+   ========================== */
+.sach-van-hoc .sach-van-hoc-list,
+.daily-recommended .daily-recommended-list {
+  padding-bottom: 3rem;
+}
+
+.sach-van-hoc .sach-van-hoc-list .box,
+.daily-recommended .daily-recommended-list .box {
+  width: 25rem;
+  margin: 2rem 0;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 42rem;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+  border: 0.06rem solid rgba(0, 0, 0, 0.04);
+}
+
+.sach-van-hoc .sach-van-hoc-list .box .image,
+.daily-recommended .daily-recommended-list .box .image {
+  padding: 1rem;
+  border: none;
+  background: #f7f7f7;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.sach-van-hoc .sach-van-hoc-list .box .image img,
+.daily-recommended .daily-recommended-list .box .image img {
+  height: var(--card-img-h);
+  width: 100%;
+  object-fit: cover;
+}
+
+.sach-van-hoc .sach-van-hoc-list .box .content,
+.daily-recommended .daily-recommended-list .box .content {
+  padding: 1.5rem;
+  background: #fff;
+  border: var(--border);
+  border-top: 0;
+  text-align: center;
+}
+
+.sach-van-hoc .sach-van-hoc-list .box .content h3,
+.daily-recommended .daily-recommended-list .box .content h3 {
+  font-size: 1.2rem;
+  color: var(--black);
+}
+
+.sach-van-hoc .sach-van-hoc-list .box .content .price,
+.daily-recommended .daily-recommended-list .box .content .price {
+  font-size: 1.2rem;
+  color: var(--light-color);
+  padding-top: 0.5rem;
+}
+
+.sach-van-hoc .sach-van-hoc-list .box .content .price span,
+.daily-recommended .daily-recommended-list .box .content .price span {
+  color: var(--light-color);
+  font-size: 0.8rem;
+  text-decoration: line-through;
+}
+
+/* ==========================
+    Swiper Navigation Buttons
+   ========================== */
+.swiper-button-next,
+.swiper-button-prev {
+  width: 4.8rem;
+  height: 4.8rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--blue);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  border: 0.06rem solid rgba(0, 0, 0, 0.06);
+  z-index: 2000;
+  transition: transform 160ms ease, background-color 160ms ease, color 160ms ease;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 1.6rem;
+  color: currentColor;
+}
+
+.swiper-button-prev {
+  left: 1rem;
+}
+
+.swiper-button-next {
+  right: 1rem;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover,
+.swiper-button-next:focus,
+.swiper-button-prev:focus {
+  background: var(--blue);
+  color: #fff;
+  transform: translateY(-50%) scale(1.06);
+}
+
+.sach-van-hoc .swiper-wrapper {
+  align-items: stretch;
+}
+.sach-van-hoc .swiper-slide {
+  display: flex;
+  align-items: stretch;
+  height: auto;
+}

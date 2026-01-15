@@ -72,8 +72,7 @@
   color: #333;
 }
 
-.category-bars:hover + .category-content,
-.category-content:hover {
+.category:hover .category-content {
   display: block;
   z-index: 1000;
 }

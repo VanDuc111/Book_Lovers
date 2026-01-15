@@ -1,0 +1,165 @@
+/* ==========================
+    Book Card Components
+   ========================== */
+
+.sach-van-hoc .sach-van-hoc-list,
+.daily-recommended .daily-recommended-list {
+  padding-bottom: 3rem;
+}
+
+.sach-van-hoc .sach-van-hoc-list .box,
+.daily-recommended .daily-recommended-list .box {
+  width: 25rem;
+  margin: 2rem 0;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 42rem;
+}
+
+.sach-van-hoc .sach-van-hoc-list .box .image,
+.daily-recommended .daily-recommended-list .box .image {
+  padding: 1rem;
+  border: none;
+  background: #f7f7f7;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.sach-van-hoc .sach-van-hoc-list .box .image img,
+.daily-recommended .daily-recommended-list .box .image img {
+  height: var(--card-img-h);
+  width: 100%;
+  object-fit: cover;
+}
+
+.sach-van-hoc .sach-van-hoc-list .box .content,
+.daily-recommended .daily-recommended-list .box .content {
+  padding: 1.5rem;
+  background: #fff;
+  border: var(--border);
+  border-top: 0;
+  text-align: center;
+}
+
+.sach-van-hoc .sach-van-hoc-list .box .content h3,
+.daily-recommended .daily-recommended-list .box .content h3 {
+  font-size: 1.2rem;
+  color: var(--black);
+}
+
+.sach-van-hoc .sach-van-hoc-list .box .content .price,
+.daily-recommended .daily-recommended-list .box .content .price {
+  font-size: 1.2rem;
+  color: var(--light-color);
+  padding-top: 0.5rem;
+}
+
+.sach-van-hoc .sach-van-hoc-list .box .content .price span,
+.daily-recommended .daily-recommended-list .box .content .price span {
+  color: var(--light-color);
+  font-size: 0.8rem;
+  text-decoration: line-through;
+}
+
+.card,
+.sach-van-hoc .sach-van-hoc-list .box,
+.daily-recommended .daily-recommended-list .box {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+  border: 0.06rem solid rgba(0, 0, 0, 0.04);
+}
+
+/* Slider Row Specific Hover effects */
+.sach-van-hoc .sach-van-hoc-list .box,
+.daily-recommended .daily-recommended-list .box {
+  transition: transform 220ms ease, box-shadow 220ms ease;
+  overflow: hidden;
+  border-radius: 0.8rem;
+}
+
+.sach-van-hoc .sach-van-hoc-list .box .image,
+.daily-recommended .daily-recommended-list .box .image {
+  padding: 0;
+  height: 26rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+.sach-van-hoc .sach-van-hoc-list .box .image img,
+.daily-recommended .daily-recommended-list .box .image img {
+  width: auto;
+  max-width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  transition: transform 320ms ease;
+}
+
+.sach-van-hoc .sach-van-hoc-list .box:hover,
+.daily-recommended .daily-recommended-list .box:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.06);
+}
+
+.sach-van-hoc .sach-van-hoc-list .box:hover .image img,
+.daily-recommended .daily-recommended-list .box:hover .image img {
+  transform: scale(1.04);
+}
+
+.sach-van-hoc .sach-van-hoc-list .box .content,
+.daily-recommended .daily-recommended-list .box .content {
+  padding: 1.6rem;
+}
+
+.sach-van-hoc .sach-van-hoc-list .box .content h3,
+.daily-recommended .daily-recommended-list .box .content h3 {
+  font-size: 1.15rem;
+  margin-bottom: 0.8rem;
+}
+
+/* Mobile Responsive for Books */
+@media (max-width: 991px) {
+  .sach-van-hoc .sach-van-hoc-list .box,
+  .daily-recommended .daily-recommended-list .box {
+    width: 17rem;
+    min-height: auto;
+    margin: 1rem 0;
+  }
+
+  .sach-van-hoc .sach-van-hoc-list .box .image,
+  .daily-recommended .daily-recommended-list .box .image {
+    height: 18rem;
+  }
+
+  .sach-van-hoc .sach-van-hoc-list .box .content,
+  .daily-recommended .daily-recommended-list .box .content {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 450px) {
+  .sach-van-hoc .sach-van-hoc-list .box,
+  .daily-recommended .daily-recommended-list .box {
+    width: 14.5rem;
+  }
+
+  .sach-van-hoc .sach-van-hoc-list .box .image,
+  .daily-recommended .daily-recommended-list .box .image {
+    height: 15rem;
+  }
+
+  .sach-van-hoc .sach-van-hoc-list .box .content h3,
+  .daily-recommended .daily-recommended-list .box .content h3 {
+    font-size: 1.05rem;
+    height: 3rem;
+    overflow: hidden;
+  }
+}

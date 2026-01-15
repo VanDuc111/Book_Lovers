@@ -313,7 +313,6 @@ table.cart-table thead th {
 }
 
 .btn-checkout-all {
-    /* Inherits from .btn-main in style.css */
     width: 100%;
 }
 
@@ -326,4 +325,22 @@ table.cart-table thead th {
     font-size: 5rem;
     color: #ddd;
     margin-bottom: 1.5rem;
+}
+
+#cart-table th,
+#cart-table td {
+  font-size: 2rem;
+  line-height: 1.5;
+}
+
+.cart-total,
+#cart-total {
+  font-size: 2rem;
+  padding: 1rem;
+  margin-top: 1rem;
+  text-align: right;
+}
+
+.container.mt-5 {
+  margin-bottom: 50px;
 }
