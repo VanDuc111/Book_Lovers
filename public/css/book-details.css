@@ -88,15 +88,7 @@
   color: #dc3545;
 }
 
-/* Review & Rating Summary Section */
-.reviews-section {
-  margin-top: 3rem;
-  padding: 2.5rem;
-  background: #fff;
-  border: 1px solid #f0f0f0;
-  border-radius: 1.2rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-}
+/* [Combined into Common Section Wrapper below] */
 
 #avg-rating-number {
   line-height: 1;
@@ -144,6 +136,39 @@
   }
 }
 
+.reviews-section,
+.related-books-wrapper {
+  margin-top: 3rem;
+  padding: 2.5rem;
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  border-radius: 1.2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+}
+
+/* Enhancing standard book-card within the related books wrapper */
+.related-books-wrapper .book-card {
+  padding: 0.8rem;
+}
+
+.related-books-wrapper .card {
+  border: 1px solid #f0f0f0;
+}
+
+/* Sync "View All" button with site premium style */
+.view-all-btn {
+  font-size: 1.35rem !important;
+  font-weight: 600 !important;
+  padding: 0.7rem 2.2rem !important;
+  margin-top: 0 !important;
+  border-radius: 50px !important;
+  text-decoration: none !important;
+}
+
+@media (max-width: 450px) {
+  /* No special stacking needed for header anymore as button moved to bottom */
+}
+
 /* Animations */
 @keyframes fadeInUp {
   from {
@@ -184,3 +209,21 @@
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+/* Related Books Responsive Grid Logic */
+/* By default show up to 8 (2 rows of 4) for LG */
+
+@media (max-width: 991px) {
+  /* Tablet: Show max 6 (2 rows of 3) */
+  #related-books-container .col:nth-child(n+7) {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  /* Mobile: Show max 4 (2 rows of 2) */
+  #related-books-container .col:nth-child(n+5) {
+    display: none;
+  }
+}
+

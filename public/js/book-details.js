@@ -120,6 +120,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Load review summary + reviews for this book
       loadReviewsForBook(book.bookID);
+
+      // Load related books (same category)
+      loadRelatedBooks(book.categoryName, book.bookID);
     }
 
     function setupActionListeners(book) {
@@ -488,6 +491,70 @@ document.addEventListener("DOMContentLoaded", function () {
     if (bookId && userId) {
       checkUserPurchased(bookId, userId);
       setupReviewForm(bookId, userId);
+    }
+
+    function loadRelatedBooks(categoryName, currentBookId) {
+      if (!categoryName) return;
+
+      const section = document.getElementById("related-books-section");
+      const container = document.getElementById("related-books-container");
+      const viewAllLink = document.getElementById("view-all-category");
+
+      if (!container) return;
+
+      // Update "View All" link to point to the category page
+      if (viewAllLink) {
+        viewAllLink.href = `/book-list?category=${encodeURIComponent(categoryName)}`;
+      }
+
+      fetch(`/api/books?category=${encodeURIComponent(categoryName)}`)
+        .then((res) => res.json())
+        .then((books) => {
+          // Filter out the current book
+          const others = books.filter((b) => b.bookID != currentBookId);
+
+          if (others.length > 0) {
+            section.style.display = "block";
+            container.innerHTML = "";
+
+            // Determine screen limit (Laptop: 8, Tablet: 6, Mobile: 4)
+            let screenLimit = 8;
+            if (window.innerWidth <= 767) screenLimit = 4;
+            else if (window.innerWidth <= 991) screenLimit = 6;
+
+            // If there are more books in this category than can be shown on current screen
+            if (viewAllLink) {
+              viewAllLink.style.display = others.length > screenLimit ? "inline-block" : "none";
+              viewAllLink.className = "btn-main view-all-btn"; 
+            }
+
+            const limit = 8;
+            const selection = others.slice(0, limit);
+
+            selection.forEach((book) => {
+              const col = document.createElement("div");
+              // Use standard book-list grid classes but we'll override count in CSS if needed
+              col.className = "col book-card"; 
+              col.innerHTML = `
+                <div class="card">
+                  <img src="${book.image || '/assets/images/default.jpg'}" class="card-img-top" alt="${book.title}">
+                  <div class="card-body">
+                    <h5 class="card-title">${book.title}</h5>
+                    <p class="card-text">Tác giả: ${book.author || 'Đang cập nhật'}</p>
+                    <p class="card-text price">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }).format(Number(book.bookPrice))}</p>
+                  </div>
+                </div>
+              `;
+              
+              col.querySelector('.card').addEventListener('click', () => {
+                window.location.href = `/book-details?id=${book.bookID}`;
+              });
+              
+              container.appendChild(col);
+            });
+          }
+        })
+        .catch((err) => console.error("Related books fetch error:", err));
     }
 
     function escapeHtml(str) {

@@ -198,6 +198,22 @@
         </div>
       </div>
     </section>
+    
+    <!-- Related Books Section -->
+    <section class="container mb-5" id="related-books-section" style="display: none;">
+      <div class="related-books-wrapper">
+        <div class="mb-4">
+          <h3 class="fw-bold" style="font-size: 2rem; color: var(--black); margin-bottom: 0;">Sách cùng thể loại</h3>
+        </div>
+        <div id="related-books-container" class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
+          <!-- Related books will be loaded here -->
+        </div>
+        <!-- View All Button Moved Here -->
+        <div class="text-center mt-5">
+          <a id="view-all-category" href="#" class="btn-main view-all-btn" style="display: none;">Xem tất cả</a>
+        </div>
+      </div>
+    </section>
 @endsection
 
 @section('scripts')
