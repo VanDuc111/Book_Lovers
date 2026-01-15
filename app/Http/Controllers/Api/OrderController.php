@@ -144,7 +144,7 @@ class OrderController extends Controller
     }
     
     $books = $query
-        ->select('books.bookID', 'books.title', 'books.author', 'books.bookPrice', 'books.image', 'orders.order_date')
+        ->select('books.bookID', 'books.title', 'books.author', 'books.bookPrice', 'books.image', 'orders.order_date', 'order_items.price as purchase_price')
         ->distinct()
         ->orderBy('orders.order_date', 'desc')
         ->get();

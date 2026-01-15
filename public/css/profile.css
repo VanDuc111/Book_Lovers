@@ -303,7 +303,17 @@
 .p-book-author {
     font-size: 1.3rem;
     color: var(--light-color);
+    margin-bottom: 0.5rem;
+}
+
+.p-book-price {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--orange);
     margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
 }
 
 .p-book-date {

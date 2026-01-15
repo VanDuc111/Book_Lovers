@@ -291,6 +291,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="p-book-info">
                                 <a href="/book-details?id=${book.bookID}" class="p-book-title" title="${book.title}">${book.title}</a>
                                 <div class="p-book-author">${book.author || 'Đang cập nhật'}</div>
+                                <div class="p-book-price">
+                                    ${Number(book.purchase_price).toLocaleString('vi-VN')} ₫
+                                </div>
                                 <div class="p-book-date">
                                     <i class="far fa-calendar-alt"></i>
                                     Mua ngày: ${orderDate}
