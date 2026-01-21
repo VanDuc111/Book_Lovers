@@ -147,34 +147,85 @@ document.addEventListener('DOMContentLoaded', async function () {
         if (!bookListContainer) return;
 
         bookListContainer.innerHTML = '';
+        const suggestedSection = document.getElementById('suggested-books-section');
+        const suggestedList = document.querySelector('.suggested-book-list');
+        
+        // Reset suggested section
+        if (suggestedSection) suggestedSection.style.display = 'none';
 
         if (books.length === 0) {
-            bookListContainer.innerHTML = '<p>Không có sách nào trong thể loại này.</p>'; // Cập nhật thông báo
+            const currentSearch = new URLSearchParams(window.location.search).get('search');
+            let emptyMsg = 'Xin lỗi, chúng tôi không tìm thấy sách phù hợp.';
+            if (currentSearch) {
+                emptyMsg = `Rất tiếc, không tìm thấy kết quả nào cho từ khóa "<strong>${currentSearch}</strong>".`;
+            }
+            
+            bookListContainer.innerHTML = `
+                <div class="empty-results py-5 text-center w-100">
+                    <i class="fas fa-search-minus" style="font-size: 6rem; color: var(--muted-color); opacity: 0.3; margin-bottom: 2rem;"></i>
+                    <p style="font-size: 1.8rem; color: var(--light-color);">${emptyMsg}</p>
+                </div>
+            `;
+            
+            // Show suggestions
+            fetchSuggestions();
             return;
         }
 
         books.forEach(book => {
-            const bookCard = document.createElement('div');
-            bookCard.className = 'col-6 col-md-4 col-lg-3 mb-4 book-card';
-            bookCard.dataset.bookid = book.bookID;
-
-            bookCard.innerHTML = `
-                <div class="card">
-                            <img src="${book.image ? book.image : '/assets/images/default.jpg'}" class="card-img-top" alt="${book.title ?? 'Không có tiêu đề'}">
-                    <div class="card-body">
-                        <h5 class="card-title">${book.title ?? 'Không có tiêu đề'}</h5>
-                        <p class="card-text">Tác giả: ${book.author ?? 'Không có tác giả'}</p>
-                        <p class="card-text price">${book.bookPrice ? Number(book.bookPrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }) : 'Chưa rõ'}</p>
-                    </div>
-                </div>
-            `;
-
-            bookCard.addEventListener('click', function () {
-                window.location.href = `/book-details?id=${book.bookID}`;
-            });
-
+            const bookCard = createBookCard(book);
             bookListContainer.appendChild(bookCard);
         });
+    }
+
+    function createBookCard(book) {
+        const bookCard = document.createElement('div');
+        bookCard.className = 'col-6 col-md-4 col-lg-3 mb-4 book-card';
+        bookCard.dataset.bookid = book.bookID;
+
+        bookCard.innerHTML = `
+            <div class="card">
+                <img src="${book.image ? book.image : '/assets/images/default.jpg'}" class="card-img-top" alt="${book.title ?? 'Không có tiêu đề'}">
+                <div class="card-body">
+                    <h5 class="card-title">${book.title ?? 'Không có tiêu đề'}</h5>
+                    <p class="card-text text-muted">${book.author ?? 'Không có tác giả'}</p>
+                    <p class="card-text price">${book.bookPrice ? Number(book.bookPrice).toLocaleString('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 }) : 'Chưa rõ'}</p>
+                </div>
+            </div>
+        `;
+
+        bookCard.addEventListener('click', function () {
+            window.location.href = `/book-details?id=${book.bookID}`;
+        });
+        
+        return bookCard;
+    }
+
+    async function fetchSuggestions() {
+        const suggestedSection = document.getElementById('suggested-books-section');
+        const suggestedList = document.querySelector('.suggested-book-list');
+        
+        if (!suggestedList) return;
+        
+        try {
+            const response = await fetch('/api/books');
+            const allBooks = await response.json();
+            
+            if (allBooks.length > 0) {
+                // Pick 4 random or first 4 books
+                const suggestions = allBooks.sort(() => 0.5 - Math.random()).slice(0, 4);
+                
+                suggestedList.innerHTML = '';
+                suggestions.forEach(book => {
+                    const card = createBookCard(book);
+                    suggestedList.appendChild(card);
+                });
+                
+                if (suggestedSection) suggestedSection.style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Lỗi khi lấy sách gợi ý:', error);
+        }
     }
 
     // fetchCategories();

@@ -28,81 +28,83 @@
 </head>
 <body>
 
-    <div id="site-header">
-        <header class="header">
-            <div class="header-1">
-                <a href="{{ route('home') }}" class="logo-brand" id="logo" aria-label="BookLovers">
-                    <img src="{{ asset('assets/images/logo-full.svg') }}" alt="BookLovers Logo" class="brand-logo">
-                </a>
+    <div class="site-wrapper">
+        <div id="site-header">
+            <header class="header">
+                <div class="header-1">
+                    <a href="{{ route('home') }}" class="logo-brand" id="logo" aria-label="BookLovers">
+                        <img src="{{ asset('assets/images/logo-full.svg') }}" alt="BookLovers Logo" class="brand-logo">
+                    </a>
 
-                <!-- Category -->
-                <nav class="category">
-                    <button class="category-bars btn" aria-label="Mở danh mục">
-                        <img src="{{ asset('assets/icons/category.svg') }}" alt="Category" class="category-icon">
-                    </button>
-                    <div class="category-content">
-                        <ul id="header-category-list" class="category-list"></ul>
+                    <!-- Category -->
+                    <nav class="category">
+                        <button class="category-bars btn" aria-label="Mở danh mục">
+                            <img src="{{ asset('assets/icons/category.svg') }}" alt="Category" class="category-icon">
+                        </button>
+                        <div class="category-content">
+                            <ul id="header-category-list" class="category-list"></ul>
+                        </div>
+                    </nav>
+
+                    <form action="" class="form-box from-box" id="search-form" autocomplete="off" role="search" aria-label="Site search">
+                        <input type="search" name="q" placeholder="Tìm kiếm sản phẩm..." id="search-input" autocomplete="off">
+                    </form>
+
+                    <div class="icons">
+                        <a href="{{ url('cart') }}" class="cart-link">
+                            <img src="{{ asset('assets/icons/shopping-cart.svg') }}" alt="Cart" class="navbar-icon">
+                        </a>
+                        <a href="{{ url('login') }}" id="login-btn" class="user-info">
+                            <img src="{{ asset('assets/icons/user.svg') }}" alt="User" class="navbar-icon">
+                            <span id="welcome-message"></span>
+                        </a>
                     </div>
-                </nav>
-
-                <form action="" class="form-box from-box" id="search-form" autocomplete="off" role="search" aria-label="Site search">
-                    <input type="search" name="q" placeholder="Tìm kiếm sản phẩm..." id="search-input" autocomplete="off">
-                </form>
-
-                <div class="icons">
-                    <a href="{{ url('cart') }}" class="cart-link">
-                        <img src="{{ asset('assets/icons/shopping-cart.svg') }}" alt="Cart" class="navbar-icon">
-                    </a>
-                    <a href="{{ url('login') }}" id="login-btn" class="user-info">
-                        <img src="{{ asset('assets/icons/user.svg') }}" alt="User" class="navbar-icon">
-                        <span id="welcome-message"></span>
-                    </a>
                 </div>
-            </div>
 
-        </header>
-    </div>
+            </header>
+        </div>
 
-    <main>
-        @yield('content')
-    </main>
+        <main>
+            @yield('content')
+        </main>
 
-    <div id="site-footer">
-        <div class="footer-section">
-            <div class="container">
-                <div class="row g-4">
-                    <div class="col-md-4">
-                        <div class="icons h-100">
-                            <i class="fas fa-info"></i>
-                            <div class="content">
-                                <h3>Về website</h3>
-                                <p>Giới thiệu</p>
-                                <p>Điều khoản dịch vụ</p>
-                                <p>Quy chế hoạt động</p>
-                                <p>Blog</p>
+        <div id="site-footer">
+            <div class="footer-section">
+                <div class="container">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="icons h-100">
+                                <i class="fas fa-info"></i>
+                                <div class="content">
+                                    <h3>Về website</h3>
+                                    <p>Giới thiệu</p>
+                                    <p>Điều khoản dịch vụ</p>
+                                    <p>Quy chế hoạt động</p>
+                                    <p>Blog</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="icons h-100">
-                            <i class="fas fa-lock"></i>
-                            <div class="content">
-                                <h3>Chính sách</h3>
-                                <p>Chính sách bảo mật</p>
-                                <p>Chính sách đổi trả</p>
-                                <p>Chính sách giao tiếp</p>
-                                <p>Chính sách thanh toán</p>
+                        <div class="col-md-4">
+                            <div class="icons h-100">
+                                <i class="fas fa-lock"></i>
+                                <div class="content">
+                                    <h3>Chính sách</h3>
+                                    <p>Chính sách bảo mật</p>
+                                    <p>Chính sách đổi trả</p>
+                                    <p>Chính sách giao tiếp</p>
+                                    <p>Chính sách thanh toán</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="icons h-100">
-                            <i class="fas fa-headset"></i>
-                            <div class="content">
-                                <h3>Hỗ trợ 24/7</h3>
-                                <p>Hotline: 0934364007</p>
-                                <p>Email: lienhe94@gmail.com</p>
-                                <p>Địa chỉ: 207 Giải Phóng, phường Đồng Tâm, quận Hai Bà Trưng, Hà Nội</p>
+                        <div class="col-md-4">
+                            <div class="icons h-100">
+                                <i class="fas fa-headset"></i>
+                                <div class="content">
+                                    <h3>Hỗ trợ 24/7</h3>
+                                    <p>Hotline: 0934364007</p>
+                                    <p>Email: lienhe94@gmail.com</p>
+                                    <p>Địa chỉ: 207 Giải Phóng, phường Đồng Tâm, quận Hai Bà Trưng, Hà Nội</p>
+                                </div>
                             </div>
                         </div>
                     </div>

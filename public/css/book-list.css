@@ -1,6 +1,15 @@
 /* Book List Layout */
 .book-list {
     padding: 1rem;
+    min-height: 40rem; /* Give it some depth even when empty */
+}
+
+.book-list p {
+    font-size: var(--fs-md);
+    color: var(--light-color);
+    text-align: center;
+    width: 100%;
+    margin-top: 5rem;
 }
 
 .book-card {

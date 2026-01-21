@@ -19,6 +19,12 @@
             </div>
             <div class="col-md-10">
                 <div class="row book-list"> </div>
+                
+                <!-- Suggested Books Section (Hidden by default) -->
+                <div id="suggested-books-section" style="display: none; margin-top: 5rem; border-top: var(--border); padding-top: 3rem;">
+                    <h3 class="suggested-title mb-4" style="font-size: 2rem; font-weight: 700; color: var(--black);">Sách gợi ý cho bạn</h3>
+                    <div class="row suggested-book-list"></div>
+                </div>
             </div>
         </div>
     </div>
