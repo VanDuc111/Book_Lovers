@@ -4,7 +4,7 @@
 
 @section('content')
     <!-- home section start -->
-    <section class="home book-slider" id="home">
+    <section class="home" id="home">
       <div class="row align-items-center">
         <div class="col-md-5 content">
           <h3>Ưu đãi lên đến 30%!</h3>
@@ -27,14 +27,13 @@
     <section class="sach-van-hoc container book-slider" id="sach-van-hoc">
       <div class="heading"><span>Sách Thể Loại Văn Học</span></div>
 
-      <div class="sach-van-hoc-list swiper">
+        <div class="sach-van-hoc-list swiper">
         <div class="swiper-wrapper" id="sach-van-hoc-container">
           <div class="swiper-slide loading-message">
             Đang tải sách văn học...
           </div>
         </div>
-        <div class="swiper-button-next"></div>
-        <div class="swiper-button-prev"></div>
+          @include('components.swiper-controls')
       </div>
     </section>
     <!-- sach-van-hoc section ends -->
@@ -46,15 +45,14 @@
         <div class="swiper-wrapper" id="daily-recommended-container">
           <div class="swiper-slide loading-message">Đang tải sách gợi ý...</div>
         </div>
-        <div class="swiper-button-next"></div>
-        <div class="swiper-button-prev"></div>
+        @include('components.swiper-controls')
       </div>
     </section>
     <!-- daily-recommended section ends -->
 
     <!-- recent-reviews section starts -->
-    <section class="reviews" id="recent-reviews">
-      <h1 class="heading"><span>Đánh giá gần đây</span></h1>
+    <section class="reviews container book-slider" id="recent-reviews">
+      <div class="heading"><span>Đánh giá gần đây</span></div>
       <div class="row" id="recent-reviews-row">
         <div class="col-12 text-center py-5">
            <div class="spinner-border text-primary" role="status">

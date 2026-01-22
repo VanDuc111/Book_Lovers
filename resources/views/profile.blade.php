@@ -4,37 +4,6 @@
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/profile.css') }}">
-    <style>
-        /* Custom tweaks for this page */
-        .profile-section {
-            background: url('{{ asset('assets/icons/profile-background.avif') }}') center/cover no-repeat fixed;
-            position: relative;
-        }
-        .profile-section::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(5px);
-            z-index: 1;
-        }
-        .profile-wrapper {
-            position: relative;
-            z-index: 2;
-        }
-        .password-wrapper {
-            position: relative;
-        }
-        .toggle-password {
-            position: absolute;
-            right: 1.5rem;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            width: 2rem;
-            opacity: 0.6;
-        }
-    </style>
 @endsection
 
 @section('content')

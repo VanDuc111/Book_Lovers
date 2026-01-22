@@ -3,100 +3,100 @@
    ========================== */
 
 .reviews {
-  padding: 5rem 9%;
+    padding: 5rem 0;
 }
 
 .reviews .heading span {
-  font-size: var(--fs-h3);
-  padding: 0.6rem 1.2rem;
+    font-size: 2rem;
+    padding: 0.6rem 1.2rem;
 }
 
 .reviews .row {
-  display: flex;
-  gap: 2rem;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  align-items: stretch;
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: stretch;
 }
 
 .reviews .col-md-4 {
-  display: flex;
-  width: 25rem;
-  flex: 0 0 auto;
+    display: flex;
+    width: 25rem;
+    flex: 0 0 auto;
 }
 
 .reviews .card {
-  flex: 1 1 auto;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  box-shadow: var(--shadow-premium);
-  border: var(--border);
-  display: flex;
-  flex-direction: column;
+    flex: 1 1 auto;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-premium);
+    border: var(--border);
+    display: flex;
+    flex-direction: column;
 }
 
 .reviews .card-img-top {
-  width: 100%;
-  aspect-ratio: 2 / 3;
-  object-fit: cover;
-  display: block;
-  background: var(--bg-light);
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    display: block;
+    background: var(--bg-light);
 }
 
 .reviews .card-body {
-  padding: 1.4rem 1.6rem;
-  text-align: center;
-  background: var(--white);
+    padding: 1.4rem 1.6rem;
+    text-align: center;
+    background: var(--white);
 }
 
 .reviews .card-title {
-  font-size: var(--fs-base);
-  margin-bottom: 0.4rem;
-  color: var(--black);
+    font-size: var(--fs-base);
+    margin-bottom: 0.4rem;
+    color: var(--black);
 }
 
 .reviews .card-text {
-  font-size: var(--fs-sm);
-  color: var(--light-color);
-  max-height: 6.2rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
+    font-size: var(--fs-sm);
+    color: var(--light-color);
+    max-height: 6.2rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .reviews .rating {
-  display: inline-block;
-  margin-top: 0.6rem;
-  color: var(--rating-star, #ffb400);
-  font-size: var(--fs-base);
+    display: inline-block;
+    margin-top: 0.6rem;
+    color: var(--rating-star, #ffb400);
+    font-size: var(--fs-base);
 }
 
 .reviews .card-body h5 {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
 }
 
 @media (max-width: 991px) {
-  .reviews .col-md-4 {
-    width: 14.5rem;
-    flex: 0 0 auto;
-  }
-  .reviews .card-img-top {
-    height: 15rem;
-  }
-  .reviews .card-body h5 {
-    font-size: 1.1rem;
-  }
-  .reviews .card-text {
-    font-size: 1rem;
-    max-height: 4rem;
-  }
+    .reviews .col-md-4 {
+        width: 14.5rem;
+        flex: 0 0 auto;
+    }
+    .reviews .card-img-top {
+        height: 15rem;
+    }
+    .reviews .card-body h5 {
+        font-size: 1.1rem;
+    }
+    .reviews .card-text {
+        font-size: 1rem;
+        max-height: 4rem;
+    }
 }
 
 @media (max-width: 500px) {
-  .reviews .col-md-4 {
-    max-width: 90%;
-    flex: 0 0 auto;
-  }
+    .reviews .col-md-4 {
+        max-width: 90%;
+        flex: 0 0 auto;
+    }
 }

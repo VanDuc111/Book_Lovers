@@ -1,21 +1,20 @@
 /* [Global Variables moved to variables.css] */
 
-
 /* ==========================
     Base / Reset
     ========================== */
 
 * {
-  font-family: "Montserrat", serif;
-  margin: 0;
-  padding: 0;
-  text-decoration: none;
-  outline: none;
-  border: none;
-  transition: var(--transition);
-  transition-property: all;
-  transition-duration: 0.2s;
-  transition: width none;
+    font-family: "Montserrat", serif;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    outline: none;
+    border: none;
+    transition: var(--transition);
+    transition-property: all;
+    transition-duration: 0.2s;
+    transition: width none;
 }
 
 input,
@@ -23,81 +22,85 @@ textarea,
 select,
 button,
 .box {
-  text-transform: none;
+    text-transform: none;
 }
 
 html {
-  font-size: 65%;
-  overflow-x: hidden;
-  scroll-padding-top: 5rem;
-  scroll-behavior: smooth;
-  height: 100%;
+    font-size: 65%;
+    overflow-x: hidden;
+    scroll-padding-top: 5rem;
+    scroll-behavior: smooth;
+    height: 100%;
 }
 
 .reviews-table td,
 .reviews-table th {
-  vertical-align: middle;
+    vertical-align: middle;
 }
 .no-data {
-  text-align: center;
-  padding: 2.2rem;
-  color: var(--light-color);
+    text-align: center;
+    padding: 2.2rem;
+    color: var(--light-color);
 }
 
 .rating-stars {
-  font-size: 2.4rem;
-  color: #ddd;
-  cursor: pointer;
-  display: inline-block;
+    font-size: 2.4rem;
+    color: #ddd;
+    cursor: pointer;
+    display: inline-block;
 }
 .rating-stars .fa-star {
-  color: #ddd;
+    color: #ddd;
 }
 
 .rating-stars .fa-star.checked {
-  color: var(--rating-star, #ffc107) !important;
+    color: var(--rating-star, #ffc107) !important;
 }
 .rating-stars .fa-star.checked svg,
 .rating-stars .fa-star.checked * {
-  fill: var(--rating-star, #ffc107) !important;
-  color: var(--rating-star, #ffc107) !important;
+    fill: var(--rating-star, #ffc107) !important;
+    color: var(--rating-star, #ffc107) !important;
 }
 
 .rating-stars.static {
-  cursor: default;
+    cursor: default;
 }
 
 /* (Moved detailed scrollbar styling later) */
 
 /* Bottom navbar removed */
 .btn {
-  display: inline-block;
-  color: var(--white);
-  background: linear-gradient(135deg, var(--orange) 0%, var(--dark-color) 100%);
-  font-size: var(--fs-large, 1.6rem);
-  font-weight: 600;
-  padding: var(--btn-padding-vertical) var(--btn-padding-horizontal);
-  border-radius: var(--radius-pill);
-  cursor: pointer;
-  border: none;
-  text-align: center;
-  text-transform: none;
-  letter-spacing: 0.3px;
-  box-shadow: 0 6px 16px rgba(255, 99, 71, 0.3);
-  transition: var(--transition);
+    display: inline-block;
+    color: var(--white);
+    background: linear-gradient(
+        135deg,
+        var(--orange) 0%,
+        var(--dark-color) 100%
+    );
+    font-size: var(--fs-large, 1.6rem);
+    font-weight: 600;
+    padding: var(--btn-padding-vertical) var(--btn-padding-horizontal);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    border: none;
+    text-align: center;
+    text-transform: none;
+    letter-spacing: 0.3px;
+    box-shadow: 0 6px 16px rgba(255, 99, 71, 0.3);
+    transition: var(--transition);
 }
 
 .btn:hover {
-  background: linear-gradient(135deg, var(--dark-color) 0%, #e63900 100%);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 20px rgba(255, 99, 71, 0.4);
-  letter-spacing: 0.5px;
-  color: #fff;
+    background: linear-gradient(135deg, var(--dark-color) 0%, #e63900 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(255, 99, 71, 0.4);
+    letter-spacing: 0.5px;
+    color: #fff;
 }
 
 .btn:active {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 99, 71, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 99, 71, 0.3);
 }
 
 /* Common Premium Button Style */
@@ -106,7 +109,11 @@ html {
     padding: 1.2rem 2.8rem;
     font-weight: 600;
     font-size: 1.6rem;
-    background: linear-gradient(135deg, var(--orange) 0%, var(--dark-color) 100%);
+    background: linear-gradient(
+        135deg,
+        var(--orange) 0%,
+        var(--dark-color) 100%
+    );
     color: var(--white) !important;
     border: none;
     border-radius: var(--radius-pill);
@@ -172,11 +179,10 @@ html {
 button,
 input[type="submit"],
 .btn.btn-sm {
-  font-size: var(--btn-font-size);
+    font-size: var(--btn-font-size);
 }
 
 /* [Auth sections moved to auth.css] */
-
 
 /* [Password Toggle sections moved to auth.css] */
 
@@ -189,98 +195,100 @@ input[type="submit"],
 /* ------- daily-recommended section ------ */
 
 .daily-recommended .heading {
-  text-align: left;
-  padding-bottom: 1rem;
-  font-size: 3rem;
-  color: var(--orange);
-  border-radius: 0.6rem;
+    text-align: left;
+    padding-bottom: 1rem;
+    font-size: 3rem;
+    color: var(--orange);
+    border-radius: 0.6rem;
 }
 
 .daily-recommended .heading span {
-  background: var(--orange);
-  color: var(--black);
-  padding: 0.5rem 1.5rem;
-  font-size: var(--fs-h2, 2rem);
-  border-radius: var(--radius-sm);
+    background: var(--orange);
+    color: var(--black);
+    padding: 0.5rem 1.5rem;
+    font-size: var(--fs-h2, 2rem);
+    border-radius: var(--radius-sm);
 }
 
 .daily-recommended .daily-recommended-list {
-  padding-bottom: 3rem;
+    padding-bottom: 3rem;
 }
 
 .daily-recommended .daily-recommended-list .box {
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 42rem;
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 42rem;
 }
 
 /* [Extended Daily Recommended Book styles moved to books.css] */
 
 .breadcrumb a,
 .page-links a {
-  color: var(--black);
-  font-weight: 500;
-  font-size: 1.8rem;
-  text-decoration: none;
+    color: var(--black);
+    font-weight: 500;
+    font-size: 1.8rem;
+    text-decoration: none;
 }
 .breadcrumb a:hover,
 .page-links a:hover {
-  color: var(--orange);
-  text-decoration: underline;
+    color: var(--orange);
+    text-decoration: underline;
 }
 
 .form-container p a {
-  color: var(--orange);
-  font-weight: 500;
-  font-size: 1.3rem;
-  text-decoration: none;
+    color: var(--orange);
+    font-weight: 500;
+    font-size: 1.3rem;
+    text-decoration: none;
 }
 .form-container p a:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }
 
 /* [Book Content in Slider moved to books.css] */
 
 .swiper-button-next,
 .swiper-button-prev {
-  width: 4.8rem;
-  height: 4.8rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: #fff;
-  color: var(--blue);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  border: 0.06rem solid rgba(0, 0, 0, 0.06);
-  z-index: 2000;
-  transition: transform 160ms ease, background-color 160ms ease,
-    color 160ms ease;
+    width: 4.8rem;
+    height: 4.8rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--blue);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    border: 0.06rem solid rgba(0, 0, 0, 0.06);
+    z-index: 2000;
+    transition:
+        transform 160ms ease,
+        background-color 160ms ease,
+        color 160ms ease;
 }
 
 .swiper-button-next::after,
 .swiper-button-prev::after {
-  font-size: 1.6rem;
-  color: currentColor;
+    font-size: 1.6rem;
+    color: currentColor;
 }
 
 .swiper-button-prev {
-  left: 1rem;
-  transform: translateY(-50%);
-  top: 50%;
-  position: absolute;
+    left: 1rem;
+    transform: translateY(-50%);
+    top: 50%;
+    position: absolute;
 }
 
 .swiper-button-next {
-  right: 1rem;
-  transform: translateY(-50%);
-  top: 50%;
-  position: absolute;
+    right: 1rem;
+    transform: translateY(-50%);
+    top: 50%;
+    position: absolute;
 }
 
 /* Hover/focus effects */
@@ -288,52 +296,53 @@ input[type="submit"],
 .swiper-button-prev:hover,
 .swiper-button-next:focus,
 .swiper-button-prev:focus {
-  background: var(--blue);
-  color: #fff;
-  transform: translateY(-50%) scale(1.06);
+    background: var(--blue);
+    color: #fff;
+    transform: translateY(-50%) scale(1.06);
 }
 
 /* ------- sach-van-hoc swiper styles ------ */
 .sach-van-hoc .swiper-wrapper {
-  align-items: stretch;
+    align-items: stretch;
 }
 .sach-van-hoc .swiper-slide {
-  display: flex;
-  align-items: stretch;
+    display: flex;
+    align-items: stretch;
 }
 
 /* Book-store friendly swiper controls: generic style for all sliders */
 .book-slider .swiper-button-next,
 .book-slider .swiper-button-prev {
-  width: 3.6rem;
-  height: 3.6rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--blue);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
-  border: 0.04rem solid rgba(0, 0, 0, 0.06);
-  z-index: 2200;
-  transition: transform 180ms ease, background-color 180ms ease,
-    color 180ms ease, opacity 180ms ease;
-  opacity: 0;
-  visibility: hidden;
+    width: 3.6rem;
+    height: 3.6rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--blue);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    border: 0.04rem solid rgba(0, 0, 0, 0.06);
+    z-index: 2200;
+    transition:
+        transform 180ms ease,
+        background-color 180ms ease,
+        color 180ms ease,
+        opacity 180ms ease;
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    overflow: visible;
 }
 
-/* position controls inset and vertically centered */
+/* position controls on card edges */
 .book-slider .swiper-button-prev {
-  left: 0.6rem;
+    left: 0.6rem;
 }
 .book-slider .swiper-button-next {
-  right: 0.6rem;
-}
-.book-slider .swiper-button-prev,
-.book-slider .swiper-button-next {
-  top: 50%;
-  transform: translateY(-50%);
-  position: absolute;
+    right: 0.6rem;
 }
 
 /* show controls when user interacts with the slider region */
@@ -341,32 +350,32 @@ input[type="submit"],
 .book-slider:hover .swiper-button-prev,
 .book-slider:focus-within .swiper-button-next,
 .book-slider:focus-within .swiper-button-prev {
-  opacity: 1;
-  visibility: visible;
+    opacity: 1;
+    visibility: visible;
 }
 
 /* hover styles */
 .book-slider .swiper-button-next:hover,
 .book-slider .swiper-button-prev:hover {
-  background: var(--blue);
-  color: #fff;
-  transform: translateY(-50%) scale(1.08);
+    background: var(--blue);
+    color: #fff;
+    transform: translateY(-50%) scale(1.08);
 }
 
 .book-slider .swiper-button-next::after,
 .book-slider .swiper-button-prev::after {
-  font-size: 1.2rem;
+    font-size: 1.2rem;
 }
 
 @media (max-width: 768px) {
-  .book-slider .swiper-button-next,
-  .book-slider .swiper-button-prev {
-    opacity: 1;
-    visibility: visible;
-    background: rgba(255, 255, 255, 0.95);
-    width: 3.2rem;
-    height: 3.2rem;
-  }
+    .book-slider .swiper-button-next,
+    .book-slider .swiper-button-prev {
+        opacity: 1;
+        visibility: visible;
+        background: rgba(255, 255, 255, 0.95);
+        width: 3.2rem;
+        height: 3.2rem;
+    }
 }
 
 /* ==========================
@@ -377,130 +386,129 @@ input[type="submit"],
 
 /* WebKit browsers (Chrome, Edge, Safari) */
 html::-webkit-scrollbar {
-  width: 12px;
+    width: 12px;
 }
 html::-webkit-scrollbar-track {
-  background: var(--scroll-track);
-  border-radius: 12px;
+    background: var(--scroll-track);
+    border-radius: 12px;
 }
 html::-webkit-scrollbar-thumb {
-  background: var(--scroll-thumb);
-  border-radius: 12px;
-  border: 3px solid var(--scroll-track);
+    background: var(--scroll-thumb);
+    border-radius: 12px;
+    border: 3px solid var(--scroll-track);
 }
 html::-webkit-scrollbar-thumb:hover {
-  background: var(--scroll-thumb-hover);
+    background: var(--scroll-thumb-hover);
 }
 
 /* Firefox */
 html {
-  scrollbar-width: thin;
-  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+    scrollbar-width: thin;
+    scrollbar-color: var(--scroll-thumb) var(--scroll-track);
 }
 
 body {
-  padding-top: 0;
-  box-sizing: border-box;
+    padding-top: 0;
+    box-sizing: border-box;
 }
 
 .site-wrapper {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 main {
-  flex: 1;
-  padding: 2rem 0;
+    flex: 1;
+    padding: 2rem 0;
 }
 
 @media (max-width: 991px) {
-  section {
-    padding: 2.6rem 3.5%;
-  }
+    section {
+        padding: 2.6rem 3.5%;
+    }
 
-  .heading {
-     margin-bottom: 1.6rem;
-  }
+    .heading {
+        margin-bottom: 1.6rem;
+    }
 
-  .home {
-    background: var(--bg-gray) !important;
-    background-image: none !important;
-    padding: 4rem 2rem;
-    height: auto !important;
-    min-height: auto;
-  }
+    .home {
+        background: var(--bg-gray) !important;
+        background-image: none !important;
+        padding: 4rem 2rem;
+        height: auto !important;
+        min-height: auto;
+    }
 
-  .home::before {
-    display: none;
-  }
+    .home::before {
+        display: none;
+    }
 
-  .home .row {
-    text-align: center;
-  }
+    .home .row {
+        text-align: center;
+    }
 
-  .home .row .home-books-list {
-    width: 100%;
-    padding: 3rem 0;
-    margin-top: 0;
-  }
+    .home .row .home-books-list {
+        width: 100%;
+        padding: 3rem 0;
+        margin-top: 0;
+    }
 
-  .home .row .home-books-list .swiper-slide {
-    transform: scale(0.9);
-    opacity: 0.7;
-  }
+    .home .row .home-books-list .swiper-slide {
+        transform: scale(0.9);
+        opacity: 0.7;
+    }
 
-  .home .row .home-books-list .swiper-slide-active {
-    transform: scale(1.05);
-    opacity: 1;
-  }
+    .home .row .home-books-list .swiper-slide-active {
+        transform: scale(1.05);
+        opacity: 1;
+    }
 
-  .home .row .home-books-list a img {
-    height: 24rem !important;
-    width: auto !important;
-    margin: 0 auto;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-  }
+    .home .row .home-books-list a img {
+        height: 24rem !important;
+        width: auto !important;
+        margin: 0 auto;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
 
-/* [Mobile Tablet Book sizes moved to books.css] */
+    /* [Mobile Tablet Book sizes moved to books.css] */
 }
 
 @media (max-width: 768px) {
-  .sach-van-hoc .swiper-button-next,
-  .sach-van-hoc .swiper-button-prev,
-  .daily-recommended .swiper-button-next,
-  .daily-recommended .swiper-button-prev,
-  .home .swiper-button-next,
-  .home .swiper-button-prev {
-    opacity: 1;
-    visibility: visible;
-    width: 3.2rem;
-    height: 3.2rem;
-  }
+    .sach-van-hoc .swiper-button-next,
+    .sach-van-hoc .swiper-button-prev,
+    .daily-recommended .swiper-button-next,
+    .daily-recommended .swiper-button-prev,
+    .home .swiper-button-next,
+    .home .swiper-button-prev {
+        opacity: 1;
+        visibility: visible;
+        width: 3.2rem;
+        height: 3.2rem;
+    }
 
-  .reviews .col-md-4 {
-    flex: 1 1 100%;
-  }
+    .reviews .col-md-4 {
+        flex: 1 1 100%;
+    }
 
-  .home .row .content h3 {
-    font-size: 3rem;
-  }
+    .home .row .content h3 {
+        font-size: 3rem;
+    }
 }
 
 @media (max-width: 450px) {
-  section {
-    padding: 1.4rem 3.5%;
-  }
+    section {
+        padding: 1.4rem 3.5%;
+    }
 
-  .heading span {
-    font-size: 1.6rem;
-    padding: 0.4rem 0.8rem;
-  }
+    .heading span {
+        font-size: 1.6rem;
+        padding: 0.4rem 0.8rem;
+    }
 
-  .home .row .content h3 {
-    font-size: 2.2rem;
-  }
-
+    .home .row .content h3 {
+        font-size: 2.2rem;
+    }
 }
 /* ==========================
    Improvements: section headings + reviews styles
@@ -510,40 +518,40 @@ main {
 
 /* Password Toggle shared styles */
 .password-wrapper {
-  position: relative;
-  display: block;
-  width: 100%;
+    position: relative;
+    display: block;
+    width: 100%;
 }
 
 .password-wrapper input {
-  padding-right: 1.5rem !important;
+    padding-right: 1.5rem !important;
 }
 
 /* ========================== 
    Utilities / Glassmorphism 
-   ========================== */ 
-.glass { 
-    background: rgba(255, 255, 255, 0.7) !important; 
-    backdrop-filter: blur(10px) saturate(180%); 
-    -webkit-backdrop-filter: blur(10px) saturate(180%); 
-    border: 1px solid rgba(255, 255, 255, 0.3) !important; 
-    border-radius: 12px; 
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07); 
-} 
- 
-.glass-dark { 
-    background: rgba(0, 0, 0, 0.4) !important; 
-    backdrop-filter: blur(10px) saturate(180%); 
-    -webkit-backdrop-filter: blur(10px) saturate(180%); 
-    border: 1px solid rgba(255, 255, 255, 0.1) !important; 
-    border-radius: 12px; 
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); 
-} 
- 
-.glass-card { 
-    background: rgba(255, 255, 255, 0.4); 
-    backdrop-filter: blur(4px); 
-    -webkit-backdrop-filter: blur(4px); 
-    border-radius: 12px; 
-    border: 1px solid rgba(255, 255, 255, 0.2); 
+   ========================== */
+.glass {
+    background: rgba(255, 255, 255, 0.7) !important;
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+}
+
+.glass-dark {
+    background: rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }

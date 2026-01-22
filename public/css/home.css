@@ -157,6 +157,17 @@
   padding: 0.6rem 1.2rem;
 }
 
+/* Reviews heading: match spacing/size with other sections */
+.reviews .heading {
+  text-align: left;
+  margin-bottom: 5rem;
+  padding-bottom: 1rem;
+}
+.reviews .heading span {
+  font-size: 2rem;
+  padding: 0.6rem 1.2rem;
+}
+
 /* ==========================
     Specific Book Row Sections
    ========================== */
