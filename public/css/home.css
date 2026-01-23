@@ -226,8 +226,7 @@
 
 .sach-van-hoc .sach-van-hoc-list .box .content .price,
 .daily-recommended .daily-recommended-list .box .content .price {
-  font-size: 1.2rem;
-  color: var(--light-color);
+  /* Inherits from global .price */
   padding-top: 0.5rem;
 }
 

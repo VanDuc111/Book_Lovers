@@ -70,9 +70,7 @@
 
 .card-text.price {
     margin-top: auto;
-    font-size: 1.6rem;
-    color: var(--orange, #ff6347);
-    font-weight: 700;
+    /* Styles inherited from global .price */
 }
 
 /* Breadcrumb Styling */
