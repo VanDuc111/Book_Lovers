@@ -3,34 +3,9 @@
 @section('title', 'Sách - Book Lovers')
 
 @section('content')
-    <div class="container mt-3">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ route('home') }}">Trang Chủ</a></li>
-                <li class="breadcrumb-item"><a href="{{ url('book-list') }}">Sách</a></li>
-                <li class="breadcrumb-item active" id="breadcrumb-current-category" aria-current="page"></li>
-            </ol>
-        </nav>
-    </div>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-2">
-                <!-- Sidebar for categories could go here if needed, currently book-list.js handles it? -->
-            </div>
-            <div class="col-md-10">
-                <div class="row book-list"> </div>
-                
-                <!-- Suggested Books Section (Hidden by default) -->
-                <div id="suggested-books-section" style="display: none; margin-top: 5rem; border-top: var(--border); padding-top: 3rem;">
-                    <h3 class="suggested-title mb-4" style="font-size: 2rem; font-weight: 700; color: var(--black);">Sách gợi ý cho bạn</h3>
-                    <div class="row suggested-book-list"></div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <book-list-app></book-list-app>
 @endsection
 
 @section('scripts')
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script type="module" src="{{ asset('js/book-list.js') }}"></script>
+    <!-- Logic handled by Vue in app.js -->
 @endsection
