@@ -11,6 +11,10 @@ import HomeApp from './components/HomeApp.vue';
 import LoginApp from './components/LoginApp.vue';
 import RegisterApp from './components/RegisterApp.vue';
 
+import CheckoutApp from './components/CheckoutApp.vue';
+import SearchBox from './components/SearchBox.vue';
+import AppToast from './components/AppToast.vue';
+
 const app = createApp({});
 
 // Components registration
@@ -24,5 +28,8 @@ app.component('site-footer', SiteFooter);
 app.component('home-app', HomeApp);
 app.component('login-app', LoginApp);
 app.component('register-app', RegisterApp);
+app.component('checkout-app', CheckoutApp);
+app.component('search-box', SearchBox);
+app.component('app-toast', AppToast);
 
 app.mount('#app');

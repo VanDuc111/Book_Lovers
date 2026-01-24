@@ -251,6 +251,9 @@ const navItems = [
     { id: 'change-password', label: 'Đổi mật khẩu', icon: 'fas fa-shield-alt' }
 ];
 
+// Fallback to window.profileConfig if props.config is not provided
+const safeConfig = computed(() => props.config || window.profileConfig || {});
+
 const avatarUrl = computed(() => {
     const name = user.name || 'User';
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ff6347&color=fff&size=128`;
@@ -282,7 +285,7 @@ const initUser = () => {
     }
     
     if (!userID) {
-        window.location.href = props.config.loginUrl || '/login';
+        window.location.href = safeConfig.value.loginUrl || '/login';
         return;
     }
     
@@ -293,13 +296,14 @@ const handleUrlParams = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const initialTab = urlParams.get('tab') || urlParams.get('target');
     if (initialTab) {
-        activeTab.ref = tabMap[initialTab] || initialTab;
+        activeTab.value = tabMap[initialTab] || initialTab;
     }
 };
 
 const fetchUserData = async () => {
+    if (!safeConfig.value.apiUrl) return;
     try {
-        const response = await fetch(`${props.config.apiUrl}/${user.userID}`);
+        const response = await fetch(`${safeConfig.value.apiUrl}/${user.userID}`);
         const data = await response.json();
         if (data) {
             Object.assign(user, data);
@@ -344,11 +348,11 @@ const switchTab = (tabId) => {
 const updateProfile = async () => {
     saving.value = true;
     try {
-        const response = await fetch(`${props.config.apiUrl}/${user.userID}`, {
+        const response = await fetch(`${safeConfig.value.apiUrl}/${user.userID}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': props.config.csrfToken
+                'X-CSRF-TOKEN': safeConfig.value.csrfToken
             },
             body: JSON.stringify({
                 name: user.name,
@@ -382,11 +386,11 @@ const updatePassword = async () => {
 
     savingPassword.value = true;
     try {
-        const response = await fetch(`${props.config.apiUrl}/${user.userID}`, {
+        const response = await fetch(`${safeConfig.value.apiUrl}/${user.userID}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': props.config.csrfToken
+                'X-CSRF-TOKEN': safeConfig.value.csrfToken
             },
             body: JSON.stringify({
                 current_password: passwords.current,
@@ -411,7 +415,7 @@ const updatePassword = async () => {
 
 const logout = () => {
     localStorage.removeItem('user');
-    window.location.href = props.config.homeUrl || '/';
+    window.location.href = safeConfig.value.homeUrl || '/';
 };
 
 const formatCurrency = (value) => {

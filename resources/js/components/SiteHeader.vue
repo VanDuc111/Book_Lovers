@@ -24,9 +24,7 @@
                 </div>
             </nav>
 
-            <form @submit.prevent="handleSearch" class="form-box from-box" id="search-form" autocomplete="off" role="search" aria-label="Site search">
-                <input type="search" v-model="searchQuery" placeholder="Tìm kiếm sản phẩm..." id="search-input" autocomplete="off">
-            </form>
+            <search-box />
 
             <div class="icons">
                 <a href="/cart" class="cart-link" style="position: relative;">
@@ -45,6 +43,8 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 
+import SearchBox from './SearchBox.vue';
+
 const logoSrc = '/assets/images/logo-full.svg';
 const categoryIconSrc = '/assets/icons/category.svg';
 const cartIconSrc = '/assets/icons/shopping-cart.svg';
@@ -52,7 +52,6 @@ const userIconSrc = '/assets/icons/user.svg';
 
 const categories = ref([]);
 const loadingCategories = ref(false);
-const searchQuery = ref('');
 const cartCount = ref(0);
 const user = ref(null);
 
@@ -63,6 +62,8 @@ onMounted(() => {
 
     // Listen for cart updates
     window.addEventListener('cart-updated', updateCartIcon);
+    // Listen for user updates (login/logout)
+    window.addEventListener('user-updated', checkUser);
 });
 
 const fetchCategories = async () => {
@@ -74,13 +75,6 @@ const fetchCategories = async () => {
         console.error('Error fetching categories:', error);
     } finally {
         loadingCategories.value = false;
-    }
-};
-
-const handleSearch = () => {
-    const q = searchQuery.value.trim();
-    if (q) {
-        window.location.href = `/book-list?search=${encodeURIComponent(q)}`;
     }
 };
 
@@ -98,6 +92,8 @@ const checkUser = () => {
         const storedUser = JSON.parse(localStorage.getItem('user'));
         if (storedUser) {
             user.value = storedUser;
+        } else {
+            user.value = null;
         }
     } catch (e) {
         user.value = null;

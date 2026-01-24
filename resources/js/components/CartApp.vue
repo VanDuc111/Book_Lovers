@@ -246,7 +246,12 @@ const checkout = () => {
 onMounted(() => {
   const user = JSON.parse(localStorage.getItem('user'));
   userId.value = user ? user.userID : null;
-  fetchCart();
+  
+  if (userId.value) {
+    fetchCart();
+  } else {
+    loading.value = false;
+  }
 });
 </script>
 
