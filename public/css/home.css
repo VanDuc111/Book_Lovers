@@ -106,6 +106,18 @@
   margin-top: -2rem;
 }
 
+@media (max-width: 991px) {
+  .home .row .content,
+  .home .row .home-books-list {
+    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  .home .row .home-books-list {
+    margin-top: 2rem;
+  }
+}
+
 @media (max-width: 768px) {
   .home .row .content h3 {
     color: var(--black);
@@ -166,6 +178,12 @@
 .reviews .heading span {
   font-size: 2rem;
   padding: 0.6rem 1.2rem;
+}
+
+@media (max-width: 768px) {
+  .heading {
+    padding-left: 2rem;
+  }
 }
 
 /* ==========================

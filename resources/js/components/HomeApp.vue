@@ -3,13 +3,13 @@
         <!-- Hero Section -->
         <section class="home" id="home">
             <div class="row align-items-center">
-                <div class="col-md-5 content">
+                <div class="col-lg-5 content">
                     <h3>Ưu đãi lên đến 30%!</h3>
                     <p>Danh sách nổi bật</p>
                     <a href="/book-list" class="btn">Mua ngay!</a>
                 </div>
 
-                <div class="col-md-7">
+                <div class="col-lg-7">
                     <div class="swiper home-books-list" ref="heroSwiperRef">
                         <div class="swiper-wrapper">
                             <div v-if="loadingFeatured" class="swiper-slide loading-message">
@@ -194,9 +194,9 @@ const initHeroSwiper = () => {
             centeredSlides: true,
             autoplay: { delay: 4000, disableOnInteraction: false },
             breakpoints: {
-                0: { slidesPerView: 2, spaceBetween: 10 },
-                768: { slidesPerView: 3, spaceBetween: 20 },
-                1200: { slidesPerView: 3, spaceBetween: 30 },
+                0: { slidesPerView: 2, spaceBetween: 15 },
+                768: { slidesPerView: 2, spaceBetween: 20 },
+                992: { slidesPerView: 3, spaceBetween: 30 },
             },
         });
     } else if (typeof window.Swiper === 'undefined') {
@@ -258,11 +258,72 @@ const formatCurrency = (value) => {
     font-size: 1.5rem;
     color: var(--light-color);
 }
+
 .box {
     cursor: pointer;
+    transition: var(--transition);
 }
+
 .box:hover {
     transform: translateY(-5px);
-    transition: transform 0.3s ease;
+}
+
+
+/* Custom Heading Styles */
+.heading {
+    text-align: left;
+    margin-bottom: 4rem;
+    margin-top: 8.5rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+
+.heading::before {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 99, 71, 0.05);
+    z-index: 0;
+    border-radius: 10px;
+}
+
+.heading span {
+    font-size: 1.8rem; /* Giảm size từ 2.4rem xuống */
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, var(--orange) 0%, var(--dark-color) 100%);
+    padding: 0.7rem 2rem; /* Thu gọn padding */
+    border-radius: 12px 35px 12px 5px;
+    display: inline-block;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 8px 15px rgba(255, 99, 71, 0.2);
+    text-transform: capitalize;
+    letter-spacing: 0.5px;
+    border: none;
+    transition: var(--transition);
+}
+.heading span:hover {
+    transform: translateX(10px);
+    box-shadow: 0 12px 25px rgba(255, 99, 71, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .heading {
+        margin-bottom: 3rem;
+        padding-left: 1rem;
+    }
+    
+    .heading span {
+        font-size: 1.8rem;
+        padding: 0.8rem 2rem;
+        border-radius: 12px 35px 12px 5px;
+    }
 }
 </style>
