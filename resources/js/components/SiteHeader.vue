@@ -78,11 +78,21 @@ const fetchCategories = async () => {
     }
 };
 
-const updateCartIcon = () => {
+const updateCartIcon = async () => {
     try {
-        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-        cartCount.value = cart.reduce((total, item) => total + item.quantity, 0);
+        const storedUser = JSON.parse(localStorage.getItem('user'));
+        if (storedUser && storedUser.userID) {
+            // Fetch from API for logged-in users
+            const response = await fetch(`/api/cart?userID=${storedUser.userID}`);
+            const cartItems = await response.json();
+            cartCount.value = Array.isArray(cartItems) ? cartItems.length : 0;
+        } else {
+            // Fetch from LocalStorage for guests
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            cartCount.value = cart.length; // Count unique items (lines), not total quantity
+        }
     } catch (e) {
+        console.error('Error updating cart count:', e);
         cartCount.value = 0;
     }
 };
@@ -115,16 +125,22 @@ const userLink = computed(() => {
 <style scoped>
 .cart-count-badge {
     position: absolute;
-    top: -5px;
-    right: -5px;
-    background-color: var(--brand-orange);
+    top: -8px;
+    right: -10px;
+    background-color: var(--orange);
     color: white;
     border-radius: 50%;
-    padding: 2px 6px;
-    font-size: 10px;
-    font-weight: bold;
+    padding: 2px 5px;
+    font-size: 1.1rem;
+    font-weight: 700;
     min-width: 18px;
-    text-align: center;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(255, 99, 71, 0.4);
+    border: 2px solid white;
+    z-index: 10;
 }
 
 #welcome-message {
@@ -137,6 +153,13 @@ const userLink = computed(() => {
 @media (max-width: 768px) {
     #welcome-message {
         display: none;
+    }
+    .cart-count-badge {
+        top: -5px;
+        right: -5px;
+        font-size: 0.9rem;
+        min-width: 15px;
+        height: 15px;
     }
 }
 </style>

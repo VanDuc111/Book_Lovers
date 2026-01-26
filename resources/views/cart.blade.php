@@ -3,7 +3,7 @@
 @section('title', 'Giỏ hàng - Book Lovers')
 
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('css/cart.css') }}" />
+    <!-- Styles managed by Vue component -->
 @endsection
 
 @section('content')

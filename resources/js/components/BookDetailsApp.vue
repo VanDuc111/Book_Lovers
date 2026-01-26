@@ -264,7 +264,7 @@ const handleCartAction = async (isBuyNow) => {
          window.location.href = "/cart";
        } else {
          if (window.showToast) window.showToast("Đã thêm vào giỏ hàng!", "success");
-         // Tùy chọn: update icon giỏ hàng ở đây
+         window.dispatchEvent(new Event('cart-updated')); // Đồng bộ số lượng trên header
        }
     }
   } catch (err) {
