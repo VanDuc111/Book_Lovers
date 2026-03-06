@@ -34,6 +34,21 @@ class BookController extends Controller
             }
         }
 
+        if ($request->has('minPrice') && is_numeric($request->minPrice)) {
+            $query->where('bookPrice', '>=', $request->minPrice);
+        }
+
+        if ($request->has('maxPrice') && is_numeric($request->maxPrice)) {
+            $query->where('bookPrice', '<=', $request->maxPrice);
+        }
+
+        if ($request->has('publishers')) {
+            $publishers = explode(',', $request->publishers);
+            if (count($publishers) > 0) {
+                $query->whereIn('publisher', $publishers);
+            }
+        }
+
         $books = $query->get()->map(function ($book) {
             $book->image = $this->fixImagePath($book->image);
             $book->categoryName = $book->category ? $book->category->categoryName : null;

@@ -13,16 +13,67 @@
 
     <div class="container-fluid">
       <div class="row">
-        <div class="col-md-2">
-          <!-- Sidebar có thể thêm tại đây -->
-        </div>
-        <div class="col-md-10">
-          <!-- Main Book List -->
-          <div v-if="loading" class="text-center py-5">
-            <div class="spinner-border text-primary" role="status">
-              <span class="visually-hidden">Loading...</span>
+        <div class="col-md-3 col-lg-2">
+          <!-- Sidebar -->
+          <div class="filter-sidebar p-4 border rounded mb-4 bg-white shadow-sm">
+            <h4 class="filter-title mb-4" style="font-size: 1.6rem; font-weight: 700; color: var(--black);"><i class="fas fa-filter"></i> Bộ lọc</h4>
+            
+            <!-- Lọc theo Danh mục -->
+            <div class="filter-group mb-4 pb-3 border-bottom">
+              <h5 class="filter-subtitle mb-3" style="font-size: 1.4rem; font-weight: 600; color: var(--black);">Danh mục</h5>
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="radio" name="categoryFilter" id="cat-all" value="all" v-model="currentCategory" @change="applyFilters">
+                <label class="form-check-label" for="cat-all" style="font-size: 1.3rem; color: var(--light-color); cursor: pointer;">Tất cả</label>
+              </div>
+              <div class="form-check mb-2" v-for="cat in availableCategories" :key="cat">
+                <input class="form-check-input" type="radio" name="categoryFilter" :id="'cat-'+cat" :value="cat" v-model="currentCategory" @change="applyFilters">
+                <label class="form-check-label" :for="'cat-'+cat" style="font-size: 1.3rem; color: var(--light-color); cursor: pointer;">{{ cat }}</label>
+              </div>
             </div>
-            <p class="mt-2 text-muted">Đang tải danh sách sách...</p>
+
+            <!-- Lọc theo Giá -->
+            <div class="filter-group mb-4 pb-3 border-bottom">
+              <h5 class="filter-subtitle mb-3" style="font-size: 1.4rem; font-weight: 600; color: var(--black);">Giá (VNĐ)</h5>
+              <div class="d-flex align-items-center mb-2">
+                <input type="number" class="form-control form-control-sm text-center" placeholder="TỪ" v-model="filters.minPrice" style="font-size: 1.2rem; padding: 0.5rem; border-radius: 4px;">
+                <span class="mx-2" style="font-size: 1.2rem; color: var(--light-color);">-</span>
+                <input type="number" class="form-control form-control-sm text-center" placeholder="ĐẾN" v-model="filters.maxPrice" style="font-size: 1.2rem; padding: 0.5rem; border-radius: 4px;">
+              </div>
+              <button class="btn w-100 mt-2 filter-btn" @click="applyFilters" style="font-size: 1.2rem; border: 1px solid var(--orange); color: var(--orange); background: transparent; border-radius: .5rem; transition: .2s;">Áp dụng giá</button>
+            </div>
+
+            <!-- Lọc theo NXB -->
+            <div class="filter-group mb-4 pb-2">
+              <h5 class="filter-subtitle mb-3" style="font-size: 1.4rem; font-weight: 600; color: var(--black);">Nhà phát hành</h5>
+              <div class="form-check mb-2" v-for="pub in availablePublishers" :key="pub">
+                <input class="form-check-input" type="checkbox" :id="'pub-'+pub" :value="pub" v-model="filters.publishers" @change="applyFilters">
+                <label class="form-check-label" :for="'pub-'+pub" style="font-size: 1.3rem; color: var(--light-color); cursor: pointer;">{{ pub }}</label>
+              </div>
+            </div>
+
+            <button class="btn w-100 mt-2 filter-reset-btn" @click="resetFilters" style="font-size: 1.3rem; font-weight: 600; padding: 0.8rem; background: var(--orange); color: white; border-radius: .5rem; border: none; transition: .2s;">Xóa bộ lọc</button>
+          </div>
+        </div>
+        <div class="col-md-9 col-lg-10">
+          <!-- Main Book List -->
+          <div v-if="loading" class="row">
+            <div v-for="i in 8" :key="i" class="col-6 col-md-4 col-lg-3 mb-4">
+              <div class="card h-100 border-0 shadow-sm">
+                <!-- Image skeleton -->
+                <div class="skeleton p-3" style="height: 250px; border-radius: 8px 8px 0 0;"></div>
+                <div class="card-body">
+                  <!-- Title skeleton -->
+                  <div class="skeleton mb-3" style="height: 20px; width: 100%;"></div>
+                  <div class="skeleton mb-3" style="height: 20px; width: 80%;"></div>
+                  <!-- Category/Author skeleton -->
+                  <div class="skeleton mb-3" style="height: 15px; width: 60%;"></div>
+                  <!-- Price skeleton -->
+                  <div class="skeleton mb-3" style="height: 24px; width: 50%;"></div>
+                  <!-- Button skeleton -->
+                  <div class="skeleton mt-auto" style="height: 38px; width: 100%; border-radius: 4px;"></div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <div v-else class="row book-list">
@@ -64,6 +115,14 @@ const loading = ref(true);
 const currentCategory = ref('all');
 const currentSearch = ref('');
 
+const availableCategories = ref([]);
+const availablePublishers = ref([]);
+const filters = ref({
+  minPrice: '',
+  maxPrice: '',
+  publishers: []
+});
+
 // Computed title for breadcrumb
 const currentTitle = computed(() => {
   if (currentSearch.value) return `Kết quả cho: "${currentSearch.value}"`;
@@ -89,6 +148,15 @@ const fetchBooks = async () => {
   }
   if (currentSearch.value) {
     params.append('search', currentSearch.value);
+  }
+  if (filters.value.minPrice) {
+    params.append('minPrice', filters.value.minPrice);
+  }
+  if (filters.value.maxPrice) {
+    params.append('maxPrice', filters.value.maxPrice);
+  }
+  if (filters.value.publishers && filters.value.publishers.length > 0) {
+    params.append('publishers', filters.value.publishers.join(','));
   }
   
   const queryString = params.toString();
@@ -121,12 +189,40 @@ const fetchSuggestions = async () => {
 const filterByCategory = (category) => {
   currentCategory.value = category;
   currentSearch.value = '';
-  // Cập nhật URL mà không reload trang (tùy chọn)
+  applyFilters();
+};
+
+const applyFilters = () => {
   const url = new URL(window.location);
-  url.searchParams.set('category', category);
+  url.searchParams.set('category', currentCategory.value);
   url.searchParams.delete('search');
   window.history.pushState({}, '', url);
   fetchBooks();
+};
+
+const resetFilters = () => {
+  currentCategory.value = 'all';
+  filters.value.minPrice = '';
+  filters.value.maxPrice = '';
+  filters.value.publishers = [];
+  applyFilters();
+};
+
+const fetchMetadata = async () => {
+    try {
+        const [catRes, bookRes] = await Promise.all([
+            fetch('/api/categories'),
+            fetch('/api/books')
+        ]);
+        const categories = await catRes.json();
+        availableCategories.value = categories.map(c => c.categoryName);
+        
+        const allBooks = await bookRes.json();
+        const pubs = new Set(allBooks.map(b => b.publisher).filter(p => p));
+        availablePublishers.value = Array.from(pubs);
+    } catch (e) {
+        console.error('Lỗi khi tải dữ liệu lọc', e);
+    }
 };
 
 onMounted(() => {
@@ -134,6 +230,7 @@ onMounted(() => {
   currentCategory.value = params.get('category') || 'all';
   currentSearch.value = params.get('search') || '';
   
+  fetchMetadata();
   fetchBooks();
 
   // Listen for category selection from header (Manual event if needed)
@@ -148,5 +245,31 @@ onMounted(() => {
 <style scoped>
 .suggested-section {
     border-top: var(--border);
+}
+
+.filter-btn:hover {
+    background: var(--orange) !important;
+    color: white !important;
+}
+
+.filter-reset-btn:hover {
+    background: var(--black) !important;
+}
+
+.filter-sidebar {
+    position: sticky;
+    top: 8rem;
+}
+
+/* Skeleton Loading Styles */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 4px;
+}
+
+@keyframes loading {
+    to { background-position: -200% 0; }
 }
 </style>

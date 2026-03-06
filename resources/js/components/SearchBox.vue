@@ -149,6 +149,19 @@ onUnmounted(() => {
     height: 100%;
 }
 
+#search-input:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Remove default browser clear icon (X) on search inputs */
+#search-input::-webkit-search-decoration,
+#search-input::-webkit-search-cancel-button,
+#search-input::-webkit-search-results-button,
+#search-input::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+}
+
 #search-input::placeholder {
     color: #999;
 }
