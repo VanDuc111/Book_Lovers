@@ -57,7 +57,6 @@
           <h4 class="mb-4">Đánh giá của bạn</h4>
           
           <div class="mb-3">
-            <label class="form-label d-block fw-bold">Chọn số sao:</label>
             <div class="star-rating-input" style="font-size: 2.5rem; cursor: pointer;">
               <i v-for="i in 5" :key="i"
                  class="fa fa-star"
@@ -247,16 +246,136 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* ============================================================
+   BookReviews — Scoped Styles
+   Merged from: book-details.css
+   ============================================================ */
+
+/* ---- Utility ---- */
 .text-orange { color: var(--orange); }
 .bg-orange { background-color: var(--orange); }
 .text-light-gray { color: #ddd; }
 .cursor-pointer { cursor: pointer; }
 .hover-orange:hover { color: var(--orange); }
 
+/* ---- Reviews Section Wrapper ---- */
+.reviews-section-wrapper {
+    margin-top: 3rem;
+}
+
+.reviews-section {
+    padding: 2.5rem;
+    background: var(--white);
+    border: var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--box-shadow);
+}
+
+/* ---- Average Rating ---- */
+.avg-rating {
+    margin-bottom: 0.5rem;
+}
+
+.avg-rating .display-4 {
+    font-size: 4.4rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.rating-stars i {
+    font-size: var(--fs-base);
+    margin-right: 4px;
+}
+
+/* ---- Review List ---- */
+.reviews-list {
+    font-size: 1.15rem;
+    line-height: 1.7;
+}
+
+.review-item {
+    gap: 2rem;
+}
+
+.review-user-info {
+    min-width: 120px;
+}
+
+.review-content .stars {
+    margin-bottom: 0.5rem;
+}
+
+.review-content .comment {
+    font-size: 1.5rem;
+    line-height: 1.6;
+}
+
+/* ---- Write Review Form ---- */
+.write-review-form {
+    background: #f8f9fa;
+    border-radius: var(--radius-md);
+    margin-top: 1.5rem;
+}
+
+.star-rating-input i {
+    transition: transform 0.1s ease;
+}
+.star-rating-input i:hover {
+    transform: scale(1.2);
+}
+
+/* ---- Nav Tabs (override global .btn styles leaking into nav-link) ---- */
+/* :deep() needed because nav-link gets global .btn orange gradient */
+.reviews-section :deep(.nav-tabs) {
+    border-bottom: 2px solid #dee2e6;
+    margin-bottom: 2rem;
+}
+
+.reviews-section :deep(.nav-link) {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--light-color) !important;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    padding: 1rem 1.8rem !important;
+    box-shadow: none !important;
+    transform: none !important;
+    border-bottom: 3px solid transparent !important;
+    transition: color 0.2s, border-color 0.2s !important;
+}
+
+.reviews-section :deep(.nav-link:hover) {
+    color: var(--orange) !important;
+    background: transparent !important;
+    transform: none !important;
+    box-shadow: none !important;
+    border-bottom-color: rgba(255,99,71,0.3) !important;
+}
+
+.reviews-section :deep(.nav-link.active) {
+    color: var(--orange) !important;
+    background: transparent !important;
+    border-bottom: 3px solid var(--orange) !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.progress { border-radius: 4px; }
+.progress-bar { border-radius: 4px; }
+
+/* ---- Vue Transitions ---- */
 .fade-enter-active, .fade-leave-active {
-  transition: opacity 0.3s;
+    transition: opacity 0.3s;
 }
 .fade-enter-from, .fade-leave-to {
-  opacity: 0;
+    opacity: 0;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+    .reviews-section { padding: 1.5rem; }
+    .review-item { flex-direction: column; gap: 1rem; }
+    .review-user-info { width: 100% !important; min-width: unset; }
 }
 </style>

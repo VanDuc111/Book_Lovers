@@ -3,7 +3,6 @@
 @section('title', 'Sách đã mua - Book Lovers')
 
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('css/book-list.css') }}">
     <style>
         .rating-stars {
             font-size: 2rem;

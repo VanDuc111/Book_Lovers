@@ -6,6 +6,5 @@
     <checkout-app></checkout-app>
 @endsection
 
-@section('scripts')
-    <link rel="stylesheet" href="{{ asset('css/checkout.css') }}">
+@section('styles')
 @endsection

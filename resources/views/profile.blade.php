@@ -3,7 +3,6 @@
 @section('title', 'Hồ Sơ Cá Nhân - Book Lovers')
 
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('css/profile.css') }}">
 @endsection
 
 @section('content')

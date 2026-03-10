@@ -9,17 +9,8 @@
     <!-- Style Links -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('css/variables.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/home.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/auth.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/books.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/reviews.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/header.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/footer.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/book-list.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/toast.css') }}">
-    
+    <!-- Vite CSS & JS -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <!-- Swiper CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
 
@@ -28,6 +19,7 @@
 <body>
 
     <div class="site-wrapper" id="app">
+        <global-variables></global-variables>
         <site-header></site-header>
 
         <main>
@@ -43,7 +35,5 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     
     @yield('scripts')
-
-    @vite(['resources/js/app.js'])
 </body>
 </html>

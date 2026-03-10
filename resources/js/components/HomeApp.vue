@@ -93,17 +93,17 @@
                     <p class="text-muted">Chưa có đánh giá nào.</p>
                 </div>
                 <div v-for="review in reviews" :key="review.reviewID" class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm border-0">
-                        <img :src="review.bookImage || '/assets/images/placeholder.png'" class="card-img-top img-fluid" :alt="review.bookTitle" style="height: 200px; object-fit: contain; padding: 1rem;">
-                        <div class="card-body text-center">
+                    <div class="card h-100">
+                        <img :src="review.bookImage || '/assets/images/placeholder.png'" class="card-img-top" :alt="review.bookTitle">
+                        <div class="card-body">
                             <h5 class="card-title">{{ review.bookTitle || '---' }}</h5>
-                            <div class="text-muted mb-2" style="font-size: 1.1rem;">
+                            <div class="text-muted mb-2">
                                 <i class="fas fa-user me-1"></i> {{ review.userName }}
                             </div>
-                            <p class="card-text" style="font-style: italic;">
+                            <p class="card-text">
                                 "{{ review.comment || 'Không có bình luận.' }}"
                             </p>
-                            <div class="rating text-warning">
+                            <div class="rating">
                                 <template v-for="i in 5" :key="i">
                                     {{ i <= review.rating ? '★' : '☆' }}
                                 </template>
@@ -143,7 +143,7 @@ const fetchFeaturedAndRecommended = async () => {
     try {
         const response = await fetch('/api/books');
         const books = await response.json();
-        
+
         featuredBooks.value = books.filter(b => b.isFeatured || b.featured === 1).slice(0, 6);
         if (featuredBooks.value.length === 0) {
             featuredBooks.value = books.slice(0, 6);
@@ -199,8 +199,6 @@ const initHeroSwiper = () => {
                 992: { slidesPerView: 3, spaceBetween: 30 },
             },
         });
-    } else if (typeof window.Swiper === 'undefined') {
-        console.warn('Swiper not found during hero swiper init');
     }
 };
 
@@ -253,23 +251,120 @@ const formatCurrency = (value) => {
 </script>
 
 <style scoped>
+/* ==========================
+    HomeApp — Scoped Styles
+    Merged from: home.css, books.css, reviews.css
+   ========================== */
+
+/* ---- Loading ---- */
 .loading-message {
     padding: 3rem;
     font-size: 1.5rem;
     color: var(--light-color);
 }
 
-.box {
-    cursor: pointer;
-    transition: var(--transition);
+/* ---- Hero Section ---- */
+.home {
+  background: url('/assets/images/hero-bg.svg') no-repeat center right;
+  background-size: cover;
+  height: 57.2rem;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 0 9%;
 }
 
-.box:hover {
-    transform: translateY(-5px);
+.home::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0.95) 20%, rgba(255,255,255,0.2) 100%);
+  z-index: 1;
 }
 
+.home .row {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+}
 
-/* Custom Heading Styles */
+.home .row .content {
+  flex: 1 1 42rem;
+  padding: 1rem 0;
+}
+
+.home .row .content h3 {
+  color: var(--black);
+  font-size: var(--fs-h1);
+}
+
+.home .row .content p {
+  color: var(--light-color);
+  font-size: var(--fs-md);
+  line-height: 2;
+  padding: 1rem 0;
+}
+
+.home .row .content .btn {
+  margin-top: 1rem;
+  padding: 1.2rem 3.5rem;
+  font-size: 1.8rem;
+  border-radius: var(--radius-pill);
+  box-shadow: var(--btn-shadow);
+  background: var(--orange);
+  color: var(--white);
+  border: none;
+  text-decoration: none;
+  display: inline-block;
+  transition: var(--transition);
+}
+
+.home .row .content .btn:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-premium);
+  background: var(--dark-color);
+}
+
+.home .row .home-books-list {
+  padding: 0 1rem;
+  margin-top: 4rem;
+  flex: 1 1 42rem;
+  text-align: center;
+  overflow: hidden;
+  height: 40rem;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 15%, black 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 15%, black 100%);
+}
+
+.home .row .home-books-list .swiper-slide {
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  transform: scale(0.85);
+  opacity: 0.6;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-bottom: 2rem;
+}
+
+.home .row .home-books-list .swiper-slide-active {
+  transform: scale(1.15);
+  opacity: 1;
+  z-index: 10;
+}
+
+.home .row .home-books-list a img {
+  height: 32rem;
+  width: auto;
+  max-width: 100%;
+  box-shadow: var(--shadow-premium);
+  border-radius: var(--radius-sm);
+  display: block;
+  object-fit: contain;
+  background: transparent;
+}
+
+/* ---- Section Headings ---- */
 .heading {
     text-align: left;
     margin-bottom: 4rem;
@@ -278,7 +373,6 @@ const formatCurrency = (value) => {
     display: flex;
     align-items: center;
 }
-
 
 .heading::before {
     content: '';
@@ -293,11 +387,11 @@ const formatCurrency = (value) => {
 }
 
 .heading span {
-    font-size: 1.8rem; /* Giảm size từ 2.4rem xuống */
+    font-size: 1.8rem;
     font-weight: 700;
     color: #fff;
     background: linear-gradient(135deg, var(--orange) 0%, var(--dark-color) 100%);
-    padding: 0.7rem 2rem; /* Thu gọn padding */
+    padding: 0.7rem 2rem;
     border-radius: 12px 35px 12px 5px;
     display: inline-block;
     position: relative;
@@ -308,22 +402,179 @@ const formatCurrency = (value) => {
     border: none;
     transition: var(--transition);
 }
+
 .heading span:hover {
     transform: translateX(10px);
     box-shadow: 0 12px 25px rgba(255, 99, 71, 0.3);
 }
 
-/* Responsive adjustments */
+/* ---- Swiper Controls ---- */
+.swiper-button-next,
+.swiper-button-prev {
+  width: 4.8rem;
+  height: 4.8rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--blue);
+  box-shadow: var(--shadow-premium);
+  border: var(--border);
+  z-index: 2000;
+  transition: var(--transition);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 1.6rem;
+  color: currentColor;
+}
+
+.swiper-button-prev { left: 1rem; }
+.swiper-button-next { right: 1rem; }
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover,
+.swiper-button-next:focus,
+.swiper-button-prev:focus {
+  background: var(--blue);
+  color: var(--white);
+  transform: translateY(-50%) scale(1.06);
+}
+
+/* ---- Book Slider Boxes ---- */
+.sach-van-hoc .swiper-wrapper { align-items: stretch; }
+.sach-van-hoc .swiper-slide { display: flex; align-items: stretch; height: auto; }
+
+.box {
+    cursor: pointer;
+    transition: var(--transition);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-light);
+    border: var(--border);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 42rem;
+    width: 25rem;
+    margin: 2rem 0;
+    background: var(--white);
+}
+
+.box:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-premium);
+}
+
+.box .image {
+  padding: 0;
+  height: 26rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-light);
+}
+
+.box .image img {
+  width: auto;
+  max-width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  transition: transform 320ms ease;
+}
+
+.box:hover .image img { transform: scale(1.04); }
+
+.box .content {
+  padding: 1.6rem;
+  border-top: var(--border);
+}
+
+.box .content h3 {
+  font-size: 1.15rem;
+  color: var(--black);
+  margin-bottom: 0.8rem;
+}
+
+.box .content .price { padding-top: 0.5rem; }
+
+/* ---- Reviews Section ---- */
+.reviews { padding-top: 5rem; padding-bottom: 5rem; }
+
+.reviews .row {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.reviews .col-md-4 { display: flex; width: 25rem; flex: 0 0 auto; }
+
+.reviews .card {
+    flex: 1 1 auto;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-premium);
+    border: var(--border);
+    display: flex;
+    flex-direction: column;
+}
+
+.reviews .card-img-top {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+    padding: 1rem;
+    background: var(--bg-light);
+}
+
+.reviews .card-body {
+    padding: 1.4rem 1.6rem;
+    text-align: center;
+    background: var(--white);
+    flex: 1;
+}
+
+.reviews .card-title { font-size: var(--fs-base); color: var(--black); margin-bottom: 0.4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.reviews .card-text { font-size: var(--fs-sm); color: var(--light-color); font-style: italic; }
+.reviews .rating { display: inline-block; margin-top: 0.6rem; color: var(--rating-star, #ffb400); font-size: var(--fs-base); }
+
+/* ---- Responsive ---- */
+@media (max-width: 991px) {
+  .home .row .content,
+  .home .row .home-books-list { flex: 1 1 100%; width: 100%; }
+  .home .row .home-books-list { margin-top: 2rem; }
+  .box { width: 17rem; min-height: auto; margin: 1rem 0; }
+  .box .image { height: 18rem; }
+  .box .content { padding: 1rem; }
+  .reviews .col-md-4 { width: 14.5rem; }
+  .reviews .card-img-top { height: 15rem; }
+  .reviews .card-title { font-size: 1.1rem; }
+  .reviews .card-text { font-size: 1rem; }
+}
+
 @media (max-width: 768px) {
-    .heading {
-        margin-bottom: 3rem;
-        padding-left: 1rem;
-    }
-    
-    .heading span {
-        font-size: 1.8rem;
-        padding: 0.8rem 2rem;
-        border-radius: 12px 35px 12px 5px;
-    }
+  .home .row .content h3 { font-size: 3.5rem; }
+  .home .row .content { text-align: center; }
+  .heading { margin-bottom: 3rem; padding-left: 1rem; }
+  .heading span { font-size: 1.8rem; padding: 0.8rem 2rem; }
+}
+
+@media (max-width: 500px) {
+  .reviews .col-md-4 { max-width: 90%; flex: 0 0 auto; }
+}
+
+@media (max-width: 450px) {
+  .box { width: 14.5rem; }
+  .box .image { height: 15rem; }
+  .box .content h3 { font-size: 1.05rem; height: 3rem; overflow: hidden; }
 }
 </style>

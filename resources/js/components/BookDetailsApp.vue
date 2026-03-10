@@ -5,7 +5,7 @@
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
         <li class="breadcrumb-item"><a href="/book-list">Sách</a></li>
-        <li class="breadcrumb-item active" aria-current="page">{{ book.categoryName }}</li>
+        <li class="breadcrumb-item breadcrumb-active" aria-current="page">{{ book.categoryName }}</li>
       </ol>
     </nav>
 
@@ -136,7 +136,7 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
           <h3 class="fw-bold mb-0">Sách cùng thể loại</h3>
           <a :href="'/book-list?category=' + encodeURIComponent(book.categoryName)" 
-             class="btn btn-link text-orange fw-bold text-decoration-none">Xem tất cả <i class="fas fa-arrow-right ms-1"></i></a>
+             class="link-orange fw-bold">Xem tất cả <i class="fas fa-arrow-right ms-1"></i></a>
         </div>
         <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
            <div v-for="relBook in relatedBooks" :key="relBook.bookID" class="col">
@@ -281,34 +281,158 @@ onMounted(() => {
 });
 </script>
 
-<script>
-// Thêm style global hỗ trợ trong file vue
-</script>
+
 
 <style scoped>
+/* ============================================================
+   BookDetailsApp — Scoped Styles
+   Merged from: book-details.css
+   ============================================================ */
+
+/* ---- Utility Colors ---- */
 .text-orange { color: var(--orange); }
 .bg-light-orange { background: #fffaf9; }
 .border-dashed { border: 1px dashed #dee2e6 !important; }
+
+/* ---- Breadcrumb ---- */
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin-bottom: 2rem;
+    font-size: 1.4rem;     /* consistent size for all items & separator */
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0;
+}
+
+/* Override global style.css which sets .breadcrumb a { font-size: 1.8rem } */
+.breadcrumb-item,
+.breadcrumb-item a,
+.breadcrumb-item.breadcrumb-active {
+    font-size: 1.4rem !important;
+    line-height: 1.5;
+    vertical-align: middle;
+}
+
+.breadcrumb-item a {
+    color: var(--orange);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.breadcrumb-item a:hover { text-decoration: underline; }
+
+.breadcrumb-item.breadcrumb-active {
+    color: #888;
+    font-weight: 400;
+}
+
+/* ---- Link Orange (replaces btn btn-link for text links) ---- */
+.link-orange {
+    color: var(--orange);
+    text-decoration: none;
+    font-size: 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: opacity 0.2s, transform 0.2s;
+}
+.link-orange:hover {
+    color: #e6563e;
+    text-decoration: none;
+    transform: translateX(3px);
+}
+
+/* ---- Image & Info Sections ---- */
+.book-details-image-section,
+.book-details-info-section {
+    border: var(--border);
+    transition: var(--transition);
+    background: var(--white);
+}
 
 .shadow-img {
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     transition: transform 0.4s ease;
 }
-.shadow-img:hover {
-    transform: scale(1.02);
+.shadow-img:hover { transform: scale(1.02); }
+
+.book-title {
+    line-height: 1.3;
+    margin-top: 0;
+    font-size: var(--fs-h3);
+    font-weight: 600;
+    color: var(--black);
 }
 
-.skeleton {
-    background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: loading 1.5s infinite;
-    border-radius: 8px;
+/* ---- Price Section ---- */
+.current-price { color: var(--orange); }
+
+/* ---- Quantity Selector ---- */
+.quantity-selector {
+    background: var(--white);
+    max-width: fit-content;
+    display: flex;
+    align-items: stretch;
+    overflow: hidden;
+    border: 1.5px solid #e0e0e0 !important;
+    border-radius: 6px !important;
 }
 
-@keyframes loading {
-    to { background-position: -200% 0; }
+/* :deep() needed to override global .btn from style.css */
+.quantity-selector :deep(.btn),
+.quantity-selector button {
+    color: #333 !important;
+    padding: 0.4rem 1.2rem !important;
+    font-size: 1.8rem !important;
+    font-weight: 500 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: #f8f8f8 !important;
+    box-shadow: none !important;
+    transition: background 0.15s !important;
+    transform: none !important;
+    min-width: 3.6rem;
+    line-height: 1;
 }
 
+.quantity-selector :deep(.btn):hover,
+.quantity-selector button:hover {
+    background: #ececec !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.quantity-selector :deep(.btn):disabled,
+.quantity-selector button:disabled {
+    opacity: 0.3 !important;
+    pointer-events: none;
+}
+
+/* Input inside quantity selector */
+.quantity-selector input[type="number"] {
+    border: none !important;
+    border-left: 1.5px solid #e0e0e0 !important;
+    border-right: 1.5px solid #e0e0e0 !important;
+    background: var(--white) !important;
+    width: 5rem;
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 600;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0.3rem 0;
+    outline: none !important;
+}
+
+.quantity-selector input[type="number"]::-webkit-outer-spin-button,
+.quantity-selector input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* ---- Action Buttons ---- */
 .btn-orange {
     background: var(--orange);
     color: white;
@@ -334,15 +458,51 @@ onMounted(() => {
     transform: translateY(-2px);
 }
 
-.hvr-grow {
-    transition: transform 0.2s;
-}
-.hvr-grow:active {
-    transform: scale(0.98);
+.hvr-grow { transition: transform 0.2s; }
+.hvr-grow:active { transform: scale(0.98); }
+
+/* ---- Related Books ---- */
+.related-books-wrapper {
+    margin-top: 3rem;
+    padding: 2.5rem;
+    background: var(--white);
+    border: var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--box-shadow);
 }
 
-.quantity-selector button:disabled {
-    opacity: 0.3;
-    pointer-events: none;
+/* ---- Skeleton Loading ---- */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 8px;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ---- Animations ---- */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in-up { opacity: 0; animation: fadeInUp 0.6s ease forwards; }
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+    .book-title { font-size: 2rem !important; }
+    .current-price { font-size: 2.4rem !important; }
+    .book-details-image-section img {
+        max-height: 280px !important;
+        width: auto !important;
+        object-fit: contain !important;
+    }
 }
 </style>

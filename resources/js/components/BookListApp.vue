@@ -243,8 +243,103 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.suggested-section {
-    border-top: var(--border);
+/* ============================================================
+   BookListApp — Scoped Styles
+   Merged from: book-list.css
+   ============================================================ */
+
+/* ---- Book List Layout ---- */
+.book-list {
+    padding: 1rem;
+    min-height: 40rem;
+}
+
+.book-list p {
+    font-size: var(--fs-md);
+    color: var(--light-color);
+    text-align: center;
+    width: 100%;
+    margin-top: 5rem;
+}
+
+/* ---- Card ---- */
+.card {
+    height: 100%;
+    border: none;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--white);
+    box-shadow: var(--shadow-light);
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-premium);
+}
+
+.card-img-top {
+    height: 24rem;
+    object-fit: contain;
+    padding: 1rem;
+    background: var(--bg-light);
+    transition: var(--transition);
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.card-body {
+    padding: 1.5rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+    color: var(--black);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
+    height: 4.2rem;
+}
+
+.card-text {
+    font-size: 1.3rem;
+    color: var(--light-color);
+    margin-bottom: 0.5rem;
+}
+
+/* ---- Breadcrumb ---- */
+.breadcrumb {
+    background: transparent;
+    padding: 1rem 0;
+    margin-bottom: 0;
+}
+
+.breadcrumb-item a {
+    color: var(--light-color);
+    text-decoration: none;
+    font-size: 1.4rem;
+}
+
+.breadcrumb-item.active {
+    color: var(--orange);
+    font-weight: 600;
+    font-size: 1.4rem;
+}
+
+/* ---- Filter Sidebar ---- */
+.filter-sidebar {
+    position: sticky;
+    top: 8rem;
 }
 
 .filter-btn:hover {
@@ -256,12 +351,11 @@ onMounted(() => {
     background: var(--black) !important;
 }
 
-.filter-sidebar {
-    position: sticky;
-    top: 8rem;
+.suggested-section {
+    border-top: var(--border);
 }
 
-/* Skeleton Loading Styles */
+/* ---- Skeleton Loading ---- */
 .skeleton {
     background: linear-gradient(90deg, #f0f0f0 25%, #f8f8f8 50%, #f0f0f0 75%);
     background-size: 200% 100%;
@@ -271,5 +365,18 @@ onMounted(() => {
 
 @keyframes loading {
     to { background-position: -200% 0; }
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+    .book-list { padding: 0.5rem; }
+    .card-img-top { height: 18rem; }
+    .card-body { padding: 1rem 0.8rem; }
+    .card-title { font-size: 1.3rem; height: 3.6rem; margin-bottom: 0.5rem; }
+    .card-text { font-size: 1.1rem; }
+}
+
+@media (max-width: 480px) {
+    .card-img-top { height: 16rem; }
 }
 </style>

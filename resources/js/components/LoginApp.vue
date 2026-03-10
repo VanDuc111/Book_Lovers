@@ -92,64 +92,107 @@ const handleLogin = async () => {
 </script>
 
 <style scoped>
+/* ============================================================
+   LoginApp — Form Container
+   (merged from form.css & auth.css)
+   ============================================================ */
+
 .form-container {
-    max-width: 450px;
-    margin: 3rem auto;
-    padding: 3rem;
-    border-radius: 20px;
+    width: 40rem;
+    max-width: 90%;
+    margin: 5rem auto;
+    padding: 2.5rem;
+    border: var(--border);
+    border-radius: var(--radius-md);
+    background: var(--white);
+    box-shadow: var(--box-shadow);
 }
 
-h2 {
+.form-container h2 {
     text-align: center;
     color: var(--black);
+    text-transform: uppercase;
     font-size: 2.5rem;
-    margin-bottom: 2.5rem;
+    margin-bottom: 2rem;
     font-weight: 700;
 }
 
-.custom-input {
+.form-container label {
+    display: block;
+    margin-bottom: 0.8rem;
+    font-size: var(--fs-sm);
+    color: var(--black);
+    font-weight: 500;
+}
+
+.form-container input[type="email"],
+.form-container input[type="text"],
+.form-container input[type="password"] {
+    width: 100%;
     padding: 1.2rem;
-    font-size: 1.4rem;
-    border-radius: 10px;
-    border: 2px solid #eee;
-    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
+    border: var(--border);
+    border-radius: var(--radius-sm);
+    font-size: var(--fs-base);
+    color: var(--black);
+    transition: var(--transition);
 }
 
-.custom-input:focus {
-    border-color: var(--brand-orange);
-    box-shadow: 0 0 10px rgba(255, 99, 71, 0.1);
+.form-container input:focus {
+    border-color: var(--orange);
+    box-shadow: var(--focus-shadow);
+    outline: none;
 }
 
-.btn-main {
-    background: var(--brand-orange);
-    color: white;
+.form-container button[type="submit"],
+.form-container .btn-main {
+    width: 100%;
+    text-align: center;
+    padding: 1.2rem;
+    background-color: var(--orange);
+    color: #fff;
     border: none;
-    border-radius: 10px;
+    border-radius: var(--btn-radius, var(--radius-md));
+    cursor: pointer;
     font-size: 1.6rem;
     font-weight: 600;
-    transition: all 0.3s ease;
+    box-shadow: var(--btn-shadow);
+    transition: var(--transition);
 }
 
-.btn-main:hover {
-    background: #e5563f;
+.form-container button[type="submit"]:hover,
+.form-container .btn-main:hover {
+    background-color: var(--dark-color);
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(255, 99, 71, 0.3);
 }
 
-.btn-main:disabled {
+.form-container button[type="submit"]:disabled,
+.form-container .btn-main:disabled {
     opacity: 0.7;
     cursor: not-allowed;
+    transform: none;
 }
 
-a {
-    color: var(--brand-orange);
-    font-size: 1.4rem;
+.form-container p {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: var(--fs-sm);
+    color: var(--light-color);
+}
+
+.form-container p a {
+    color: var(--orange);
+    font-weight: 600;
     text-decoration: none;
-    transition: color 0.3s;
 }
 
-a:hover {
-    color: #e5563f;
+.form-container p a:hover {
     text-decoration: underline;
+}
+
+.password-wrapper {
+    position: relative;
+    width: 100%;
 }
 </style>
