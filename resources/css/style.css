@@ -440,15 +440,14 @@ main {
     }
 
     .home {
-        background: var(--bg-gray) !important;
-        background-image: none !important;
-        padding: 4rem 2rem;
+        padding: 2rem 2rem;
         height: auto !important;
         min-height: auto;
     }
 
     .home::before {
-        display: none;
+        display: block;
+        background: rgba(255, 255, 255, 0.85);
     }
 
     .home .row {

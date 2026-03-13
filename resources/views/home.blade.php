@@ -7,5 +7,4 @@
 @endsection
 
 @section('scripts')
-    {{-- Old scripts are no longer needed as HomeApp handles everything --}}
 @endsection

@@ -257,5 +257,11 @@ onUnmounted(() => {
     .input-group-custom {
         height: 4rem;
     }
+    #search-input {
+        font-size: 1.25rem;
+    }
+    #search-input::placeholder {
+        font-size: 1.25rem;
+    }
 }
 </style>

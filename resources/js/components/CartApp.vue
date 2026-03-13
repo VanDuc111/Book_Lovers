@@ -74,7 +74,7 @@
                   </td>
                   <td>
                     <div class="d-flex align-items-center">
-                      <a :href="'/book-details?id=' + item.bookID" class="me-3 flex-shrink-0">
+                      <a :href="'/book-details?id=' + item.bookID" class="me-3 shrink-0">
                         <img 
                           :src="item.image || 'https://fakeimg.pl/100x150/f0f0f0/909090?text=No+Image'" 
                           class="cart-item-image" 

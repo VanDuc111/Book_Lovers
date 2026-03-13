@@ -35,16 +35,8 @@
                     <div v-if="loadingVanHoc" class="swiper-slide loading-message text-center w-100">
                         Đang tải sách văn học...
                     </div>
-                    <div v-for="book in vanHocBooks" :key="book.bookID" class="swiper-slide box sach-van-hoc-slider" @click="goToDetails(book.bookID)">
-                        <div class="image">
-                            <img :src="book.image || 'default-image.jpg'" :alt="book.title">
-                        </div>
-                        <div class="content">
-                            <h3>{{ book.title }}</h3>
-                            <br>
-                            <div class="price price">{{ formatCurrency(book.bookPrice) }}</div>
-                            <br>
-                        </div>
+                    <div v-for="book in vanHocBooks" :key="book.bookID" class="swiper-slide">
+                        <book-card :book="book" />
                     </div>
                 </div>
                 <!-- Swiper Controls -->
@@ -61,16 +53,8 @@
                     <div v-if="loadingRecommended" class="swiper-slide loading-message text-center w-100">
                         Đang tải sách gợi ý...
                     </div>
-                    <div v-for="book in recommendedBooks" :key="book.bookID" class="swiper-slide box daily-recommended-slider" @click="goToDetails(book.bookID)">
-                        <div class="image">
-                            <img :src="book.image || 'default-image.jpg'" :alt="book.title">
-                        </div>
-                        <div class="content">
-                            <h3>{{ book.title }}</h3>
-                            <br>
-                            <div class="price price">{{ formatCurrency(book.bookPrice) }}</div>
-                            <br>
-                        </div>
+                    <div v-for="book in recommendedBooks" :key="book.bookID" class="swiper-slide">
+                        <book-card :book="book" />
                     </div>
                 </div>
                 <!-- Swiper Controls -->
@@ -118,6 +102,7 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from 'vue';
+import BookCard from './BookCard.vue';
 
 const featuredBooks = ref([]);
 const vanHocBooks = ref([]);
@@ -205,7 +190,7 @@ const initHeroSwiper = () => {
 const initVanHocSwiper = () => {
     if (vanHocSwiperRef.value && typeof window.Swiper !== 'undefined') {
         new window.Swiper(vanHocSwiperRef.value, {
-            spaceBetween: 10,
+            spaceBetween: 20,
             loop: true,
             autoplay: { delay: 8500, disableOnInteraction: false },
             navigation: {
@@ -215,7 +200,7 @@ const initVanHocSwiper = () => {
             breakpoints: {
                 0: { slidesPerView: 2 },
                 768: { slidesPerView: 3 },
-                1024: { slidesPerView: 4 },
+                1024: { slidesPerView: 5 },
             },
         });
     }
@@ -234,14 +219,10 @@ const initDailySwiper = () => {
             breakpoints: {
                 0: { slidesPerView: 2 },
                 768: { slidesPerView: 3 },
-                1024: { slidesPerView: 4 },
+                1024: { slidesPerView: 5 },
             },
         });
     }
-};
-
-const goToDetails = (id) => {
-    window.location.href = `/book-details?id=${id}`;
 };
 
 const formatCurrency = (value) => {
@@ -253,7 +234,6 @@ const formatCurrency = (value) => {
 <style scoped>
 /* ==========================
     HomeApp — Scoped Styles
-    Merged from: home.css, books.css, reviews.css
    ========================== */
 
 /* ---- Loading ---- */
@@ -411,8 +391,8 @@ const formatCurrency = (value) => {
 /* ---- Swiper Controls ---- */
 .swiper-button-next,
 .swiper-button-prev {
-  width: 4.8rem;
-  height: 4.8rem;
+  width: 4.2rem;
+  height: 4.2rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -421,7 +401,7 @@ const formatCurrency = (value) => {
   color: var(--blue);
   box-shadow: var(--shadow-premium);
   border: var(--border);
-  z-index: 2000;
+  z-index: 10;
   transition: var(--transition);
   position: absolute;
   top: 50%;
@@ -430,102 +410,40 @@ const formatCurrency = (value) => {
 
 .swiper-button-next::after,
 .swiper-button-prev::after {
-  font-size: 1.6rem;
+  font-size: 1.4rem;
   color: currentColor;
 }
 
-.swiper-button-prev { left: 1rem; }
-.swiper-button-next { right: 1rem; }
+.swiper-button-prev { left: -1rem; }
+.swiper-button-next { right: -1rem; }
 
-.swiper-button-next:hover,
-.swiper-button-prev:hover,
-.swiper-button-next:focus,
-.swiper-button-prev:focus {
-  background: var(--blue);
-  color: var(--white);
-  transform: translateY(-50%) scale(1.06);
+/* ---- Sections ---- */
+.book-slider {
+    padding-bottom: 3rem;
 }
 
-/* ---- Book Slider Boxes ---- */
-.sach-van-hoc .swiper-wrapper { align-items: stretch; }
-.sach-van-hoc .swiper-slide { display: flex; align-items: stretch; height: auto; }
-
-.box {
-    cursor: pointer;
-    transition: var(--transition);
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    box-shadow: var(--shadow-light);
-    border: var(--border);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 42rem;
-    width: 25rem;
-    margin: 2rem 0;
-    background: var(--white);
+.swiper-slide {
+    height: auto;
 }
-
-.box:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--shadow-premium);
-}
-
-.box .image {
-  padding: 0;
-  height: 26rem;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg-light);
-}
-
-.box .image img {
-  width: auto;
-  max-width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-  transition: transform 320ms ease;
-}
-
-.box:hover .image img { transform: scale(1.04); }
-
-.box .content {
-  padding: 1.6rem;
-  border-top: var(--border);
-}
-
-.box .content h3 {
-  font-size: 1.15rem;
-  color: var(--black);
-  margin-bottom: 0.8rem;
-}
-
-.box .content .price { padding-top: 0.5rem; }
 
 /* ---- Reviews Section ---- */
 .reviews { padding-top: 5rem; padding-bottom: 5rem; }
 
 .reviews .row {
     display: flex;
-    gap: 2rem;
     flex-wrap: wrap;
-    justify-content: flex-start;
-    align-items: stretch;
+    margin: 0 -1rem;
 }
 
-.reviews .col-md-4 { display: flex; width: 25rem; flex: 0 0 auto; }
+.reviews .col-md-4 {
+    padding: 0 1rem;
+}
 
 .reviews .card {
-    flex: 1 1 auto;
     border-radius: var(--radius-md);
     overflow: hidden;
     box-shadow: var(--shadow-premium);
     border: var(--border);
-    display: flex;
-    flex-direction: column;
 }
 
 .reviews .card-img-top {
@@ -540,7 +458,6 @@ const formatCurrency = (value) => {
     padding: 1.4rem 1.6rem;
     text-align: center;
     background: var(--white);
-    flex: 1;
 }
 
 .reviews .card-title { font-size: var(--fs-base); color: var(--black); margin-bottom: 0.4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -549,32 +466,34 @@ const formatCurrency = (value) => {
 
 /* ---- Responsive ---- */
 @media (max-width: 991px) {
+  .home {
+      background-position: center !important;
+  }
   .home .row .content,
   .home .row .home-books-list { flex: 1 1 100%; width: 100%; }
-  .home .row .home-books-list { margin-top: 2rem; }
-  .box { width: 17rem; min-height: auto; margin: 1rem 0; }
-  .box .image { height: 18rem; }
-  .box .content { padding: 1rem; }
-  .reviews .col-md-4 { width: 14.5rem; }
-  .reviews .card-img-top { height: 15rem; }
-  .reviews .card-title { font-size: 1.1rem; }
-  .reviews .card-text { font-size: 1rem; }
+  .home .row .home-books-list { 
+      margin-top: 0; 
+      height: 28rem;
+      -webkit-mask-image: none;
+      mask-image: none;
+  }
+  .home .row .content h3 { font-size: 2.8rem; }
+  .home .row .content p { padding: 0.2rem 0; font-size: 1.4rem; }
+  .heading { margin-top: 3rem; margin-bottom: 2rem; }
 }
 
 @media (max-width: 768px) {
   .home .row .content h3 { font-size: 3.5rem; }
   .home .row .content { text-align: center; }
-  .heading { margin-bottom: 3rem; padding-left: 1rem; }
+  .home .row .content p { padding: 0.5rem 0; }
+  .heading { margin-top: 2rem; margin-bottom: 2rem; padding-left: 1rem; }
   .heading span { font-size: 1.8rem; padding: 0.8rem 2rem; }
-}
-
-@media (max-width: 500px) {
-  .reviews .col-md-4 { max-width: 90%; flex: 0 0 auto; }
-}
-
-@media (max-width: 450px) {
-  .box { width: 14.5rem; }
-  .box .image { height: 15rem; }
-  .box .content h3 { font-size: 1.05rem; height: 3rem; overflow: hidden; }
+  
+  .swiper-button-next, .swiper-button-prev {
+      width: 3.2rem;
+      height: 3.2rem;
+  }
+  .swiper-button-prev { left: 0; }
+  .swiper-button-next { right: 0; }
 }
 </style>

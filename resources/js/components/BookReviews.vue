@@ -22,7 +22,7 @@
           <div v-for="star in [5, 4, 3, 2, 1]" :key="star" class="d-flex align-items-center mb-1">
             <span class="me-2" style="width: 20px">{{ star }}</span>
             <i class="fa fa-star text-warning me-2 small"></i>
-            <div class="progress flex-grow-1" style="height: 8px;">
+            <div class="progress grow" style="height: 8px;">
               <div class="progress-bar bg-orange" role="progressbar" 
                    :style="{ width: getPercentage(star) + '%' }" 
                    :aria-valuenow="getPercentage(star)" aria-valuemin="0" aria-valuemax="100"></div>
@@ -112,7 +112,7 @@
               <div class="fw-bold fs-5 text-dark">{{ (review.userName || 'Ẩn danh').split(' ')[0] }}</div>
               <div class="text-muted small">{{ formatDate(review.created_at) }}</div>
             </div>
-            <div class="review-content flex-grow-1">
+            <div class="review-content grow">
               <div class="stars mb-2">
                 <i v-for="i in 5" :key="i" 
                    class="fa fa-star" 

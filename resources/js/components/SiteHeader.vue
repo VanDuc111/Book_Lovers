@@ -16,7 +16,7 @@
                             <a href="#">{{ loadingCategories ? 'Đang tải...' : 'Không có thể loại nào' }}</a>
                         </li>
                         <li v-for="cat in categories" :key="cat.categoryID">
-                            <a :href="'/book-list?category=' + encodeURIComponent(cat.categoryName)">
+                            <a :href="'/book-list?category=' + encodeURIComponent(cat.categoryName)" class="category-link">
                                 {{ cat.categoryName }}
                             </a>
                         </li>
@@ -205,13 +205,16 @@ const userLink = computed(() => {
 }
 
 .category-content li {
-  padding: 10px;
+  padding: 0;
   text-align: left;
 }
 
-.category-content a {
+.category-content a.category-link {
+  display: block;
+  padding: 1.2rem 1.5rem;
   text-decoration: none;
   color: #333;
+  width: 100%;
 }
 
 .category:hover .category-content {
@@ -262,7 +265,8 @@ const userLink = computed(() => {
   transition: color 0.3s ease;
 }
 
-.user-info:hover {
+.user-info:hover,
+.user-info:hover #welcome-message {
   color: var(--orange) !important;
 }
 
@@ -292,6 +296,7 @@ const userLink = computed(() => {
   font-size: 1.4rem;
   color: var(--light-color);
   font-weight: 500;
+  transition: color 0.3s ease;
 }
 
 /* ==========================
@@ -337,6 +342,9 @@ const userLink = computed(() => {
 
   .category .category-bars.btn {
     background: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    border: none !important;
     padding: 0;
     min-width: unset !important;
     min-height: unset !important;
