@@ -6,7 +6,7 @@
 @endsection
 
 @section('content')
-<profile-app :config="profileConfig"></profile-app>
+<profile-app></profile-app>
 @endsection
 
 @section('scripts')
