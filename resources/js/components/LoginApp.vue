@@ -29,10 +29,9 @@
                 </div>
             </div>
             
-            <button type="submit" class="btn-main w-100 py-3" :disabled="loading">
-                <i v-if="loading" class="fas fa-spinner fa-spin me-2"></i>
-                {{ loading ? 'Đang Đăng Nhập...' : 'Đăng Nhập' }}
-            </button>
+            <base-button type="submit" variant="primary" size="lg" class="w-100" :loading="loading">
+                Đăng Nhập
+            </base-button>
         </form>
 
         <p class="mt-4 text-center">
@@ -144,35 +143,7 @@ const handleLogin = async () => {
     outline: none;
 }
 
-.form-container button[type="submit"],
-.form-container .btn-main {
-    width: 100%;
-    text-align: center;
-    padding: 1.2rem;
-    background-color: var(--orange);
-    color: #fff;
-    border: none;
-    border-radius: var(--btn-radius, var(--radius-md));
-    cursor: pointer;
-    font-size: 1.6rem;
-    font-weight: 600;
-    box-shadow: var(--btn-shadow);
-    transition: var(--transition);
-}
 
-.form-container button[type="submit"]:hover,
-.form-container .btn-main:hover {
-    background-color: var(--dark-color);
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255, 99, 71, 0.3);
-}
-
-.form-container button[type="submit"]:disabled,
-.form-container .btn-main:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-    transform: none;
-}
 
 .form-container p {
     text-align: center;

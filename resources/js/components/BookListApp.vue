@@ -39,7 +39,14 @@
                 <span class="mx-2" style="font-size: 1.2rem; color: var(--light-color);">-</span>
                 <input type="number" class="form-control form-control-sm text-center" placeholder="ĐẾN" v-model="filters.maxPrice" style="font-size: 1.2rem; padding: 0.5rem; border-radius: 4px;">
               </div>
-              <button class="btn w-100 mt-2 filter-btn" @click="applyFilters" style="font-size: 1.2rem; border: 1px solid var(--orange); color: var(--orange); background: transparent; border-radius: .5rem; transition: .2s;">Áp dụng giá</button>
+              <base-button 
+                variant="outline" 
+                size="sm" 
+                class="w-100 mt-2" 
+                @click="applyFilters"
+              >
+                Áp dụng giá
+              </base-button>
             </div>
 
             <!-- Lọc theo NXB -->
@@ -51,7 +58,14 @@
               </div>
             </div>
 
-            <button class="btn w-100 mt-2 filter-reset-btn" @click="resetFilters" style="font-size: 1.3rem; font-weight: 600; padding: 0.8rem; background: var(--orange); color: white; border-radius: .5rem; border: none; transition: .2s;">Xóa bộ lọc</button>
+            <base-button 
+              variant="primary" 
+              size="md" 
+              class="w-100 mt-2" 
+              @click="resetFilters"
+            >
+              Xóa bộ lọc
+            </base-button>
           </div>
         </div>
         <div class="col-md-9 col-lg-10">

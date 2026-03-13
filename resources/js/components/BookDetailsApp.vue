@@ -25,7 +25,7 @@
     <div v-else-if="book" class="row g-4">
       <!-- Left: Image Section -->
       <div class="col-lg-4 col-md-5">
-        <div class="book-details-image-section bg-white p-3 rounded shadow-sm text-center sticky-top" style="top: 100px; z-index: 10;">
+        <div class="book-details-image-section bg-white p-3 rounded shadow-sm text-center" style="z-index: 10;">
           <img :src="book.image || 'https://fakeimg.pl/450x600/f0f0f0/909090?text=No+Image'" 
                class="img-fluid rounded shadow-img" 
                :alt="book.title">
@@ -103,21 +103,27 @@
 
             <div class="row g-3">
               <div class="col-md-6">
-                <button @click="handleCartAction(false)" 
-                        class="btn btn-outline-orange w-100 py-3 fw-bold fs-5 hvr-grow"
-                        :disabled="book.stock <= 0 || cartLoading">
-                  <template v-if="!cartLoading">
+                <base-button 
+                    variant="primary" 
+                    size="lg" 
+                    class="w-100"
+                    :disabled="book.stock <= 0 || cartLoading"
+                    :loading="cartLoading"
+                    @click="handleCartAction(false)"
+                >
                     <i class="fas fa-cart-plus me-2"></i>Thêm vào giỏ hàng
-                  </template>
-                  <i v-else class="fas fa-spinner fa-spin"></i>
-                </button>
+                </base-button>
               </div>
               <div class="col-md-6">
-                <button @click="handleCartAction(true)" 
-                        class="btn btn-orange w-100 py-3 fw-bold fs-5 hvr-grow"
-                        :disabled="book.stock <= 0">
-                  Mua ngay
-                </button>
+                <base-button 
+                    variant="primary" 
+                    size="lg" 
+                    class="w-100"
+                    :disabled="book.stock <= 0"
+                    @click="handleCartAction(true)"
+                >
+                    Mua ngay
+                </base-button>
               </div>
             </div>
           </div>
@@ -150,7 +156,7 @@
     <div v-if="!loading && !book" class="text-center py-5">
        <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
        <p class="fs-4">Rất tiếc, thông tin sách không khả dụng hoặc đã bị xóa.</p>
-       <a href="/book-list" class="btn btn-main mt-3">Quay lại danh sách</a>
+       <base-button href="/book-list" variant="primary" class="mt-3" @click="window.location.href='/book-list'">Quay lại danh sách</base-button>
     </div>
   </div>
 </template>
@@ -433,33 +439,7 @@ onMounted(() => {
 }
 
 /* ---- Action Buttons ---- */
-.btn-orange {
-    background: var(--orange);
-    color: white;
-    border: none;
-    transition: all 0.3s;
-}
-.btn-orange:hover {
-    background: #e6563e;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255, 99, 71, 0.3);
-}
 
-.btn-outline-orange {
-    border: 2px solid var(--orange);
-    color: var(--orange);
-    background: transparent;
-    transition: all 0.3s;
-}
-.btn-outline-orange:hover {
-    background: rgba(255, 99, 71, 0.05);
-    color: #e6563e;
-    border-color: #e6563e;
-    transform: translateY(-2px);
-}
-
-.hvr-grow { transition: transform 0.2s; }
-.hvr-grow:active { transform: scale(0.98); }
 
 /* ---- Related Books ---- */
 .related-books-wrapper {

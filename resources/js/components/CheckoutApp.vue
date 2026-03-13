@@ -160,10 +160,15 @@
                                 </div>
                             </div>
 
-                            <button @click="handlePlaceOrder" class="btn-checkout" :disabled="placing">
-                                <i v-if="placing" class="fas fa-spinner fa-spin me-2"></i>
-                                <span v-else><i class="fas fa-lock me-2"></i> Đặt hàng</span>
-                            </button>
+                            <base-button 
+                                variant="primary" 
+                                size="lg" 
+                                class="w-100" 
+                                :loading="placing"
+                                @click="handlePlaceOrder"
+                            >
+                                <i class="fas fa-lock me-2"></i> Đặt hàng
+                            </base-button>
 
                             <div class="security-badges">
                                 <div class="badge-item">
@@ -463,27 +468,7 @@ textarea.form-control { resize: vertical; min-height: 100px; }
 .summary-row.total span:last-child { color: var(--orange); }
 
 /* ---- Checkout Button ---- */
-.btn-checkout {
-    width: 100%;
-    padding: 1.6rem;
-    font-size: var(--fs-base);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: #fff;
-    background: linear-gradient(135deg, var(--orange) 0%, #ff4520 100%);
-    border: none;
-    border-radius: var(--radius-lg);
-    cursor: pointer;
-    transition: var(--transition);
-    box-shadow: 0 4px 15px rgba(255, 99, 71, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-}
-.btn-checkout:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(255, 99, 71, 0.4); }
-.btn-checkout:active { transform: translateY(0); }
+
 
 /* ---- Security Badges ---- */
 .security-badges { display: flex; gap: 1.5rem; margin-top: 2rem; padding-top: 2rem; border-top: var(--border); }

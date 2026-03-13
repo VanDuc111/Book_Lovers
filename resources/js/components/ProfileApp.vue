@@ -63,10 +63,15 @@
                         </div>
                     </div>
 
-                    <button type="button" class="btn-main save-profile-btn mt-4" @click="updateProfile" :disabled="saving">
-                        <i class="fas" :class="saving ? 'fa-spinner fa-spin' : 'fa-save'"></i>
-                        <span class="ms-2">{{ saving ? 'Đang lưu...' : 'Lưu thay đổi' }}</span>
-                    </button>
+                    <base-button 
+                        variant="primary" 
+                        class="mt-4" 
+                        @click="updateProfile" 
+                        :loading="saving"
+                    >
+                        <i class="fas fa-save me-2"></i>
+                        Lưu thay đổi
+                    </base-button>
                 </div>
 
                 <!-- Orders Pane -->
@@ -84,7 +89,7 @@
                     <div v-else-if="orders.length === 0" class="text-center py-5">
                         <i class="fas fa-shopping-bag fa-4x mb-3 text-muted" style="opacity: 0.3;"></i>
                         <p class="text-muted">Bạn chưa có đơn hàng nào.</p>
-                        <a href="/book-list" class="btn mt-3">Mua sắm ngay</a>
+                        <base-button href="/book-list" variant="primary" class="mt-3" @click="window.location.href='/book-list'">Mua sắm ngay</base-button>
                     </div>
 
                     <div v-else class="orders-container">
@@ -135,7 +140,7 @@
                     <div v-else-if="purchasedBooks.length === 0" class="text-center py-5">
                         <i class="fas fa-book-reader fa-4x mb-3 text-muted" style="opacity: 0.3;"></i>
                         <p class="text-muted">Xem tủ sách cá nhân của bạn để bắt đầu đọc.</p>
-                        <a href="/book-list" class="btn btn-main mt-3">Đi tới thư viện</a>
+                        <base-button href="/book-list" variant="primary" class="mt-3" @click="window.location.href='/book-list'">Đi tới thư viện</base-button>
                     </div>
 
                     <div v-else class="row g-4">
@@ -158,7 +163,7 @@
                                         Mua ngày: {{ formatDateShort(book.order_date) }}
                                     </div>
                                     <div class="p-book-actions">
-                                        <a :href="'/book-details?id=' + book.bookID" class="btn btn-main btn-read-now">Mua lại</a>
+                                        <base-button variant="primary" size="sm" class="w-100" @click="window.location.href='/book-details?id=' + book.bookID">Mua lại</base-button>
                                     </div>
                                 </div>
                             </div>
@@ -205,10 +210,15 @@
                             <input type="password" v-model="passwords.confirmation" placeholder="Xác nhận mật khẩu mới">
                         </div>
 
-                        <button type="button" class="btn-main save-password-btn mt-3" @click="updatePassword" :disabled="savingPassword">
-                            <i class="fas" :class="savingPassword ? 'fa-spinner fa-spin' : 'fa-key'"></i>
-                            <span class="ms-2">{{ savingPassword ? 'Đang cập nhật...' : 'Cập nhật mật khẩu' }}</span>
-                        </button>
+                        <base-button 
+                            variant="primary" 
+                            class="mt-3" 
+                            @click="updatePassword" 
+                            :loading="savingPassword"
+                        >
+                            <i class="fas fa-key me-2"></i>
+                            Cập nhật mật khẩu
+                        </base-button>
                     </div>
                 </div>
             </main>

@@ -86,4 +86,86 @@
   --scroll-thumb: rgba(94, 94, 249, 0.16);
   --scroll-thumb-hover: rgba(94, 94, 249, 0.28);
 }
+
+/* ==========================
+    Base / Reset
+   ========================== */
+* {
+  font-family: "Montserrat", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  outline: none;
+  border: none;
+  transition: var(--transition);
+}
+
+html {
+  font-size: 62.5%; /* Changes 1rem to 10px for easier calculation */
+  overflow-x: hidden;
+  scroll-padding-top: 5rem;
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg-light);
+  line-height: 1.6;
+}
+
+/* Global Price Style */
+.price {
+  font-size: var(--fs-md);
+  color: var(--orange);
+  font-weight: 700;
+}
+
+/* Custom Scrollbar */
+html::-webkit-scrollbar {
+  width: 12px;
+}
+html::-webkit-scrollbar-track {
+  background: var(--scroll-track);
+  border-radius: 12px;
+}
+html::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb);
+  border-radius: 12px;
+  border: 3px solid var(--scroll-track);
+}
+html::-webkit-scrollbar-thumb:hover {
+  background: var(--scroll-thumb-hover);
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+}
+
+/* Utility Glassmorphism */
+.glass {
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(10px) saturate(180%);
+  -webkit-backdrop-filter: blur(10px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(10px) saturate(180%);
+  -webkit-backdrop-filter: blur(10px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
 </style>

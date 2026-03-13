@@ -6,7 +6,7 @@
                 <div class="col-lg-5 content">
                     <h3>Ưu đãi lên đến 30%!</h3>
                     <p>Danh sách nổi bật</p>
-                    <a href="/book-list" class="btn">Mua ngay!</a>
+                    <base-button href="/book-list" variant="primary" size="lg" class="mt-3" @click="window.location.href='/book-list'">Mua ngay!</base-button>
                 </div>
 
                 <div class="col-lg-7">
@@ -286,25 +286,7 @@ const formatCurrency = (value) => {
   padding: 1rem 0;
 }
 
-.home .row .content .btn {
-  margin-top: 1rem;
-  padding: 1.2rem 3.5rem;
-  font-size: 1.8rem;
-  border-radius: var(--radius-pill);
-  box-shadow: var(--btn-shadow);
-  background: var(--orange);
-  color: var(--white);
-  border: none;
-  text-decoration: none;
-  display: inline-block;
-  transition: var(--transition);
-}
 
-.home .row .content .btn:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-premium);
-  background: var(--dark-color);
-}
 
 .home .row .home-books-list {
   padding: 0 1rem;

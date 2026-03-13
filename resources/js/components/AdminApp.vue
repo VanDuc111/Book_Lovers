@@ -96,9 +96,9 @@
                 <div class="section-header-sticky">
                     <h2>Quản lý Sách</h2>
                     <div class="mb-3 d-flex gap-2 flex-wrap">
-                        <button class="btn btn-primary" @click="showBookForm()">Thêm Sách</button>
-                        <button class="btn btn-secondary" :disabled="!selectedBookId" @click="editBook()">Sửa</button>
-                        <button class="btn btn-danger" :disabled="!selectedBookId" @click="confirmDeleteBook()">Xóa</button>
+                        <base-button variant="primary" @click="showBookForm()">Thêm Sách</base-button>
+                        <base-button variant="secondary" :disabled="!selectedBookId" @click="editBook()">Sửa</base-button>
+                        <base-button variant="danger" :disabled="!selectedBookId" @click="confirmDeleteBook()">Xóa</base-button>
                     </div>
                     <div v-if="!isBookFormVisible" class="mb-2">
                         <input v-model="bookSearchQuery" class="form-control" placeholder="Tìm theo ID hoặc tiêu đề...">
@@ -186,8 +186,8 @@
                             <input type="file" @change="handleImageChange" class="form-control file-input" accept="image/*">
                         </div>
                         <div class="col-12 mt-4 d-flex gap-2">
-                            <button type="submit" class="btn btn-success" :disabled="submitting">Lưu</button>
-                            <button type="button" class="btn btn-secondary" @click="isBookFormVisible = false">Hủy</button>
+                            <base-button variant="primary" type="submit" :loading="submitting">Lưu</base-button>
+                            <base-button variant="secondary" @click="isBookFormVisible = false">Hủy</base-button>
                         </div>
                     </form>
                 </div>
@@ -231,9 +231,9 @@
                 <div class="section-header-sticky">
                     <h2>Quản lý Thể loại</h2>
                     <div class="mb-3 d-flex gap-2 flex-wrap">
-                        <button class="btn btn-primary" @click="showCategoryForm()">Thêm Thể loại</button>
-                        <button class="btn btn-secondary" :disabled="!selectedCategoryId" @click="editCategory()">Sửa</button>
-                        <button class="btn btn-danger" :disabled="!selectedCategoryId" @click="confirmDeleteCategory()">Xóa</button>
+                        <base-button variant="primary" @click="showCategoryForm()">Thêm Thể loại</base-button>
+                        <base-button variant="secondary" :disabled="!selectedCategoryId" @click="editCategory()">Sửa</base-button>
+                        <base-button variant="danger" :disabled="!selectedCategoryId" @click="confirmDeleteCategory()">Xóa</base-button>
                     </div>
                     <div v-if="!isCategoryFormVisible" class="mb-2">
                         <input v-model="categorySearchQuery" class="form-control" placeholder="Tìm theo ID hoặc tên thể loại...">
@@ -286,8 +286,8 @@
                             <textarea v-model="categoryFormData.description" class="form-control" rows="3"></textarea>
                         </div>
                         <div class="d-flex gap-2 mt-4">
-                            <button type="submit" class="btn btn-success" :disabled="submitting">Lưu</button>
-                            <button type="button" class="btn btn-secondary" @click="isCategoryFormVisible = false">Hủy</button>
+                            <base-button variant="primary" type="submit" :loading="submitting">Lưu</base-button>
+                            <base-button variant="secondary" @click="isCategoryFormVisible = false">Hủy</base-button>
                         </div>
                     </form>
                 </div>
@@ -298,7 +298,7 @@
                 <div class="section-header-sticky">
                     <h2>Quản lý Đơn hàng</h2>
                     <div class="mb-3 d-flex gap-2 flex-wrap align-items-center">
-                        <button class="btn btn-info" :disabled="!selectedOrderId" @click="viewOrderDetails()">Chi tiết</button>
+                        <base-button variant="info" :disabled="!selectedOrderId" @click="viewOrderDetails()">Chi tiết</base-button>
                         <select v-model="orderStatusFilter" class="form-control" style="width: auto;">
                             <option value="">Tất cả trạng thái</option>
                             <option value="Pending">Pending</option>
@@ -372,7 +372,7 @@
                 <div class="section-header-sticky">
                     <h2>Quản lý Đánh giá</h2>
                     <div class="mb-3 d-flex gap-2">
-                        <button class="btn btn-danger" :disabled="!selectedReviewId" @click="confirmDeleteReview()">Xóa</button>
+                        <base-button variant="danger" :disabled="!selectedReviewId" @click="confirmDeleteReview()">Xóa</base-button>
                     </div>
                     <div class="mb-3">
                         <input v-model="reviewSearchQuery" class="form-control" placeholder="Tìm ID sách hoặc người dùng...">
@@ -436,7 +436,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button @click="isOrderDetailsModalVisible = false" class="btn btn-secondary">Đóng</button>
+          <base-button variant="secondary" @click="isOrderDetailsModalVisible = false">Đóng</base-button>
         </div>
       </div>
     </div>
@@ -964,31 +964,7 @@ onMounted(() => fetchAdminCounts());
     color: var(--black);
 }
 
-/* Specific buttons to avoid global overrides */
-#main-content .btn {
-    font-size: 1.3rem;
-    padding: 0.8rem 1.6rem;
-    border-radius: var(--radius-sm);
-    font-weight: 700;
-    transition: var(--transition);
-    border: none;
-    cursor: pointer;
-}
 
-#main-content .btn:disabled {
-    opacity: 0.5;
-    background: #e0e0e0 !important;
-    color: #999 !important;
-    cursor: not-allowed;
-}
-
-#main-content .btn-primary { background: var(--orange); color: white !important; }
-#main-content .btn-primary:hover:not(:disabled) { background: #e5533d; }
-#main-content .btn-secondary { background: #5a6268; color: white !important; }
-#main-content .btn-secondary:hover:not(:disabled) { background: #4e555b; }
-#main-content .btn-danger { background: var(--danger); color: white !important; }
-#main-content .btn-info { background: #17a2b8; color: white !important; }
-#main-content .btn-success { background: #28a745; color: white !important; }
 
 /* Tables */
 .table-responsive {

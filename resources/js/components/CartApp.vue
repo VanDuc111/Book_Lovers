@@ -14,14 +14,14 @@
     <div v-else-if="!userId" class="text-center py-5">
       <div class="empty-cart-icon mb-3"><i class="fas fa-user-lock fa-3x"></i></div>
       <p style="font-size: 1.6rem;">Vui lòng đăng nhập để xem giỏ hàng.</p>
-      <a href="/login" class="btn btn-main mt-3">Đăng nhập ngay</a>
+      <base-button href="/login" variant="primary" size="lg" class="mt-3" @click="window.location.href='/login'">Đăng nhập ngay</base-button>
     </div>
 
     <!-- Empty Cart -->
     <div v-else-if="items.length === 0" class="text-center py-5">
       <div class="empty-cart-icon mb-3"><i class="fas fa-shopping-cart fa-3x" style="opacity: 0.2;"></i></div>
       <p style="font-size: 1.6rem;">Giỏ hàng của bạn đang trống.</p>
-      <a href="/book-list" class="btn btn-main mt-3">Tiếp tục mua sắm</a>
+      <base-button href="/book-list" variant="primary" size="lg" class="mt-3" @click="window.location.href='/book-list'">Tiếp tục mua sắm</base-button>
     </div>
 
     <!-- Cart Content -->
@@ -102,9 +102,9 @@
                   <td class="cart-item-subtotal">{{ formatPrice(item.bookPrice * item.quantity) }}</td>
                   <td>
                     <div class="cart-actions">
-                      <button class="btn btn-remove btn-sm" @click="removeItem(item.cartItemID)" title="Xóa">
+                      <base-button variant="danger" size="sm" @click="removeItem(item.cartItemID)" title="Xóa">
                         <i class="fas fa-trash"></i>
-                      </button>
+                      </base-button>
                     </div>
                   </td>
                 </tr>
@@ -131,13 +131,15 @@
             <span class="text-orange" style="font-size: 1.8rem;">{{ formatPrice(totalPrice) }}</span>
           </div>
           
-          <button 
-            class="btn btn-main w-100 py-3 mt-4 btn-checkout-all"
+          <base-button 
+            variant="primary" 
+            size="lg"
+            class="w-100 mt-4"
             @click="checkout"
             :disabled="selectedIds.length === 0"
           >
             ĐẶT HÀNG NGAY ({{ selectedIds.length }})
-          </button>
+          </base-button>
           
           <div class="mt-4 p-3 bg-light rounded" style="font-size: 1.2rem; color: #777;">
             <p class="mb-2"><i class="fas fa-shield-alt me-2 text-primary"></i> Đảm bảo thanh toán an toàn</p>
@@ -157,8 +159,8 @@
           <p>Bạn có chắc chắn muốn xóa cuốn sách này khỏi giỏ hàng?</p>
         </div>
         <div class="modal-actions">
-          <button class="btn-cancel" @click="cancelRemove">Hủy</button>
-          <button class="btn-confirm" @click="confirmRemove">Xác nhận xóa</button>
+          <base-button variant="secondary" @click="cancelRemove">Hủy</base-button>
+          <base-button variant="primary" @click="confirmRemove">Xác nhận xóa</base-button>
         </div>
       </div>
     </div>
@@ -439,20 +441,7 @@ onMounted(() => {
     font-weight: 800;
 }
 
-.btn-main {
-    background: var(--orange);
-    color: white;
-    border: none;
-    font-weight: 700;
-    border-radius: var(--radius-md);
-    transition: all 0.3s;
-}
 
-.btn-main:hover:not(:disabled) {
-    background: #e6563e;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(255, 99, 71, 0.3);
-}
 
 /* Responsive for Mobile */
 @media (max-width: 991px) {
@@ -532,7 +521,7 @@ onMounted(() => {
         color: #f56565;
     }
 
-    /* Sticky Mobile Footer */
+/* Sticky Mobile Footer */
     .cart-summary-card {
         position: fixed !important;
         bottom: 0 !important;
@@ -546,7 +535,6 @@ onMounted(() => {
         display: flex;
         flex-direction: column;
         gap: 1rem;
-        /* Force visibility of button which might be hidden by external cart.css */
         display: flex !important; 
     }
 
@@ -567,24 +555,6 @@ onMounted(() => {
         font-size: 1.4rem;
         color: var(--black);
     }
-
-    .btn-checkout-all {
-        margin-top: 0 !important;
-        padding: 1.2rem !important;
-        font-size: 1.4rem !important;
-        display: block !important; /* Ensure it is visible */
-        visibility: visible !important;
-    }
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Utility to fix potential display:none from external css for the checkout button */
-.btn-checkout-all {
-    display: block !important;
 }
 
 .empty-cart-icon {
@@ -671,35 +641,7 @@ onMounted(() => {
     gap: 1.5rem;
 }
 
-.modal-actions button {
-    flex: 1;
-    padding: 1.2rem;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 1.4rem;
-    transition: all 0.2s;
-    border: none;
-}
 
-.btn-cancel {
-    background: #f3f4f6;
-    color: #4b5563;
-}
-
-.btn-cancel:hover {
-    background: #e5e7eb;
-}
-
-.btn-confirm {
-    background: #f56565;
-    color: white;
-}
-
-.btn-confirm:hover {
-    background: #e53e3e;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(245, 101, 101, 0.4);
-}
 
 @keyframes fadeInModal {
     from { opacity: 0; }

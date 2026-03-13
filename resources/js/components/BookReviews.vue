@@ -45,10 +45,11 @@
           </p>
         </div>
         
-        <button v-if="userId && hasPurchased && !showForm" 
-                @click="showForm = true" class="btn btn-main">
+        <base-button v-if="userId && hasPurchased && !showForm" 
+                variant="primary"
+                @click="showForm = true">
           <i class="fas fa-pen me-2"></i> Viết đánh giá
-        </button>
+        </base-button>
       </div>
 
       <!-- Write Review Form -->
@@ -79,14 +80,19 @@
           </div>
 
           <div class="d-flex gap-2">
-            <button @click="submitReview" 
-                    :disabled="submitting" 
-                    class="btn btn-main">
-              <i v-if="submitting" class="fas fa-spinner fa-spin me-2"></i>
-              <i v-else class="fas fa-paper-plane me-2"></i> 
+            <base-button @click="submitReview" 
+                         variant="primary" 
+                         class="review-submit-btn"
+                         :loading="submitting">
+              <i class="fas fa-paper-plane me-2"></i>
               Gửi đánh giá
-            </button>
-            <button @click="showForm = false" class="btn btn-secondary">Hủy</button>
+            </base-button>
+            <base-button @click="showForm = false" 
+                         variant="secondary"
+                         class="review-cancel-btn">
+              <i class="fas fa-times me-2"></i>
+              Hủy bỏ
+            </base-button>
           </div>
         </div>
       </transition>
@@ -239,6 +245,7 @@ const formatDate = (dateStr) => {
 };
 
 onMounted(() => {
+  console.log('BookReviews component mounted!');
   const user = JSON.parse(localStorage.getItem('user'));
   userId.value = user ? user.userID : null;
   fetchData();
@@ -246,10 +253,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* ============================================================
-   BookReviews — Scoped Styles
-   Merged from: book-details.css
-   ============================================================ */
 
 /* ---- Utility ---- */
 .text-orange { color: var(--orange); }
