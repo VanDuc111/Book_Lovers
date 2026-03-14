@@ -2,174 +2,38 @@
     <section class="profile-section">
         <div class="container profile-wrapper">
             <!-- Sidebar Navigation -->
-            <aside class="profile-sidebar glass">
-                <div class="user-profile-header">
-                    <div class="avatar-container">
-                        <img :src="avatarUrl" id="profile-avatar-img" alt="Avatar">
-                        <div class="edit-avatar">
-                            <i class="fas fa-camera"></i>
-                        </div>
-                    </div>
-                    <h3 id="sidebar-name">{{ user.name || 'Người dùng' }}</h3>
-                    <p id="sidebar-email">{{ user.email || 'email@example.com' }}</p>
-                </div>
-
-                <nav class="profile-nav">
-                    <div 
-                        v-for="item in navItems" 
-                        :key="item.id"
-                        class="profile-nav-item" 
-                        :class="{ active: activeTab === item.id }"
-                        @click="switchTab(item.id)"
-                    >
-                        <i :class="item.icon"></i>
-                        <span>{{ item.label }}</span>
-                    </div>
-                    <a href="#" @click.prevent="logout" class="profile-nav-item" style="color: #e74c3c;">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Đăng xuất</span>
-                    </a>
-                </nav>
-            </aside>
+            <profile-sidebar 
+                :user-name="user.name"
+                :user-email="user.email"
+                :active-tab="activeTab"
+                :nav-items="navItems"
+                @switch-tab="switchTab"
+                @logout="logout"
+            />
 
             <!-- Main Content Area -->
             <main class="profile-content">
                 <!-- Profile Info Pane -->
-                <div v-show="activeTab === 'profile-info'" class="content-pane glass active">
-                    <div class="content-header">
-                        <h2>Cài đặt hồ sơ</h2>
-                        <p>Quản lý thông tin cá nhân và cài đặt tài khoản của bạn</p>
-                    </div>
-
-                    <div class="profile-form-grid">
-                        <div class="form-group full-width">
-                            <label for="name">Họ và tên</label>
-                            <input type="text" v-model="user.name" id="name" placeholder="Nhập họ tên của bạn">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="email">Địa chỉ Email</label>
-                            <input type="email" v-model="user.email" id="email" readonly>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="phone">Số điện thoại</label>
-                            <input type="tel" v-model="user.phone" id="phone" placeholder="Nhập số điện thoại">
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label for="address">Địa chỉ giao hàng</label>
-                            <input type="text" v-model="user.address" id="address" placeholder="Nhập địa chỉ của bạn">
-                        </div>
-                    </div>
-
-                    <base-button 
-                        variant="primary" 
-                        class="mt-4" 
-                        @click="updateProfile" 
-                        :loading="saving"
-                    >
-                        <i class="fas fa-save me-2"></i>
-                        Lưu thay đổi
-                    </base-button>
-                </div>
+                <profile-info-pane 
+                    v-show="activeTab === 'profile-info'"
+                    :user="user"
+                    :loading="saving"
+                    @update-profile="updateProfile"
+                />
 
                 <!-- Orders Pane -->
-                <div v-show="activeTab === 'my-orders'" class="content-pane glass active">
-                    <div class="content-header">
-                        <h2>Lịch sử đơn hàng</h2>
-                        <p>Theo dõi trạng thái và quản lý các đơn hàng bạn đã đặt</p>
-                    </div>
-                    
-                    <div v-if="loadingOrders" class="text-center py-5">
-                        <i class="fas fa-spinner fa-spin fa-3x text-muted"></i>
-                        <p class="mt-3">Đang tải đơn hàng...</p>
-                    </div>
-                    
-                    <div v-else-if="orders.length === 0" class="text-center py-5">
-                        <i class="fas fa-shopping-bag fa-4x mb-3 text-muted" style="opacity: 0.3;"></i>
-                        <p class="text-muted">Bạn chưa có đơn hàng nào.</p>
-                        <base-button href="/book-list" variant="primary" class="mt-3" @click="window.location.href='/book-list'">Mua sắm ngay</base-button>
-                    </div>
+                <order-history 
+                    v-show="activeTab === 'my-orders'"
+                    :orders="orders"
+                    :loading="loadingOrders"
+                />
 
-                    <div v-else class="orders-container">
-                        <div v-for="order in orders" :key="order.orderID" class="order-card">
-                            <div class="order-header">
-                                <div class="order-id">
-                                    <i class="fas fa-receipt"></i>
-                                    <span>Đơn hàng #{{ order.orderID }}</span>
-                                </div>
-                                <span class="order-status" :class="getStatusClass(order.order_status)">
-                                    {{ order.order_status }}
-                                </span>
-                            </div>
-                            <div class="order-body">
-                                <div class="order-info-row">
-                                    <i class="far fa-calendar-alt"></i>
-                                    <span>{{ formatOrderDate(order.order_date) }}</span>
-                                </div>
-                                <div class="order-info-row">
-                                    <i class="fas fa-money-bill-wave"></i>
-                                    <span class="price">{{ formatCurrency(order.total_amount) }}</span>
-                                </div>
-                                <div class="order-info-row">
-                                    <i class="fas fa-credit-card"></i>
-                                    <span>{{ order.payment_method || 'COD' }}</span>
-                                </div>
-                                <div v-if="order.shipping_address" class="order-info-row">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <span>{{ order.shipping_address }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                 <!-- Purchased Books Pane -->
-                <div v-show="activeTab === 'purchased-books-pane'" class="content-pane glass active">
-                    <div class="content-header">
-                        <h2>Thư viện của tôi</h2>
-                        <p>Xem toàn bộ các cuốn sách bạn đã mua và sở hữu</p>
-                    </div>
-                    
-                    <div v-if="loadingPurchased" class="text-center py-5">
-                        <i class="fas fa-spinner fa-spin fa-3x text-muted"></i>
-                        <p class="mt-3">Đang tải tủ sách...</p>
-                    </div>
-
-                    <div v-else-if="purchasedBooks.length === 0" class="text-center py-5">
-                        <i class="fas fa-book-reader fa-4x mb-3 text-muted" style="opacity: 0.3;"></i>
-                        <p class="text-muted">Xem tủ sách cá nhân của bạn để bắt đầu đọc.</p>
-                        <base-button href="/book-list" variant="primary" class="mt-3" @click="window.location.href='/book-list'">Đi tới thư viện</base-button>
-                    </div>
-
-                    <div v-else class="row g-4">
-                        <div v-for="book in purchasedBooks" :key="book.bookID" class="col-6 col-md-4 col-lg-3 mb-4">
-                            <div class="purchased-book-card">
-                                <div class="p-book-image-wrapper">
-                                    <img :src="book.image || 'https://fakeimg.pl/200x300/f0f0f0/909090?text=No+Image'" 
-                                         class="p-book-image" :alt="book.title">
-                                </div>
-                                <div class="p-book-info">
-                                    <a :href="'/book-details?id=' + book.bookID" class="p-book-title" :title="book.title">
-                                        {{ book.title }}
-                                    </a>
-                                    <div class="p-book-author">{{ book.author || 'Đang cập nhật' }}</div>
-                                    <div class="p-book-price price">
-                                        {{ formatCurrency(book.purchase_price) }}
-                                    </div>
-                                    <div class="p-book-date">
-                                        <i class="far fa-calendar-alt"></i>
-                                        Mua ngày: {{ formatDateShort(book.order_date) }}
-                                    </div>
-                                    <div class="p-book-actions">
-                                        <base-button variant="primary" size="sm" class="w-100" @click="window.location.href='/book-details?id=' + book.bookID">Mua lại</base-button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <!-- Purchased Books Pane -->
+                <purchased-books 
+                    v-show="activeTab === 'purchased-books-pane'"
+                    :books="purchasedBooks"
+                    :loading="loadingPurchased"
+                />
 
                 <!-- Wishlist Pane -->
                 <div v-show="activeTab === 'wishlist'" class="content-pane glass active">
@@ -184,43 +48,11 @@
                 </div>
 
                 <!-- Change Password Pane -->
-                <div v-show="activeTab === 'change-password'" class="content-pane glass active">
-                    <div class="content-header">
-                        <h2>Đổi mật khẩu</h2>
-                        <p>Đảm bảo an toàn cho tài khoản của bạn</p>
-                    </div>
-
-                    <div style="max-width: 45rem;">
-                        <div class="form-group">
-                            <label for="current_password">Mật khẩu hiện tại</label>
-                            <div class="password-wrapper">
-                                <input type="password" v-model="passwords.current" placeholder="Nhập mật khẩu hiện tại">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="new_password">Mật khẩu mới</label>
-                            <div class="password-wrapper">
-                                <input type="password" v-model="passwords.new" placeholder="Nhập mật khẩu mới">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="new_password_confirmation">Xác nhận mật khẩu mới</label>
-                            <input type="password" v-model="passwords.confirmation" placeholder="Xác nhận mật khẩu mới">
-                        </div>
-
-                        <base-button 
-                            variant="primary" 
-                            class="mt-3" 
-                            @click="updatePassword" 
-                            :loading="savingPassword"
-                        >
-                            <i class="fas fa-key me-2"></i>
-                            Cập nhật mật khẩu
-                        </base-button>
-                    </div>
-                </div>
+                <change-password 
+                    v-show="activeTab === 'change-password'"
+                    :loading="savingPassword"
+                    @update-password="updatePassword"
+                />
             </main>
         </div>
     </section>
@@ -228,6 +60,11 @@
 
 <script setup>
 import { ref, reactive, onMounted, computed } from 'vue';
+import ProfileSidebar from './profile/ProfileSidebar.vue';
+import ProfileInfoPane from './profile/ProfileInfoPane.vue';
+import OrderHistory from './profile/OrderHistory.vue';
+import PurchasedBooks from './profile/PurchasedBooks.vue';
+import ChangePassword from './profile/ChangePassword.vue';
 
 const props = defineProps(['config']);
 
@@ -247,12 +84,6 @@ const loadingPurchased = ref(false);
 const saving = ref(false);
 const savingPassword = ref(false);
 
-const passwords = reactive({
-    current: '',
-    new: '',
-    confirmation: ''
-});
-
 const navItems = [
     { id: 'profile-info', label: 'Thông tin cá nhân', icon: 'fas fa-user-circle' },
     { id: 'my-orders', label: 'Đơn hàng của tôi', icon: 'fas fa-box-open' },
@@ -261,13 +92,7 @@ const navItems = [
     { id: 'change-password', label: 'Đổi mật khẩu', icon: 'fas fa-shield-alt' }
 ];
 
-// Fallback to window.profileConfig if props.config is not provided
 const safeConfig = computed(() => props.config || window.profileConfig || {});
-
-const avatarUrl = computed(() => {
-    const name = user.name || 'User';
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ff6347&color=fff&size=128`;
-});
 
 const tabMap = {
     'orders': 'my-orders',
@@ -349,13 +174,22 @@ const fetchPurchasedBooks = async () => {
 
 const switchTab = (tabId) => {
     activeTab.value = tabId;
-    // Update URL without reloading
     const url = new URL(window.location);
     url.searchParams.set('tab', tabId);
     window.history.pushState({}, '', url);
 };
 
-const updateProfile = async () => {
+const updateProfile = async (updatedData) => {
+    // Validate phone number format (Vietnamese mobile standard: 10 digits, starts with 03, 05, 07, 08, 09)
+    if (updatedData.phone) {
+        const phoneRegex = /^(0)(3|5|7|8|9)[0-9]{8}$/;
+        if (!phoneRegex.test(updatedData.phone)) {
+            if (window.showToast) window.showToast('Số điện thoại không đúng định dạng (VD: 0912345678)', 'warning');
+            else alert('Số điện thoại không đúng định dạng');
+            return;
+        }
+    }
+
     saving.value = true;
     try {
         const response = await fetch(`${safeConfig.value.apiUrl}/${user.userID}`, {
@@ -365,32 +199,46 @@ const updateProfile = async () => {
                 'X-CSRF-TOKEN': safeConfig.value.csrfToken
             },
             body: JSON.stringify({
-                name: user.name,
-                phone: user.phone,
-                address: user.address
+                name: updatedData.name,
+                phone: updatedData.phone,
+                address: updatedData.address
             })
         });
         const result = await response.json();
         if (result.success || !result.error) {
-            alert('Cập nhật hồ sơ thành công!');
+            if (window.showToast) window.showToast('Cập nhật hồ sơ thành công!', 'success');
+            else alert('Cập nhật hồ sơ thành công!');
+            Object.assign(user, updatedData);
         } else {
-            alert('Lỗi: ' + (result.error || result.message));
+            if (window.showToast) window.showToast('Lỗi: ' + (result.error || result.message), 'danger');
+            else alert('Lỗi: ' + (result.error || result.message));
         }
     } catch (error) {
-        alert('Đã xảy ra lỗi khi kết nối server.');
+        if (window.showToast) window.showToast('Đã xảy ra lỗi khi kết nối server.', 'danger');
+        else alert('Đã xảy ra lỗi khi kết nối server.');
     } finally {
         saving.value = false;
     }
 };
 
-const updatePassword = async () => {
+const updatePassword = async (passwords) => {
     if (!passwords.current || !passwords.new) {
-        alert('Vui lòng điền đầy đủ các thông tin mật khẩu.');
+        if (window.showToast) window.showToast('Vui lòng điền đầy đủ các thông tin mật khẩu.', 'warning');
+        return;
+    }
+
+    if (passwords.new.length < 8) {
+        if (window.showToast) window.showToast('Mật khẩu mới phải có ít nhất 8 ký tự.', 'warning');
         return;
     }
 
     if (passwords.new !== passwords.confirmation) {
-        alert('Xác nhận mật khẩu mới không khớp.');
+        if (window.showToast) window.showToast('Xác nhận mật khẩu mới không khớp.', 'warning');
+        return;
+    }
+
+    if (passwords.new === passwords.current) {
+        if (window.showToast) window.showToast('Mật khẩu mới không được trùng với mật khẩu hiện tại.', 'warning');
         return;
     }
 
@@ -409,15 +257,17 @@ const updatePassword = async () => {
         });
         const result = await response.json();
         if (result.success || !result.error) {
-            alert('Đổi mật khẩu thành công!');
-            passwords.current = '';
-            passwords.new = '';
-            passwords.confirmation = '';
+            if (window.showToast) window.showToast('Đổi mật khẩu thành công! Vui lòng đăng nhập lại.', 'success');
+            setTimeout(() => {
+                logout();
+            }, 2000);
         } else {
-            alert('Lỗi: ' + (result.error || result.message));
+            const errorMsg = result.error || result.message || 'Lỗi không xác định';
+            if (window.showToast) window.showToast(errorMsg, 'danger');
+            else alert('Lỗi: ' + errorMsg);
         }
     } catch (error) {
-        alert('Đã xảy ra lỗi khi kết nối server.');
+        if (window.showToast) window.showToast('Đã xảy ra lỗi khi kết nối server.', 'danger');
     } finally {
         savingPassword.value = false;
     }
@@ -427,44 +277,14 @@ const logout = () => {
     localStorage.removeItem('user');
     window.location.href = safeConfig.value.homeUrl || '/';
 };
-
-const formatCurrency = (value) => {
-    if (!value) return '0 ₫';
-    return Number(value).toLocaleString('vi-VN') + ' ₫';
-};
-
-const formatOrderDate = (dateString) => {
-    const date = new Date(dateString);
-    return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
-};
-
-const formatDateShort = (dateString) => {
-    return new Date(dateString).toLocaleDateString('vi-VN');
-};
-
-const getStatusClass = (status) => {
-    const map = {
-        'Pending': 'badge-warning',
-        'Processing': 'badge-info',
-        'Shipped': 'badge-primary',
-        'Delivered': 'badge-success',
-        'Cancelled': 'badge-danger'
-    };
-    return map[status] || 'badge-secondary';
-};
 </script>
 
 <style scoped>
-/* ============================================================
-   ProfileApp — Scoped Styles
-   Merged from: profile.css
-   ============================================================ */
-
 .profile-section {
     padding: 3rem 0;
     min-height: 80vh;
     background: url('/assets/icons/profile-background.avif') center/cover no-repeat fixed,
-                linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                var(--grad-profile);
     position: relative;
 }
 
@@ -485,86 +305,6 @@ const getStatusClass = (status) => {
     z-index: 1;
 }
 
-/* ---- Sidebar ---- */
-.profile-sidebar {
-    flex: 0 0 30rem;
-    padding: 2.5rem;
-    position: sticky;
-    top: 10rem;
-    background: var(--bg-glass) !important;
-    backdrop-filter: blur(15px);
-    border-radius: var(--radius-xl);
-    box-shadow: var(--shadow-medium);
-}
-
-.user-profile-header {
-    text-align: center;
-    margin-bottom: 3rem;
-    padding: 2rem;
-    background: rgba(255, 255, 255, 0.6);
-    border-radius: var(--radius-lg);
-    border: 1px solid rgba(255,255,255,0.8);
-}
-
-.avatar-container {
-    position: relative;
-    width: 10rem;
-    height: 10rem;
-    margin: 0 auto 1.5rem;
-}
-
-.avatar-container img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 3px solid var(--white);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-.edit-avatar {
-    position: absolute;
-    bottom: 0; right: 0;
-    background: var(--orange);
-    width: 3rem; height: 3rem;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 1.2rem;
-    cursor: pointer;
-    border: 2px solid #fff;
-}
-
-.user-profile-header h3 { font-size: var(--fs-md); font-weight: 700; color: var(--black); margin-bottom: 0.5rem; }
-.user-profile-header p { font-size: var(--fs-sm); color: var(--light-color); }
-
-.profile-nav { display: flex; flex-direction: column; gap: 0.5rem; }
-
-.profile-nav-item {
-    display: flex;
-    align-items: center;
-    gap: 1.2rem;
-    padding: 1.2rem 1.5rem;
-    border-radius: var(--radius-md);
-    font-size: 1.5rem;
-    font-weight: 500;
-    color: var(--black);
-    background: rgba(255, 255, 255, 0.5);
-    margin-bottom: 0.8rem;
-    transition: var(--transition);
-    cursor: pointer;
-    border: 1px solid rgba(255,255,255,0.3);
-    text-decoration: none;
-}
-
-.profile-nav-item i { width: 2.5rem; text-align: center; font-size: 1.8rem; color: var(--orange); }
-.profile-nav-item:hover { background: rgba(255, 255, 255, 0.9); color: var(--orange); transform: translateX(5px); }
-.profile-nav-item.active { background: var(--orange); color: var(--white); box-shadow: 0 4px 15px rgba(255, 99, 71, 0.3); }
-.profile-nav-item.active i { color: #fff; }
-
-/* ---- Main Content ---- */
 .profile-content { flex: 1; }
 
 .content-pane {
@@ -584,115 +324,8 @@ const getStatusClass = (status) => {
 .content-header h2 { font-size: var(--fs-h2); color: var(--black); text-align: left; margin-bottom: 0.5rem; font-weight: 700; }
 .content-header p { font-size: var(--fs-sm); color: var(--light-color); }
 
-/* ---- Profile Form ---- */
-.profile-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-.form-group { margin-bottom: 2rem; }
-.form-group.full-width { grid-column: span 2; }
-.form-group label { display: block; font-size: 1.4rem; font-weight: 600; margin-bottom: 0.8rem; color: var(--black); }
-
-.form-group input {
-    width: 100%;
-    padding: 1.2rem 1.5rem;
-    border-radius: var(--radius-md);
-    border: var(--border);
-    font-size: 1.5rem;
-    background: rgba(255,255,255,0.8);
-    transition: var(--transition);
-}
-
-.form-group input:focus { border-color: var(--orange); background: var(--white); box-shadow: var(--focus-shadow); outline: none; }
-.form-group input[readonly] { background: rgba(0,0,0,0.03); cursor: not-allowed; }
-
-.password-wrapper { position: relative; }
-
-/* ---- Orders ---- */
-.orders-container { display: grid; gap: 1.5rem; margin-top: 2rem; }
-
-.order-card {
-    background: var(--white);
-    border-radius: var(--radius-lg);
-    padding: 2rem;
-    border: 1px solid var(--border-color);
-    transition: var(--transition);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-}
-
-.order-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-premium); border-color: var(--orange); }
-
-.order-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 2px solid var(--border-color-light);
-}
-
-.order-id { display: flex; align-items: center; gap: 1rem; font-size: 1.6rem; font-weight: 700; color: var(--black); }
-.order-id i { color: var(--orange); font-size: 1.8rem; }
-
-.order-status {
-    padding: 0.6rem 1.2rem;
-    border-radius: 20px;
-    font-size: var(--fs-xs);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.badge-warning { background: #fff3cd; color: #856404; }
-.badge-info { background: #d1ecf1; color: #0c5460; }
-.badge-primary { background: #cce5ff; color: #004085; }
-.badge-success { background: #d4edda; color: var(--success); }
-.badge-danger { background: #f8d7da; color: var(--error); }
-.badge-secondary { background: #e2e3e5; color: #383d41; }
-
-.order-body { display: grid; gap: 1rem; }
-
-.order-info-row { display: flex; align-items: flex-start; gap: 1rem; font-size: 1.4rem; color: #555; }
-.order-info-row i { width: 2rem; text-align: center; color: var(--orange); margin-top: 0.2rem; flex-shrink: 0; }
-.order-info-row span { flex: 1; line-height: 1.6; }
-
-/* ---- Purchased Books ---- */
-.purchased-book-card {
-    background: var(--white);
-    border-radius: var(--radius-lg);
-    padding: 1.5rem;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    border: 1px solid var(--border-color);
-    transition: var(--transition);
-    box-shadow: var(--shadow-light);
-}
-
-.purchased-book-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-premium); border-color: var(--orange); }
-
-.p-book-image-wrapper { position: relative; width: 100%; aspect-ratio: 2/3; margin-bottom: 1.5rem; border-radius: var(--radius-md); overflow: hidden; background: #f8f9fa; }
-.p-book-image { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-.p-book-info { text-align: left; display: flex; flex-direction: column; height: 100%; }
-.p-book-title { font-size: var(--fs-base); font-weight: 700; color: var(--black); margin-bottom: 0.5rem; text-decoration: none; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.p-book-author { font-size: var(--fs-sm); color: var(--light-color); margin-bottom: 0.5rem; }
-.p-book-price { font-size: var(--fs-sm); font-weight: 700; color: var(--orange); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem; }
-.p-book-date { margin-top: auto; font-size: var(--fs-xs); padding-top: 1rem; border-top: 1px solid var(--border-color-light); color: var(--muted-color); display: flex; align-items: center; gap: 0.6rem; }
-.p-book-date i { font-size: 1.1rem; color: #bbb; }
-.p-book-actions { margin-top: 1.5rem; display: flex; gap: 1rem; }
-.btn-read-now { flex: 1; padding: 0.8rem; font-size: 1.2rem; font-weight: 600; }
-
-/* ---- Responsive ---- */
 @media (max-width: 991px) {
     .profile-wrapper { flex-direction: column; }
-    .profile-sidebar { flex: 1; width: 100%; position: static; margin-bottom: 2rem; }
-    .profile-nav { flex-direction: row; overflow-x: auto; padding-bottom: 1rem; }
-    .profile-nav-item { white-space: nowrap; }
     .content-pane { padding: 2rem; }
-}
-
-@media (max-width: 768px) {
-    .profile-form-grid { grid-template-columns: 1fr; }
-    .form-group.full-width { grid-column: span 1; }
-    .order-card { padding: 1.5rem; }
-    .order-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
-    .order-status { align-self: flex-start; }
 }
 </style>

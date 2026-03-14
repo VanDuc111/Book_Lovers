@@ -131,8 +131,8 @@ const userLink = computed(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 3rem;
-  padding: 1.5rem 5%;
+  gap: var(--header-gap);
+  padding: var(--header-padding);
   background: var(--white);
   box-shadow: var(--shadow-light);
   position: relative;
@@ -151,7 +151,7 @@ const userLink = computed(() => {
 }
 
 .brand-logo {
-  height: 4.5rem;
+  height: var(--logo-height);
   width: auto;
   display: block;
 }
@@ -170,8 +170,8 @@ const userLink = computed(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 4.4rem;
-  min-height: 4.4rem;
+  min-width: var(--min-btn-size);
+  min-height: var(--min-btn-size);
   border: none !important;
 }
 
@@ -194,8 +194,8 @@ const userLink = computed(() => {
   border: var(--border);
   box-shadow: var(--shadow-medium);
   z-index: 2000;
-  width: 25rem;
-  font-size: 1.5rem;
+  width: var(--cat-menu-width);
+  font-size: var(--fs-sm);
 }
 
 .category-content ul {
@@ -222,7 +222,11 @@ const userLink = computed(() => {
 }
 
 .category-content li:hover {
-  background-color: rgb(163, 238, 238);
+  background-color: var(--cat-hover-bg);
+}
+
+.category-content li:hover a.category-link {
+  color: var(--black);
 }
 
 /* Icons area */
@@ -329,7 +333,7 @@ const userLink = computed(() => {
   }
 
   .brand-logo {
-    height: 3.2rem;
+    height: var(--logo-height-mobile);
   }
 
   .category {

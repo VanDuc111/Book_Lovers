@@ -1,23 +1,27 @@
 <template>
-  <button 
+  <component 
+    :is="tag"
+    :href="href"
     class="base-button" 
     :class="[
       `btn-${variant}`, 
       `btn-${size}`, 
       { 'is-loading': loading, 'is-disabled': disabled }
     ]" 
-    :disabled="disabled || loading"
+    :disabled="tag === 'button' ? (disabled || loading) : null"
     @click="$emit('click', $event)"
   >
     <span v-if="loading" class="spinner"></span>
     <span v-else class="btn-content">
       <slot></slot>
     </span>
-  </button>
+  </component>
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue';
+
+const props = defineProps({
   variant: {
     type: String,
     default: 'primary' // primary, secondary, danger, info, success, outline
@@ -33,8 +37,14 @@ defineProps({
   loading: {
     type: Boolean,
     default: false
+  },
+  href: {
+    type: String,
+    default: null
   }
 });
+
+const tag = computed(() => props.href ? 'a' : 'button');
 
 defineEmits(['click']);
 </script>
@@ -55,6 +65,7 @@ defineEmits(['click']);
   user-select: none;
   position: relative;
   overflow: hidden;
+  text-decoration: none !important;
 }
 
 .base-button:active {
@@ -63,7 +74,7 @@ defineEmits(['click']);
 
 /* Variants */
 .btn-primary {
-  background: linear-gradient(135deg, var(--orange) 0%, var(--dark-color) 100%);
+  background: var(--grad-primary);
   color: var(--white) !important;
   box-shadow: 0 4px 15px rgba(255, 99, 71, 0.3);
 }
@@ -157,8 +168,12 @@ defineEmits(['click']);
 /* Mobile responsive adjustments */
 @media (max-width: 768px) {
   .btn-md {
-    padding: 0.7rem 1.4rem;
-    font-size: 1.3rem;
+    padding: 1.2rem 2.2rem;
+    font-size: 1.5rem;
+  }
+  .btn-sm {
+    padding: 0.8rem 1.6rem;
+    font-size: 1.4rem;
   }
 }
 </style>

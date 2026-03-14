@@ -5,27 +5,20 @@
     </div>
     <div class="content">
       <h3 class="title">{{ book.title }}</h3>
-      <div class="price">{{ formatPrice(book.bookPrice) }}</div>
+      <div class="price">{{ formatCurrency(book.bookPrice) }}</div>
     </div>
   </div>
 </template>
 
 <script setup>
+import { formatCurrency } from '@/utils/formatters';
+
 const props = defineProps({
   book: {
     type: Object,
     required: true
   }
 });
-
-const formatPrice = (price) => {
-  if (!price) return 'Chưa rõ';
-  return Number(price).toLocaleString('vi-VN', {
-    style: 'currency',
-    currency: 'VND',
-    maximumFractionDigits: 0
-  });
-};
 
 const goToDetails = () => {
   if (props.book.bookID) {
@@ -37,17 +30,17 @@ const goToDetails = () => {
 <style scoped>
 .book-card {
     cursor: pointer;
-    transition: var(--transition, all 0.3s ease);
-    border-radius: var(--radius-md, 12px);
+    transition: var(--transition);
+    border-radius: var(--radius-md);
     overflow: hidden;
-    box-shadow: var(--shadow-light, 0 4px 10px rgba(0,0,0,0.05));
-    border: var(--border, 1px solid #eee);
+    box-shadow: var(--shadow-light);
+    border: var(--border);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 100%;
-    background: var(--white, #fff);
-    width: 100%;
+    height: var(--card-height);
+    background: var(--white);
+    width: var(--card-width);
 }
 
 .book-card:hover {
@@ -57,12 +50,12 @@ const goToDetails = () => {
 
 .book-card .image {
   padding: 1rem;
-  height: 22rem;
+  height: var(--card-img-height);
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--bg-light, #f8f9fa);
+  background: var(--bg-light);
 }
 
 .book-card .image img {
@@ -110,10 +103,10 @@ const goToDetails = () => {
 
 @media (max-width: 768px) {
     .book-card .image {
-        height: 18rem;
+        height: var(--card-img-height-mobile);
     }
     .book-card .content .title {
-        font-size: 1.2rem;
+        font-size: var(--fs-xs);
     }
 }
 </style>

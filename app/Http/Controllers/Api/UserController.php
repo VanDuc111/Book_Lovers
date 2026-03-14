@@ -41,13 +41,27 @@ class UserController extends Controller
         $user = User::find($id);
         if (!$user) return response()->json(['error' => 'Not found'], 404);
         
-        $data = $request->except(['password', 'email', 'userID']); // Exclude guarded or sensitive if needed
+        // Validate password if it's being updated
+        if ($request->filled('password')) {
+            if (!$request->filled('current_password')) {
+                return response()->json(['error' => 'Vui lòng nhập mật khẩu hiện tại.'], 422);
+            }
+            
+            if (!Hash::check($request->current_password, $user->password)) {
+                return response()->json(['error' => 'Mật khẩu hiện tại không chính xác.'], 422);
+            }
+
+            if (strlen($request->password) < 8) {
+                return response()->json(['error' => 'Mật khẩu mới phải có ít nhất 8 ký tự.'], 422);
+            }
+        }
+
+        $data = $request->except(['password', 'email', 'userID']);
         
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
         }
         
-        // Allow email update if valid/unique? For now allow it.
         if ($request->filled('email')) {
              $data['email'] = $request->email;
         }

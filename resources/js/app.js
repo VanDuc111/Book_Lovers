@@ -16,10 +16,12 @@ import AppToast from './components/AppToast.vue';
 import AdminApp from './components/AdminApp.vue';
 import BaseButton from './components/BaseButton.vue';
 import GlobalVariables from './components/GlobalVariables.vue';
+import PasswordField from './components/common/PasswordField.vue';
 
 const app = createApp({});
 
 // Components registration
+app.component('password-field', PasswordField);
 app.component('base-button', BaseButton);
 app.component('global-variables', GlobalVariables);
 app.component('admin-app', AdminApp);

@@ -54,9 +54,9 @@ onMounted(() => {
 <style scoped>
 .toast-wrapper {
     position: fixed;
-    top: 2rem;
-    right: 2rem;
-    z-index: 9999;
+    top: var(--toast-top);
+    right: var(--toast-right);
+    z-index: var(--toast-z-index);
     display: flex;
     flex-direction: column;
     gap: 1rem;

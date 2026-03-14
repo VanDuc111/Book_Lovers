@@ -3,12 +3,13 @@
         <h2>ĐĂNG NHẬP</h2>
         <form @submit.prevent="handleLogin">
             <div class="form-group mb-4">
-                <label for="email" class="form-label">Email:</label>
+                <label for="email" class="form-label">Email: <span class="required">*</span></label>
                 <input 
                     type="email" 
                     id="email" 
                     v-model="email" 
                     class="form-control custom-input"
+                    placeholder="VD: example@mail.com"
                     autocapitalize="off" 
                     autocorrect="off" 
                     spellcheck="false" 
@@ -16,18 +17,12 @@
                 >
             </div>
             
-            <div class="form-group mb-4">
-                <label for="password" class="form-label">Mật Khẩu:</label>
-                <div class="password-wrapper">
-                    <input 
-                        type="password" 
-                        id="password" 
-                        v-model="password" 
-                        class="form-control custom-input"
-                        required
-                    >
-                </div>
-            </div>
+            <password-field 
+                v-model="password"
+                label="Mật Khẩu"
+                placeholder="Nhập mật khẩu của bạn..."
+                required
+            />
             
             <base-button type="submit" variant="primary" size="lg" class="w-100" :loading="loading">
                 Đăng Nhập
@@ -48,6 +43,13 @@ const password = ref('');
 const loading = ref(false);
 
 const handleLogin = async () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.value)) {
+        if (window.showToast) window.showToast('Email không đúng định dạng chuẩn (Ví dụ: ten@example.com)', 'warning');
+        else alert('Email không đúng định dạng chuẩn');
+        return;
+    }
+
     loading.value = true;
     try {
         const response = await fetch('/api/login', {
@@ -65,7 +67,8 @@ const handleLogin = async () => {
             // Notify other components (like SiteHeader)
             window.dispatchEvent(new CustomEvent('user-updated'));
 
-            if (data.user.role === 'admin') {
+            const role = data.user.role ? data.user.role.toLowerCase() : '';
+            if (role === 'admin') {
                 window.location.href = '/admin';
             } else {
                 window.location.href = '/';
@@ -97,10 +100,10 @@ const handleLogin = async () => {
    ============================================================ */
 
 .form-container {
-    width: 40rem;
+    width: var(--form-width);
     max-width: 90%;
     margin: 5rem auto;
-    padding: 2.5rem;
+    padding: var(--form-padding);
     border: var(--border);
     border-radius: var(--radius-md);
     background: var(--white);
@@ -162,8 +165,4 @@ const handleLogin = async () => {
     text-decoration: underline;
 }
 
-.password-wrapper {
-    position: relative;
-    width: 100%;
-}
 </style>

@@ -146,6 +146,7 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { formatDateShort as formatDate } from '@/utils/formatters';
 
 const props = defineProps({
   bookId: {
@@ -240,9 +241,6 @@ const submitReview = async () => {
   }
 };
 
-const formatDate = (dateStr) => {
-  return new Date(dateStr).toLocaleDateString('vi-VN');
-};
 
 onMounted(() => {
   console.log('BookReviews component mounted!');
@@ -272,6 +270,12 @@ onMounted(() => {
     border: var(--border);
     border-radius: var(--radius-lg);
     box-shadow: var(--box-shadow);
+    font-size: var(--fs-base);
+}
+
+.review-status-note p {
+    font-size: var(--fs-base);
+    font-weight: 500;
 }
 
 /* ---- Average Rating ---- */
@@ -292,7 +296,7 @@ onMounted(() => {
 
 /* ---- Review List ---- */
 .reviews-list {
-    font-size: 1.15rem;
+    font-size: var(--fs-base);
     line-height: 1.7;
 }
 

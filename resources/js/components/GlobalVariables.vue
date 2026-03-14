@@ -45,7 +45,13 @@
   --shadow-light: 0 4px 6px rgba(0, 0, 0, 0.02);
   --shadow-medium: 0 10px 30px rgba(0, 0, 0, 0.1);
   --shadow-premium: 0 12px 25px rgba(0, 0, 0, 0.08);
+  --shadow-img: 0 10px 30px rgba(0, 0, 0, 0.1);
   --focus-shadow: 0 0 0 4px rgba(255, 99, 71, 0.1);
+  
+  /* ---- Skeleton Loading ---- */
+  --skeleton-base: #f0f0f0;
+  --skeleton-highlight: #f8f8f8;
+  --skeleton-animation: shimmer 1.5s infinite;
 
   /* ---- Border Radius ---- */
   --radius-sm: 0.5rem;
@@ -55,16 +61,16 @@
   --radius-pill: 50px;
 
   /* ---- Typography / Font Sizes ---- */
-  --fs-xs: 1.2rem;
-  --fs-sm: 1.4rem;
-  --fs-base: 1.5rem;
-  --fs-large: 1.6rem;
-  --fs-md: 1.8rem;
-  --fs-lg: 2.2rem;
-  --fs-xl: 2.8rem;
-  --fs-h1: 4.5rem;
-  --fs-h2: 3rem;
-  --fs-h3: 2.4rem;
+  --fs-xs: 1.3rem;    
+  --fs-sm: 1.5rem;    
+  --fs-base: 1.6rem;  
+  --fs-large: 1.8rem; 
+  --fs-md: 2.0rem;    
+  --fs-lg: 2.4rem;    
+  --fs-xl: 3.0rem;    
+  --fs-h1: 4.8rem;
+  --fs-h2: 3.2rem;
+  --fs-h3: 2.6rem;
 
   /* ---- Transitions ---- */
   --transition: all 0.3s ease;
@@ -85,11 +91,71 @@
   --scroll-track: #f3f4f6;
   --scroll-thumb: rgba(94, 94, 249, 0.16);
   --scroll-thumb-hover: rgba(94, 94, 249, 0.28);
+
+  /* ---- Admin Dashboard ---- */
+  --admin-sidebar-width: 280px;
+  --admin-topbar-height: 70px;
+  --admin-bg: #f8f9fa;
+  --admin-active-bg: #fff5f2;
+  --admin-hover-bg: #fffaf9;
+  --admin-radius-sm: 0.8rem;
+  --admin-radius-md: 1.25rem;
+  --admin-spacing-sm: 1.2rem;
+  --admin-spacing-md: 1.8rem;
+  --admin-spacing-lg: 2.5rem;
+
+  /* ---- Common Component Tokens ---- */
+  --header-height: 8rem;
+  --header-height-mobile: 13rem;
+  --container-width: 120rem;
+  --hero-height: 57.2rem;
+  --hero-height-mobile: 35rem;
+  
+  --card-width: 100%;
+  --card-height: 100%;
+  --card-img-height: 22rem;
+  --card-img-height-mobile: 18rem;
+  
+  --form-width: 40rem;
+  --form-padding: 3rem;
+  
+  --toast-top: 2rem;
+  --toast-right: 2rem;
+  --toast-z-index: 9999;
+  
+  --logo-height: 4.5rem;
+  --logo-height-mobile: 3.2rem;
+  --search-max-width: 60rem;
+  
+  /* ---- Sections & Headings ---- */
+  --heading-margin-top: 8.5rem;
+  --heading-margin-bottom: 4rem;
+  --heading-radius: 12px 35px 12px 5px;
+  --heading-shadow: 0 8px 15px rgba(255, 99, 71, 0.2);
+  --heading-bg: linear-gradient(135deg, var(--orange) 0%, var(--dark-color) 100%);
+
+  /* ---- Header & Nav ---- */
+  --header-padding: 1.5rem 5%;
+  --header-gap: 3rem;
+  --cat-menu-width: 25rem;
+  --cat-hover-bg: #a2f0f0;
+
+  /* ---- Admin Table & UI ---- */
+  --admin-table-head-bg: #fdfdfd;
+  --admin-table-padding-head: 1.8rem 1.5rem;
+  --admin-table-padding-rows: 2rem 1.5rem;
+  --admin-input-height: 50px;
+  --admin-header-fs: 2.8rem;
+  
+  /* ---- Gradients ---- */
+  --grad-profile: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  --grad-primary: linear-gradient(135deg, var(--orange) 0%, var(--dark-color) 100%);
 }
 
 /* ==========================
     Base / Reset
-   ========================== */
+    ========================== */
+
 * {
   font-family: "Montserrat", sans-serif;
   margin: 0;
@@ -98,7 +164,6 @@
   text-decoration: none;
   outline: none;
   border: none;
-  transition: var(--transition);
 }
 
 html {
@@ -111,6 +176,29 @@ html {
 body {
   background: var(--bg-light);
   line-height: 1.6;
+}
+
+/* Global Form Controls */
+.form-control, 
+input[type="text"], 
+input[type="email"], 
+input[type="password"], 
+input[type="number"], 
+input[type="tel"], 
+select, 
+textarea {
+  border: var(--border-field, 1.5px solid #e2e8f0) !important;
+  transition: var(--transition) !important;
+}
+
+.form-control:focus, 
+input:focus, 
+select:focus, 
+textarea:focus {
+  border-color: var(--orange) !important;
+  box-shadow: var(--focus-shadow) !important;
+  outline: none !important;
+  background-color: var(--white) !important;
 }
 
 /* Global Price Style */
@@ -168,4 +256,31 @@ html {
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
+
+.required {
+  color: var(--error);
+  font-weight: bold;
+  margin-left: 2px;
+}
+
+/* Skeleton Loading Animation */
+.skeleton-loader {
+  background: linear-gradient(
+    90deg,
+    var(--skeleton-base) 25%,
+    var(--skeleton-highlight) 50%,
+    var(--skeleton-base) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+  width: 100%;
+  height: 100%;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
 </style>
+```

@@ -14,82 +14,35 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-3 col-lg-2">
-          <!-- Sidebar -->
-          <div class="filter-sidebar p-4 border rounded mb-4 bg-white shadow-sm">
-            <h4 class="filter-title mb-4" style="font-size: 1.6rem; font-weight: 700; color: var(--black);"><i class="fas fa-filter"></i> Bộ lọc</h4>
-            
-            <!-- Lọc theo Danh mục -->
-            <div class="filter-group mb-4 pb-3 border-bottom">
-              <h5 class="filter-subtitle mb-3" style="font-size: 1.4rem; font-weight: 600; color: var(--black);">Danh mục</h5>
-              <div class="form-check mb-2">
-                <input class="form-check-input" type="radio" name="categoryFilter" id="cat-all" value="all" v-model="currentCategory" @change="applyFilters">
-                <label class="form-check-label" for="cat-all" style="font-size: 1.3rem; color: var(--light-color); cursor: pointer;">Tất cả</label>
-              </div>
-              <div class="form-check mb-2" v-for="cat in availableCategories" :key="cat">
-                <input class="form-check-input" type="radio" name="categoryFilter" :id="'cat-'+cat" :value="cat" v-model="currentCategory" @change="applyFilters">
-                <label class="form-check-label" :for="'cat-'+cat" style="font-size: 1.3rem; color: var(--light-color); cursor: pointer;">{{ cat }}</label>
-              </div>
-            </div>
-
-            <!-- Lọc theo Giá -->
-            <div class="filter-group mb-4 pb-3 border-bottom">
-              <h5 class="filter-subtitle mb-3" style="font-size: 1.4rem; font-weight: 600; color: var(--black);">Giá (VNĐ)</h5>
-              <div class="d-flex align-items-center mb-2">
-                <input type="number" class="form-control form-control-sm text-center" placeholder="TỪ" v-model="filters.minPrice" style="font-size: 1.2rem; padding: 0.5rem; border-radius: 4px;">
-                <span class="mx-2" style="font-size: 1.2rem; color: var(--light-color);">-</span>
-                <input type="number" class="form-control form-control-sm text-center" placeholder="ĐẾN" v-model="filters.maxPrice" style="font-size: 1.2rem; padding: 0.5rem; border-radius: 4px;">
-              </div>
-              <base-button 
-                variant="outline" 
-                size="sm" 
-                class="w-100 mt-2" 
-                @click="applyFilters"
-              >
-                Áp dụng giá
-              </base-button>
-            </div>
-
-            <!-- Lọc theo NXB -->
-            <div class="filter-group mb-4 pb-2">
-              <h5 class="filter-subtitle mb-3" style="font-size: 1.4rem; font-weight: 600; color: var(--black);">Nhà phát hành</h5>
-              <div class="form-check mb-2" v-for="pub in availablePublishers" :key="pub">
-                <input class="form-check-input" type="checkbox" :id="'pub-'+pub" :value="pub" v-model="filters.publishers" @change="applyFilters">
-                <label class="form-check-label" :for="'pub-'+pub" style="font-size: 1.3rem; color: var(--light-color); cursor: pointer;">{{ pub }}</label>
-              </div>
-            </div>
-
-            <base-button 
-              variant="primary" 
-              size="md" 
-              class="w-100 mt-2" 
-              @click="resetFilters"
-            >
-              Xóa bộ lọc
-            </base-button>
-          </div>
+          <!-- Filter Sidebar -->
+          <filter-sidebar
+              :categories="availableCategories"
+              :publishers="availablePublishers"
+              :total-count="totalBooksCount"
+              :current-category="currentCategory"
+              :filters="filters"
+              @filter-changed="onFilterChanged"
+              @reset="resetFilters"
+          />
         </div>
         <div class="col-md-9 col-lg-10">
-          <!-- Main Book List -->
+          <!-- Loading Skeleton -->
           <div v-if="loading" class="row">
             <div v-for="i in 8" :key="i" class="col-6 col-md-4 col-lg-3 mb-4">
               <div class="card h-100 border-0 shadow-sm">
-                <!-- Image skeleton -->
                 <div class="skeleton p-3" style="height: 250px; border-radius: 8px 8px 0 0;"></div>
                 <div class="card-body">
-                  <!-- Title skeleton -->
                   <div class="skeleton mb-3" style="height: 20px; width: 100%;"></div>
                   <div class="skeleton mb-3" style="height: 20px; width: 80%;"></div>
-                  <!-- Category/Author skeleton -->
                   <div class="skeleton mb-3" style="height: 15px; width: 60%;"></div>
-                  <!-- Price skeleton -->
                   <div class="skeleton mb-3" style="height: 24px; width: 50%;"></div>
-                  <!-- Button skeleton -->
                   <div class="skeleton mt-auto" style="height: 38px; width: 100%; border-radius: 4px;"></div>
                 </div>
               </div>
             </div>
           </div>
 
+          <!-- Book Grid -->
           <div v-else class="row book-list">
             <template v-if="books.length > 0">
               <div v-for="book in books" :key="book.bookID" class="col-6 col-md-4 col-lg-3 mb-4">
@@ -120,14 +73,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import BookCard from './BookCard.vue';
+import FilterSidebar from './book-list/FilterSidebar.vue';
 
 const books = ref([]);
 const suggestions = ref([]);
 const loading = ref(true);
 const currentCategory = ref('all');
 const currentSearch = ref('');
+const totalBooksCount = ref(0);
 
 const availableCategories = ref([]);
 const availablePublishers = ref([]);
@@ -206,6 +161,14 @@ const filterByCategory = (category) => {
   applyFilters();
 };
 
+const onFilterChanged = (filterData) => {
+  currentCategory.value = filterData.category;
+  filters.value.minPrice = filterData.minPrice;
+  filters.value.maxPrice = filterData.maxPrice;
+  filters.value.publishers = filterData.publishers;
+  applyFilters();
+};
+
 const applyFilters = () => {
   const url = new URL(window.location);
   url.searchParams.set('category', currentCategory.value);
@@ -229,11 +192,23 @@ const fetchMetadata = async () => {
             fetch('/api/books')
         ]);
         const categories = await catRes.json();
-        availableCategories.value = categories.map(c => c.categoryName);
-        
         const allBooks = await bookRes.json();
-        const pubs = new Set(allBooks.map(b => b.publisher).filter(p => p));
-        availablePublishers.value = Array.from(pubs);
+        totalBooksCount.value = allBooks.length;
+
+        // Map categories with counts
+        availableCategories.value = categories.map(c => ({
+            name: c.categoryName,
+            count: allBooks.filter(b => b.categoryName === c.categoryName).length
+        }));
+        
+        // Calculate publisher counts
+        const pubMap = {};
+        allBooks.forEach(b => {
+            if (b.publisher) {
+                pubMap[b.publisher] = (pubMap[b.publisher] || 0) + 1;
+            }
+        });
+        availablePublishers.value = Object.entries(pubMap).map(([name, count]) => ({ name, count }));
     } catch (e) {
         console.error('Lỗi khi tải dữ liệu lọc', e);
     }
@@ -247,7 +222,7 @@ onMounted(() => {
   fetchMetadata();
   fetchBooks();
 
-  // Listen for category selection from header (Manual event if needed)
+  // Listen for category selection from header
   window.addEventListener('categoryChanged', (e) => {
     currentCategory.value = e.detail.category;
     currentSearch.value = '';
@@ -259,7 +234,6 @@ onMounted(() => {
 <style scoped>
 /* ============================================================
    BookListApp — Scoped Styles
-   Merged from: book-list.css
    ============================================================ */
 
 /* ---- Book List Layout ---- */
@@ -348,21 +322,6 @@ onMounted(() => {
     color: var(--orange);
     font-weight: 600;
     font-size: 1.4rem;
-}
-
-/* ---- Filter Sidebar ---- */
-.filter-sidebar {
-    position: sticky;
-    top: 8rem;
-}
-
-.filter-btn:hover {
-    background: var(--orange) !important;
-    color: white !important;
-}
-
-.filter-reset-btn:hover {
-    background: var(--black) !important;
 }
 
 .suggested-section {
