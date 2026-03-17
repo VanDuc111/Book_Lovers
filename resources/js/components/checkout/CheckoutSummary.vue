@@ -89,7 +89,7 @@ defineEmits(['place-order']);
 .checkout-card .card-header h3 { font-size: 1.6rem; font-weight: 600; color: var(--black); margin: 0; }
 .checkout-card .card-body { padding: 2.5rem; }
 
-.summary-sticky { position: sticky; top: 2rem; }
+.summary-sticky { position: sticky; top: var(--sticky-top); z-index: 10; }
 .order-items { max-height: 300px; overflow-y: auto; margin-bottom: 2rem; }
 
 .order-item { display: flex; gap: 1.5rem; padding: 1.5rem 0; border-bottom: var(--border); }
@@ -97,12 +97,12 @@ defineEmits(['place-order']);
 .item-image { width: 70px; height: 95px; object-fit: cover; border-radius: var(--radius-sm); flex-shrink: 0; }
 .item-details { flex: 1; }
 .item-title { font-size: 1.4rem; font-weight: 600; color: var(--black); margin-bottom: 0.5rem; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.item-meta { font-size: 1.2rem; color: #6c757d; margin-bottom: 0.5rem; }
+.item-meta { font-size: 1.2rem; color: var(--light-color); margin-bottom: 0.5rem; }
 .item-price { font-size: 1.4rem; font-weight: 700; color: var(--orange); }
 
 .order-summary { padding: 2rem 0; }
 .summary-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; font-size: 1.4rem; }
-.summary-row span:first-child { color: #6c757d; }
+.summary-row span:first-child { color: var(--light-color); }
 .summary-row span:last-child { font-weight: 600; color: var(--black); }
 .summary-row.discount span:last-child { color: var(--success, #28a745); }
 .summary-divider { height: 1px; background: var(--border-color-light); margin: 1.5rem 0; }
@@ -111,8 +111,8 @@ defineEmits(['place-order']);
 .summary-row.total span:last-child { color: var(--orange); }
 
 .security-badges { display: flex; gap: 1.5rem; margin-top: 2rem; padding-top: 2rem; border-top: var(--border); }
-.badge-item { display: flex; align-items: center; gap: 0.8rem; font-size: 1.2rem; color: #6c757d; }
-.badge-item i { font-size: 1.6rem; color: var(--success, #28a745); }
+.badge-item { display: flex; align-items: center; gap: 0.8rem; font-size: 1.2rem; color: var(--light-color); }
+.badge-item i { font-size: 1.6rem; color: var(--success); }
 
 .back-to-cart { display: inline-flex; align-items: center; gap: 0.8rem; margin-top: 1.5rem; padding: 1rem 1.5rem; font-size: 1.4rem; font-weight: 600; color: var(--orange); text-decoration: none; border-radius: 8px; transition: all 0.3s ease; }
 .back-to-cart:hover { background: rgba(255, 99, 71, 0.1); transform: translateX(-5px); }

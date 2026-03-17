@@ -121,7 +121,6 @@ const booksQuery = useQuery({
         maxPrice: filters.value.maxPrice || undefined,
         publishers: filters.value.publishers.length > 0 ? filters.value.publishers.join(',') : undefined
     }),
-    staleTime: 1000 * 60 * 5, // Cache 5 phút
 });
 
 const books = computed(() => booksQuery.data.value || []);
@@ -132,7 +131,6 @@ const suggestionQuery = useQuery({
     queryKey: ['book-suggestions-list'],
     queryFn: () => BookService.fetchBooks({ limit: 8 }),
     enabled: computed(() => !loading.value && books.value.length === 0),
-    staleTime: 1000 * 60 * 15,
 });
 
 const suggestions = computed(() => suggestionQuery.data.value ? suggestionQuery.data.value.slice(0, 8) : []);
@@ -164,7 +162,6 @@ const metadataQuery = useQuery({
             totalCount: allBooks.length
         };
     },
-    staleTime: 1000 * 60 * 30,
 });
 
 const availableCategories = computed(() => metadataQuery.data.value?.availableCategories || []);

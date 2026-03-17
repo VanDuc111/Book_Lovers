@@ -20,12 +20,12 @@
                 <a :href="'/book-details?id=' + item.bookID" class="cart-item-title">{{ item.title }}</a>
             </div>
         </td>
-        <td class="cart-item-price">
+        <td class="cart-item-price text-end" style="width: 120px;">
             <span class="mobile-label d-lg-none">Giá gốc:</span>
             {{ formatCurrency(item.bookPrice) }}
         </td>
-        <td>
-            <div class="d-flex justify-content-between align-items-center w-100 d-lg-block">
+        <td class="text-center" style="width: 150px;">
+            <div class="d-flex justify-content-between align-items-center w-100 d-lg-flex justify-content-lg-center">
                 <span class="mobile-label d-lg-none">Số lượng:</span>
                 <quantity-selector 
                     :modelValue="item.quantity"
@@ -35,7 +35,7 @@
                 />
             </div>
         </td>
-        <td class="cart-item-subtotal">
+        <td class="cart-item-subtotal text-end" style="width: 140px;">
             <span class="mobile-label d-lg-none">Thành tiền:</span>
             {{ formatCurrency(item.bookPrice * item.quantity) }}
         </td>
@@ -64,8 +64,8 @@ defineEmits(['toggle-select', 'update-qty', 'remove']);
 
 <style scoped>
 .cart-item-image {
-    width: 80px;
-    height: 110px;
+    width: var(--cart-img-width);
+    height: var(--cart-img-height);
     object-fit: cover;
     border-radius: var(--radius-sm);
     box-shadow: var(--shadow-light);
@@ -87,12 +87,14 @@ defineEmits(['toggle-select', 'update-qty', 'remove']);
     font-weight: 600;
     color: var(--light-color);
     font-size: 1.6rem;
+    white-space: nowrap;
 }
 
 .cart-item-subtotal {
     font-weight: 700;
     color: var(--orange);
     font-size: 1.6rem;
+    white-space: nowrap;
 }
 
 .select-item {
@@ -104,7 +106,7 @@ defineEmits(['toggle-select', 'update-qty', 'remove']);
 
 .mobile-label {
     font-weight: 600;
-    color: #888;
+    color: var(--muted-color);
 }
 
 @media (max-width: 991px) {
@@ -124,7 +126,7 @@ defineEmits(['toggle-select', 'update-qty', 'remove']);
         width: 100%;
         padding: 1rem 0;
         border: none;
-        border-bottom: 1px dashed #eee;
+        border-bottom: 1px dashed var(--border-color-light);
     }
 
     .cart-item-row td:first-child {
@@ -153,11 +155,13 @@ defineEmits(['toggle-select', 'update-qty', 'remove']);
 
     .btn-remove-item {
         width: 100%;
-        padding: 1rem;
-        border-radius: 50px;
-        background: #fff5f5;
-        border: 1px solid #feb2b2;
-        color: #f56565;
+        padding: 1.2rem;
+        border-radius: var(--radius-pill);
+        background: var(--admin-active-bg);
+        border: 1.5px solid var(--border-color-light);
+        color: var(--error);
+        font-weight: 600;
+        font-size: 1.3rem;
     }
 }
 </style>

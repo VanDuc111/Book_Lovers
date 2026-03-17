@@ -10,7 +10,7 @@ class ReviewService extends BaseApiService {
      */
     async getReviewSummary(bookId) {
         const res = await this.get('', { summary: 1, bookID: bookId });
-        return Array.isArray(res) ? res[0] : null;
+        return (Array.isArray(res) && res.length > 0) ? res[0] : null;
     }
 
     /**

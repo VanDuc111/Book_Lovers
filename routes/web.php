@@ -48,14 +48,14 @@ Route::get('/cart', function () {
 
 Route::get('/profile', function () {
     return view('profile');
-});
+})->name('profile');
 
 Route::get('/purchased-books', function () {
-    return view('purchased-books');
+    return redirect()->route('profile', ['tab' => 'purchased']);
 });
 
 Route::get('/reviews', function () {
-    return view('reviews');
+    return redirect()->route('home');
 });
 
 Route::get('/book-details', function () {

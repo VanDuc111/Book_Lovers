@@ -24,7 +24,7 @@
             ĐẶT HÀNG NGAY ({{ selectedCount }})
         </base-button>
         
-        <div class="mt-4 p-3 bg-light rounded summary-extra" style="font-size: 1.2rem; color: #777;">
+        <div class="mt-4 p-3 rounded summary-extra">
             <p class="mb-2"><i class="fas fa-shield-alt me-2 text-primary"></i> Đảm bảo thanh toán an toàn</p>
             <p class="mb-0"><i class="fas fa-undo me-2 text-warning"></i> Đổi trả dễ dàng trong 7 ngày</p>
         </div>
@@ -48,8 +48,6 @@ defineEmits(['checkout']);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-premium);
     padding: 2.5rem;
-    position: sticky;
-    top: 100px;
     border: 1px solid var(--border-color-light);
 }
 
@@ -58,7 +56,7 @@ defineEmits(['checkout']);
     font-weight: 800;
     margin-bottom: 2rem;
     color: var(--black);
-    border-bottom: 2px solid #f0f0f0;
+    border-bottom: 1.5px solid var(--border-color-light);
     padding-bottom: 1rem;
 }
 
@@ -70,7 +68,7 @@ defineEmits(['checkout']);
 }
 
 .summary-total {
-    border-top: 1px dashed #ddd;
+    border-top: 1px dashed var(--border-color-fade);
     padding-top: 1.5rem;
     margin-top: 1.5rem;
     font-weight: 800;
@@ -78,6 +76,13 @@ defineEmits(['checkout']);
 
 .total-price {
     font-size: 1.8rem;
+}
+
+.summary-extra {
+    background: var(--bg-gray);
+    font-size: 1.2rem;
+    color: var(--light-color);
+    border: 1px solid var(--border-color-light);
 }
 
 @media (max-width: 991px) {

@@ -66,9 +66,8 @@
       <p style="font-size: 1.6rem;">Giỏ hàng của bạn đang trống.</p>
       <base-button variant="primary" size="lg" class="mt-3" @click="goToBooks">Tiếp tục mua sắm</base-button>
     </div>
-
     <!-- Cart Content -->
-    <div v-else class="row g-4">
+    <div v-else class="row g-4 align-items-stretch" style="position: relative;">
       <!-- Mobile Select All Bar -->
       <div class="cart-mobile-controls d-lg-none mb-3">
         <div class="p-3 bg-white rounded shadow-sm d-flex align-items-center">
@@ -99,10 +98,10 @@
                     >
                   </th>
                   <th>Sản phẩm</th>
-                  <th>Giá</th>
-                  <th>Số lượng</th>
-                  <th>Tổng</th>
-                  <th></th>
+                  <th style="width: 120px; text-align: right;">Giá</th>
+                  <th style="width: 150px; text-align: center;">Số lượng</th>
+                  <th style="width: 140px; text-align: right;">Tổng</th>
+                  <th style="width: 60px;"></th>
                 </tr>
               </thead>
               <tbody>
@@ -122,7 +121,7 @@
       </div>
 
       <!-- Right Side: Order Summary -->
-      <div class="col-lg-4">
+      <div class="col-lg-4" style="display: block; position: sticky; z-index: 1000; top: 110px; right: 0;">
         <cart-summary 
           :selected-count="selectedIds.length"
           :total-price="totalPrice"
@@ -172,7 +171,6 @@ const cartQuery = useQuery({
     queryKey: computed(() => ['cart', userId.value]),
     queryFn: () => CartService.getCart(userId.value),
     enabled: computed(() => !!userId.value),
-    staleTime: 1000 * 60 * 5,
 });
 
 const items = computed(() => cartQuery.data.value || []);
@@ -181,8 +179,26 @@ const loading = computed(() => cartQuery.isLoading.value);
 // Mutations cho việc cập nhật/xóa
 const updateQtyMutation = useMutation({
     mutationFn: ({ id, qty }) => CartService.updateQuantity(id, qty),
-    onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['cart'] });
+    onMutate: async ({ id, qty }) => {
+        // Cancel any outgoing refetches
+        await queryClient.cancelQueries({ queryKey: ['cart', userId.value] });
+        // Snapshot the previous value
+        const previousCart = queryClient.getQueryData(['cart', userId.value]);
+        // Optimistically update to the new value
+        queryClient.setQueryData(['cart', userId.value], (old) => {
+            if (!old) return [];
+            return old.map(item => item.cartItemID === id ? { ...item, quantity: qty } : item);
+        });
+        return { previousCart };
+    },
+    onError: (err, newQty, context) => {
+        // If the mutation fails, use the context returned from onMutate to roll back
+        queryClient.setQueryData(['cart', userId.value], context.previousCart);
+        if (window.showToast) window.showToast("Không thể cập nhật số lượng. Vui lòng thử lại.", "error");
+    },
+    onSettled: () => {
+        // Always refetch after error or success to ensure server state is sync
+        queryClient.invalidateQueries({ queryKey: ['cart', userId.value] });
     }
 });
 
@@ -281,8 +297,9 @@ onMounted(() => {
     background: var(--white);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-light);
-    overflow: hidden;
     border: 1px solid var(--border-color-light);
+    height: fit-content;
+    overflow: visible;
 }
 
 .cart-table thead th {
@@ -310,7 +327,7 @@ onMounted(() => {
 
 .empty-cart-icon {
     font-size: 5rem;
-    color: #eee;
+    color: var(--border-color-light);
     margin-bottom: 2rem;
 }
 
@@ -337,14 +354,14 @@ onMounted(() => {
 
 .modal-icon {
     width: 60px; height: 60px;
-    background: #fff5f5; color: #f56565;
+    background: var(--admin-active-bg); color: var(--error);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-size: 2.5rem; margin: 0 auto 2rem;
 }
 
 .modal-content h3 { font-size: 2rem; font-weight: 700; margin-bottom: 1rem; color: var(--black); }
-.modal-content p { font-size: 1.4rem; color: #666; margin-bottom: 2.5rem; line-height: 1.5; }
+.modal-content p { font-size: 1.4rem; color: var(--light-color); margin-bottom: 2.5rem; line-height: 1.5; }
 .modal-actions { display: flex; gap: 1.5rem; justify-content: center; }
 
 @media (max-width: 991px) {
@@ -352,4 +369,5 @@ onMounted(() => {
     .cart-table-wrapper { background: transparent; box-shadow: none; border: none; }
     .cart-table thead { display: none; }
 }
+
 </style>

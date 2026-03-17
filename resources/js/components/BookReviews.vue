@@ -172,7 +172,6 @@ const summaryQuery = useQuery({
     queryKey: computed(() => ['reviews-summary', props.bookId]),
     queryFn: () => ReviewService.getReviewSummary(props.bookId),
     enabled: computed(() => !!props.bookId),
-    staleTime: 1000 * 60 * 10,
 });
 
 const summary = computed(() => summaryQuery.data.value);
@@ -182,7 +181,6 @@ const reviewsQuery = useQuery({
     queryKey: computed(() => ['reviews-list', props.bookId]),
     queryFn: () => ReviewService.getBookReviews(props.bookId),
     enabled: computed(() => !!props.bookId),
-    staleTime: 1000 * 60 * 5,
 });
 
 const reviews = computed(() => reviewsQuery.data.value || []);
@@ -193,7 +191,6 @@ const purchaseQuery = useQuery({
     queryKey: computed(() => ['purchase-check', userId.value, props.bookId]),
     queryFn: () => OrderService.getPurchasedBooks(userId.value, props.bookId),
     enabled: computed(() => !!userId.value && !!props.bookId),
-    staleTime: 1000 * 60 * 30,
 });
 
 const hasPurchased = computed(() => {

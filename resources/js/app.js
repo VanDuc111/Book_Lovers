@@ -19,11 +19,20 @@ import GlobalVariables from './components/GlobalVariables.vue';
 import PasswordField from './components/common/PasswordField.vue';
 
 import { VueQueryPlugin } from '@tanstack/vue-query';
+import { STALE_TIME } from './components/GlobalVariables.vue';
 
 const app = createApp({});
 
 // Plugins
-app.use(VueQueryPlugin);
+app.use(VueQueryPlugin, {
+    queryClientConfig: {
+        defaultOptions: {
+            queries: {
+                staleTime: STALE_TIME,
+            }
+        }
+    }
+});
 
 // Components registration
 app.component('password-field', PasswordField);

@@ -61,14 +61,17 @@ class CartController extends Controller
             $cartItem->quantity = $totalRequested;
             $cartItem->save();
         } else {
-            CartItem::create([
+            $cartItem = CartItem::create([
                 'cartID' => $cart->cartID,
                 'bookID' => $bookID,
                 'quantity' => $quantity
             ]);
         }
 
-        return response()->json(['message' => 'Đã thêm vào giỏ hàng']);
+        return response()->json([
+            'message' => 'Đã thêm vào giỏ hàng',
+            'cartItemID' => $cartItem->cartItemID
+        ]);
     }
 
     public function update(Request $request, $id)

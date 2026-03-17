@@ -56,8 +56,8 @@ const { data: suggestionsData = [] } = useQuery({
     queryKey: computed(() => ['search-suggestions', query.value.trim()]),
     queryFn: () => BookService.fetchBooks(searchParams.value),
     enabled: computed(() => query.value.trim().length >= 2),
-    staleTime: 1000 * 60 * 5, // Cache gợi ý 5 phút
 });
+
 
 const suggestions = computed(() => (Array.isArray(suggestionsData.value) ? suggestionsData.value.slice(0, 5) : []));
 

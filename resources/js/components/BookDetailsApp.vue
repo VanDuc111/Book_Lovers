@@ -105,7 +105,6 @@ const bookQuery = useQuery({
     queryKey: computed(() => ['book', bookId.value]),
     queryFn: () => BookService.getBookDetails(bookId.value),
     enabled: computed(() => !!bookId.value),
-    staleTime: 1000 * 60 * 15, // Cache 15 phút
 });
 
 const book = computed(() => bookQuery.data.value);
@@ -116,7 +115,6 @@ const relatedQuery = useQuery({
     queryKey: computed(() => ['books-related', book.value?.categoryName, bookId.value]),
     queryFn: () => BookService.getRelatedBooks(book.value.categoryName, bookId.value),
     enabled: computed(() => !!book.value?.categoryName),
-    staleTime: 1000 * 60 * 15,
 });
 
 const relatedBooks = computed(() => relatedQuery.data.value || []);
@@ -134,7 +132,7 @@ const handleCartAction = async (isBuyNow) => {
     
     if (!data.error) {
        if (isBuyNow) {
-         window.location.href = "/cart";
+         window.location.href = `/checkout?items=${data.cartItemID}`;
        } else {
          if (window.showToast) window.showToast("Đã thêm vào giỏ hàng!", "success");
          window.dispatchEvent(new Event('cart-updated'));

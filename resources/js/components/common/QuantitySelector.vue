@@ -68,28 +68,31 @@ const onInput = (e) => {
 .quantity-selector {
     display: flex;
     align-items: center;
-    border: 1.5px solid #e0e0e0;
-    border-radius: 6px;
+    gap: 0.8rem;
     width: fit-content;
-    background: var(--white);
-    overflow: hidden;
+    background: transparent;
 }
 
 .qty-btn {
-    background: #f8f8f8;
-    border: none;
-    padding: 0.4rem 1.2rem;
+    background: var(--bg-gray);
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: 0;
+    width: 3.6rem;
+    height: 3.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: 1.8rem;
     font-weight: 500;
-    color: #333;
+    color: var(--black);
     cursor: pointer;
-    min-width: 3.6rem;
-    line-height: 1;
-    transition: background 0.15s;
+    transition: var(--transition-fast);
 }
 
 .qty-btn:hover:not(:disabled) {
-    background: #ececec;
+    background: var(--border-color-light);
+    border-color: var(--muted-color);
 }
 
 .qty-btn:disabled {
@@ -98,17 +101,23 @@ const onInput = (e) => {
 }
 
 .qty-input {
-    width: 5rem;
+    width: 4.5rem;
+    height: 3.6rem;
     text-align: center;
-    border: none;
-    border-left: 1.5px solid #e0e0e0;
-    border-right: 1.5px solid #e0e0e0;
+    border: 1.5px solid var(--border-color);
+    border-radius: var(--radius-sm);
     background: var(--white);
-    font-size: 1.6rem;
-    font-weight: 600;
-    padding: 0.3rem 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--black);
     outline: none;
+    transition: var(--transition-fast);
     -moz-appearance: textfield;
+}
+
+.qty-input:focus {
+    border-color: var(--orange);
+    box-shadow: var(--focus-shadow);
 }
 
 .qty-input::-webkit-outer-spin-button,

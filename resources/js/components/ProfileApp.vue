@@ -108,7 +108,6 @@ const userQuery = useQuery({
     queryKey: computed(() => ['user-profile', userId.value]),
     queryFn: () => UserService.getUserById(userId.value),
     enabled: computed(() => !!userId.value),
-    staleTime: 1000 * 60 * 15,
 });
 
 watch(() => userQuery.data.value, (newData) => {
@@ -120,7 +119,6 @@ const ordersQuery = useQuery({
     queryKey: computed(() => ['user-orders', userId.value]),
     queryFn: () => OrderService.getMyOrders(userId.value),
     enabled: computed(() => !!userId.value),
-    staleTime: 1000 * 60 * 5,
 });
 
 const orders = computed(() => ordersQuery.data.value || []);
@@ -131,7 +129,6 @@ const purchasedQuery = useQuery({
     queryKey: computed(() => ['purchased-books', userId.value]),
     queryFn: () => OrderService.getPurchasedBooks(userId.value),
     enabled: computed(() => !!userId.value),
-    staleTime: 1000 * 60 * 10,
 });
 
 const purchasedBooks = computed(() => purchasedQuery.data.value || []);

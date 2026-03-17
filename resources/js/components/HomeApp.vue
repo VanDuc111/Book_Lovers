@@ -43,14 +43,12 @@ import ReviewService from '@/services/ReviewService';
 const booksQuery = useQuery({
     queryKey: ['books'],
     queryFn: () => BookService.fetchBooks(),
-    staleTime: 1000 * 60 * 10, // Cache 10 phút
 });
 
 // 2. Fetch sách Văn học
 const vanHocQuery = useQuery({
     queryKey: ['books', { category: 'Văn học' }],
     queryFn: () => BookService.fetchBooks({ category: 'Văn học' }),
-    staleTime: 1000 * 60 * 10,
 });
 
 // 3. Fetch reviews gần đây
@@ -60,7 +58,6 @@ const reviewsQuery = useQuery({
         const data = await ReviewService.getAll();
         return Array.isArray(data) ? data.slice(0, 3) : [];
     },
-    staleTime: 1000 * 60 * 5,
 });
 
 // Logic biến đổi dữ liệu (Dùng .value vì useQuery trả về các ref)

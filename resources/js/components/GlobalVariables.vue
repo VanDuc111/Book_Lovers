@@ -1,3 +1,14 @@
+<script>
+/**
+ * Global JavaScript Constants
+ */
+export const STALE_TIME = 1000 * 60 * 30; // 30 minutes - Single source of truth for caching
+
+export default {
+    name: 'GlobalVariables'
+}
+</script>
+
 <template>
   <!-- GlobalVariables: Render-less component that injects global CSS Custom Properties -->
 </template>
@@ -147,6 +158,10 @@
   --admin-input-height: 50px;
   --admin-header-fs: 2.8rem;
   
+  /* ---- Cart & Sidebar ---- */
+  --cart-img-width: 80px;
+  --cart-img-height: 110px;
+
   /* ---- Gradients ---- */
   --grad-profile: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   --grad-primary: linear-gradient(135deg, var(--orange) 0%, var(--dark-color) 100%);
@@ -168,7 +183,6 @@
 
 html {
   font-size: 62.5%; /* Changes 1rem to 10px for easier calculation */
-  overflow-x: hidden;
   scroll-padding-top: 5rem;
   scroll-behavior: smooth;
 }

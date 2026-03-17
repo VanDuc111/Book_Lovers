@@ -31,7 +31,7 @@ class CartService extends BaseApiService {
      * Thêm sản phẩm vào giỏ
      */
     async addToCart(bookID, userId, quantity = 1) {
-        return await this.post('/', {
+        return await this.post('/cart', {
             bookID,
             userID: userId,
             quantity

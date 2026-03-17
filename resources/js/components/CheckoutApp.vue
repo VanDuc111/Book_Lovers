@@ -111,7 +111,6 @@ const userQuery = useQuery({
     queryKey: computed(() => ['user-profile', userId.value]),
     queryFn: () => UserService.getUserById(userId.value),
     enabled: computed(() => !!userId.value),
-    staleTime: 1000 * 60 * 15,
 });
 
 watch(() => userQuery.data.value, (data) => {
