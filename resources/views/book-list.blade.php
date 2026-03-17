@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Sách - Book Lovers')
+@section('title', request('search') ? 'Kết quả tìm kiếm - Book Lovers' : 'Sách - Book Lovers')
 
 @section('content')
     <book-list-app></book-list-app>

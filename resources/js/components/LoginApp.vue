@@ -37,6 +37,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import AuthService from '@/services/AuthService';
 
 const email = ref('');
 const password = ref('');
@@ -46,25 +47,15 @@ const handleLogin = async () => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.value)) {
         if (window.showToast) window.showToast('Email không đúng định dạng chuẩn (Ví dụ: ten@example.com)', 'warning');
-        else alert('Email không đúng định dạng chuẩn');
         return;
     }
 
     loading.value = true;
     try {
-        const response = await fetch('/api/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email: email.value, password: password.value })
-        });
-        const data = await response.json();
+        const data = await AuthService.login({ email: email.value, password: password.value });
         
         if (data.success) {
-            localStorage.setItem('user', JSON.stringify(data.user));
-            
-            // Notify other components (like SiteHeader)
+            // AuthService already handles localStorage saving
             window.dispatchEvent(new CustomEvent('user-updated'));
 
             const role = data.user.role ? data.user.role.toLowerCase() : '';
@@ -73,20 +64,9 @@ const handleLogin = async () => {
             } else {
                 window.location.href = '/';
             }
-        } else {
-            if (window.showToast) {
-                window.showToast(data.message || 'Đăng nhập không thành công', "danger");
-            } else {
-                alert(data.message || 'Đăng nhập không thành công');
-            }
         }
     } catch (error) {
         console.error('Lỗi đăng nhập:', error);
-        if (window.showToast) {
-            window.showToast('Đã xảy ra lỗi khi đăng nhập.', "danger");
-        } else {
-            alert('Đã xảy ra lỗi khi đăng nhập.');
-        }
     } finally {
         loading.value = false;
     }

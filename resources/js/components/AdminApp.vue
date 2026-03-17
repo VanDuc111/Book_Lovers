@@ -136,6 +136,14 @@ import OrderManagement from './admin/OrderManagement.vue';
 import ReviewManagement from './admin/ReviewManagement.vue';
 import OrderDetailsModal from './admin/OrderDetailsModal.vue';
 
+// Import Services
+import BookService from '@/services/BookService';
+import UserService from '@/services/UserService';
+import OrderService from '@/services/OrderService';
+import ReviewService from '@/services/ReviewService';
+import CategoryService from '@/services/CategoryService';
+import AuthService from '@/services/AuthService';
+
 const isSidebarActive = ref(false);
 const currentSection = ref('dashboard');
 const currentTitle = ref('Dashboard');
@@ -241,10 +249,10 @@ const fetchAdminCounts = async () => {
     startLoading();
     try {
         const [u, b, o, r] = await Promise.all([
-            fetch('/api/users').then(res => res.json()),
-            fetch('/api/books').then(res => res.json()),
-            fetch('/api/orders').then(res => res.json()),
-            fetch('/api/reviews').then(res => res.json())
+            UserService.getUsers(),
+            BookService.fetchBooks(),
+            OrderService.getMyOrders('all'), // Server should handle 'all' or no param for admin
+            ReviewService.getAll()
         ]);
         counts.value.users = Array.isArray(u) ? u.length : 0;
         counts.value.books = Array.isArray(b) ? b.length : 0;
@@ -257,15 +265,15 @@ const fetchBooks = async () => {
     startLoading();
     loadingBooks.value = true;
     try {
-        books.value = await fetch('/api/books').then(res => res.json());
-        categories.value = await fetch('/api/categories').then(res => res.json());
+        books.value = await BookService.fetchBooks();
+        categories.value = await CategoryService.getCategories();
     } finally { stopLoading(); loadingBooks.value = false; }
 };
 
 const fetchUsers = async () => {
     startLoading();
     loadingUsers.value = true;
-    try { users.value = await fetch('/api/users').then(res => res.json()); }
+    try { users.value = await UserService.getUsers(); }
     finally { stopLoading(); loadingUsers.value = false; }
 };
 
@@ -274,8 +282,8 @@ const fetchCategories = async () => {
     loadingCategories.value = true;
     try { 
         const [cats, bks] = await Promise.all([
-            fetch('/api/categories').then(res => res.json()),
-            fetch('/api/books').then(res => res.json())
+            CategoryService.getCategories(),
+            BookService.fetchBooks()
         ]);
         categories.value = cats;
         books.value = bks;
@@ -286,14 +294,14 @@ const fetchCategories = async () => {
 const fetchOrders = async () => {
     startLoading();
     loadingOrders.value = true;
-    try { orders.value = await fetch('/api/orders').then(res => res.json()); }
+    try { orders.value = await OrderService.getAll(); }
     finally { stopLoading(); loadingOrders.value = false; }
 };
 
 const fetchReviews = async () => {
     startLoading();
     loadingReviews.value = true;
-    try { reviews.value = await fetch('/api/reviews').then(res => res.json()); }
+    try { reviews.value = await ReviewService.getAll(); }
     finally { stopLoading(); loadingReviews.value = false; }
 };
 
@@ -356,25 +364,26 @@ const saveBook = async (data) => {
     const formData = new FormData();
     Object.keys(data).forEach(k => { if(data[k] !== null) formData.append(k, data[k]); });
     
-    const isEditing = !!data.bookID;
-    const url = isEditing ? `/api/books/${data.bookID}` : '/api/books';
-    if(isEditing) formData.append('_method', 'PUT');
-
     try {
-        const res = await fetch(url, { method: 'POST', body: formData }).then(r => r.json());
-        showToast(res.message || (res.error ? "Lỗi: " + res.error : (isEditing ? "Cập nhật thành công!" : "Thêm thành công!")), res.error ? "danger" : "success");
-        if(!res.error) { isBookFormVisible.value = false; fetchBooks(); }
-    } catch (e) { showToast("Lỗi kết nối", "danger"); }
-    finally { submitting.value = false; }
+        const res = await BookService.saveBook(formData);
+        showToast(res.message || "Thao tác thành công!", "success");
+        isBookFormVisible.value = false; 
+        fetchBooks();
+    } catch (e) {
+        // Error handling is already in BaseApiService
+    } finally { 
+        submitting.value = false; 
+    }
 };
 
 const confirmDeleteBook = async (id) => {
     if(!confirm("Bạn có chắc chắn muốn xóa cuốn sách này?")) return;
     try {
-        const res = await fetch(`/api/books/${id}`, { method: 'DELETE' }).then(r => r.json());
-        showToast(res.message || (res.error ? "Lỗi: " + res.error : "Xóa thành công!"), res.error ? "danger" : "success");
-        if(!res.error) { selectedBookId.value = null; fetchBooks(); }
-    } catch (e) { showToast("Lỗi kết nối", "danger"); }
+        const res = await BookService.deleteBook(id);
+        showToast(res.message || "Xóa thành công!", "success");
+        selectedBookId.value = null; 
+        fetchBooks();
+    } catch (e) { }
 };
 
 const showCategoryForm = () => {
@@ -391,41 +400,31 @@ const editCategory = () => {
 
 const saveCategory = async (data) => {
     submitting.value = true;
-    const isEditing = !!data.categoryID;
-    const method = isEditing ? "PUT" : "POST";
-    const url = isEditing ? `/api/categories/${data.categoryID}` : "/api/categories";
-
     try {
-        const res = await fetch(url, {
-            method,
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-        }).then(r => r.json());
-        showToast(res.message || (res.error ? "Lỗi: " + res.error : "Thao tác thành công!"), res.error ? "danger" : "success");
-        if(!res.error) { isCategoryFormVisible.value = false; fetchCategories(); }
-    } catch (e) { showToast("Lỗi kết nối", "danger"); }
+        const res = await CategoryService.saveCategory(data);
+        showToast(res.message || "Thao tác thành công!", "success");
+        isCategoryFormVisible.value = false; 
+        fetchCategories();
+    } catch (e) { }
     finally { submitting.value = false; }
 };
 
 const confirmDeleteCategory = async (id) => {
     if(!confirm("Bạn có chắc chắn muốn xóa thể loại này?")) return;
     try {
-        const res = await fetch(`/api/categories/${id}`, { method: 'DELETE' }).then(r => r.json());
-        showToast(res.message || (res.error ? "Lỗi: " + res.error : "Xóa thành công!"), res.error ? "danger" : "success");
-        if(!res.error) { selectedCategoryId.value = null; fetchCategories(); }
-    } catch (e) { showToast("Lỗi kết nối", "danger"); }
+        const res = await CategoryService.deleteCategory(id);
+        showToast(res.message || "Xóa thành công!", "success");
+        selectedCategoryId.value = null; 
+        fetchCategories();
+    } catch (e) { }
 };
 
 const updateOrderStatus = async ({ id, status }) => {
     try {
-        const res = await fetch(`/api/orders/${id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ orderID: id, order_status: status })
-        }).then(r => r.json());
-        showToast(res.message || (res.error ? "Lỗi: " + res.error : "Cập nhật trạng thái thành công!"), res.error ? "danger" : "success");
+        const res = await OrderService.updateStatus(id, status);
+        showToast(res.message || "Cập nhật trạng thái thành công!", "success");
         fetchOrders();
-    } catch (e) { showToast("Lỗi kết nối", "danger"); }
+    } catch (e) { }
 };
 
 const viewOrderDetails = () => {
@@ -436,16 +435,17 @@ const viewOrderDetails = () => {
 const confirmDeleteReview = async (id) => {
     if(!confirm("Bạn có chắc chắn muốn xóa đánh giá này?")) return;
     try {
-        const res = await fetch(`/api/reviews/${id}`, { method: 'DELETE' }).then(r => r.json());
-        showToast(res.message || (res.error ? "Lỗi: " + res.error : "Xóa thành công!"), res.error ? "danger" : "success");
-        if(!res.error) { selectedReviewId.value = null; fetchReviews(); }
-    } catch (e) { showToast("Lỗi kết nối", "danger"); }
+        const res = await ReviewService.deleteReview(id);
+        showToast(res.message || "Xóa thành công!", "success");
+        selectedReviewId.value = null; 
+        fetchReviews();
+    } catch (e) { }
 };
 
-const logout = () => { localStorage.removeItem("user"); window.location.href = "/login"; };
+const logout = () => { AuthService.logout(); };
 
 const checkAuth = () => {
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = AuthService.getCurrentUser();
     return user && user.role && user.role.toLowerCase() === 'admin';
 };
 

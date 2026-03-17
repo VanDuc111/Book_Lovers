@@ -1,11 +1,12 @@
 <template>
   <div id="book-details-app" class="container mt-4">
     <!-- Breadcrumb -->
-    <nav v-if="book" aria-label="breadcrumb" class="mb-5">
+    <nav aria-label="breadcrumb" class="mb-5">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
         <li class="breadcrumb-item"><a href="/book-list">Sách</a></li>
-        <li class="breadcrumb-item breadcrumb-active" aria-current="page">{{ book.categoryName }}</li>
+        <li v-if="book" class="breadcrumb-item breadcrumb-active" aria-current="page">{{ book.categoryName }}</li>
+        <li v-else-if="loading" class="breadcrumb-item breadcrumb-active" aria-current="page">...</li>
       </ol>
     </nav>
 
@@ -76,7 +77,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { useQuery } from '@tanstack/vue-query';
 import BookReviews from './BookReviews.vue';
 import BookCard from './BookCard.vue';
 import BookInfoPanel from './book-details/BookInfoPanel.vue';
@@ -84,44 +86,40 @@ import BookDescription from './book-details/BookDescription.vue';
 import BookActions from './book-details/BookActions.vue';
 import RelatedBooks from './book-details/RelatedBooks.vue';
 
-const book = ref(null);
-const loading = ref(true);
+// Import Services
+import BookService from '@/services/BookService';
+import CartService from '@/services/CartService';
+import AuthService from '@/services/AuthService';
+
 const cartLoading = ref(false);
 const bookId = ref(null);
 const quantity = ref(1);
-const relatedBooks = ref([]);
 const userId = ref(null);
 
-const fetchData = async () => {
-  const params = new URLSearchParams(window.location.search);
-  bookId.value = params.get('id');
-  if (!bookId.value) {
-    loading.value = false;
-    return;
-  }
+// Lấy bookId từ URL
+const params = new URLSearchParams(window.location.search);
+bookId.value = params.get('id');
 
-  try {
-    const res = await fetch(`/api/books/${bookId.value}`);
-    book.value = await res.json();
-    if (book.value && book.value.categoryName) {
-      fetchRelated(book.value.categoryName);
-    }
-  } catch (err) {
-    console.error('Lỗi tải chi tiết sách:', err);
-  } finally {
-    loading.value = false;
-  }
-};
+// 1. Fetch Chi tiết sách
+const bookQuery = useQuery({
+    queryKey: computed(() => ['book', bookId.value]),
+    queryFn: () => BookService.getBookDetails(bookId.value),
+    enabled: computed(() => !!bookId.value),
+    staleTime: 1000 * 60 * 15, // Cache 15 phút
+});
 
-const fetchRelated = async (category) => {
-  try {
-    const res = await fetch(`/api/books?category=${encodeURIComponent(category)}`);
-    const all = await res.json();
-    relatedBooks.value = all.filter(b => b.bookID != bookId.value).slice(0, 8);
-  } catch (err) {
-      console.error('Lỗi tải sách liên quan:', err);
-  }
-};
+const book = computed(() => bookQuery.data.value);
+const loading = computed(() => bookQuery.isLoading.value);
+
+// 2. Fetch Sách liên quan (chỉ chạy khi có dữ liệu book)
+const relatedQuery = useQuery({
+    queryKey: computed(() => ['books-related', book.value?.categoryName, bookId.value]),
+    queryFn: () => BookService.getRelatedBooks(book.value.categoryName, bookId.value),
+    enabled: computed(() => !!book.value?.categoryName),
+    staleTime: 1000 * 60 * 15,
+});
+
+const relatedBooks = computed(() => relatedQuery.data.value || []);
 
 const handleCartAction = async (isBuyNow) => {
   if (!userId.value) {
@@ -132,19 +130,9 @@ const handleCartAction = async (isBuyNow) => {
 
   cartLoading.value = true;
   try {
-    const res = await fetch("/api/cart", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        bookID: bookId.value,
-        quantity: quantity.value,
-        userID: userId.value,
-      }),
-    });
-    const data = await res.json();
-    if (data.error) {
-       if (window.showToast) window.showToast(data.error, "danger");
-    } else {
+    const data = await CartService.addToCart(bookId.value, userId.value, quantity.value);
+    
+    if (!data.error) {
        if (isBuyNow) {
          window.location.href = "/cart";
        } else {
@@ -160,9 +148,7 @@ const handleCartAction = async (isBuyNow) => {
 };
 
 onMounted(() => {
-  const user = JSON.parse(localStorage.getItem('user'));
-  userId.value = user ? user.userID : null;
-  fetchData();
+  userId.value = AuthService.getCurrentUser()?.userID || null;
 });
 </script>
 

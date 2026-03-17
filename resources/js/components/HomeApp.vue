@@ -29,63 +29,56 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { computed } from 'vue';
+import { useQuery } from '@tanstack/vue-query';
 import HeroSection from './home/HeroSection.vue';
 import BookSlider from './home/BookSlider.vue';
 import RecentReviews from './home/RecentReviews.vue';
 
-const featuredBooks = ref([]);
-const vanHocBooks = ref([]);
-const recommendedBooks = ref([]);
-const reviews = ref([]);
+// Import Services
+import BookService from '@/services/BookService';
+import ReviewService from '@/services/ReviewService';
 
-const loadingFeatured = ref(true);
-const loadingVanHoc = ref(true);
-const loadingRecommended = ref(true);
-const loadingReviews = ref(true);
-
-onMounted(async () => {
-    fetchFeaturedAndRecommended();
-    fetchVanHocBooks();
-    fetchReviews();
+// 1. Fetch toàn bộ sách (cho Hero và Gợi ý)
+const booksQuery = useQuery({
+    queryKey: ['books'],
+    queryFn: () => BookService.fetchBooks(),
+    staleTime: 1000 * 60 * 10, // Cache 10 phút
 });
 
-const fetchFeaturedAndRecommended = async () => {
-    try {
-        const response = await fetch('/api/books');
-        const books = await response.json();
+// 2. Fetch sách Văn học
+const vanHocQuery = useQuery({
+    queryKey: ['books', { category: 'Văn học' }],
+    queryFn: () => BookService.fetchBooks({ category: 'Văn học' }),
+    staleTime: 1000 * 60 * 10,
+});
 
-        featuredBooks.value = books.filter(b => b.isFeatured || b.featured === 1).slice(0, 6);
-        if (featuredBooks.value.length === 0) {
-            featuredBooks.value = books.slice(0, 6);
-        }
-        loadingFeatured.value = false;
+// 3. Fetch reviews gần đây
+const reviewsQuery = useQuery({
+    queryKey: ['reviews', 'recent'],
+    queryFn: async () => {
+        const data = await ReviewService.getAll();
+        return Array.isArray(data) ? data.slice(0, 3) : [];
+    },
+    staleTime: 1000 * 60 * 5,
+});
 
-        recommendedBooks.value = [...books].sort(() => 0.5 - Math.random()).slice(0, 7);
-        loadingRecommended.value = false;
-    } catch (error) {
-        console.error('Error fetching books:', error);
-    }
-};
+// Logic biến đổi dữ liệu (Dùng .value vì useQuery trả về các ref)
+const allBooks = computed(() => booksQuery.data.value || []);
+const vanHocBooks = computed(() => vanHocQuery.data.value || []);
+const reviews = computed(() => reviewsQuery.data.value || []);
 
-const fetchVanHocBooks = async () => {
-    try {
-        const response = await fetch('/api/books?category=' + encodeURIComponent('Văn học'));
-        vanHocBooks.value = await response.json();
-        loadingVanHoc.value = false;
-    } catch (error) {
-        console.error('Error fetching van hoc books:', error);
-    }
-};
+const featuredBooks = computed(() => {
+    const featured = allBooks.value.filter(b => b.isFeatured || b.featured === 1).slice(0, 6);
+    return featured.length > 0 ? featured : allBooks.value.slice(0, 6);
+});
 
-const fetchReviews = async () => {
-    try {
-        const response = await fetch('/api/reviews');
-        const data = await response.json();
-        reviews.value = Array.isArray(data) ? data.slice(0, 3) : [];
-        loadingReviews.value = false;
-    } catch (error) {
-        console.error('Error fetching reviews:', error);
-    }
-};
+const recommendedBooks = computed(() => {
+    return [...allBooks.value].sort(() => 0.5 - Math.random()).slice(0, 7);
+});
+
+const loadingFeatured = computed(() => booksQuery.isLoading.value);
+const loadingVanHoc = computed(() => vanHocQuery.isLoading.value);
+const loadingRecommended = computed(() => booksQuery.isLoading.value);
+const loadingReviews = computed(() => reviewsQuery.isLoading.value);
 </script>

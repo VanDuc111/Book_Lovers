@@ -78,15 +78,19 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue';
+import { ref, reactive, onMounted, computed, watch } from 'vue';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import ShippingForm from './checkout/ShippingForm.vue';
 import PaymentMethods from './checkout/PaymentMethods.vue';
 import CheckoutSummary from './checkout/CheckoutSummary.vue';
 
-const loading = ref(true);
-const placing = ref(false);
-const cartItems = ref([]);
-const userData = ref(null);
+// Import Services
+import OrderService from '@/services/OrderService';
+import UserService from '@/services/UserService';
+import CartService from '@/services/CartService';
+import AuthService from '@/services/AuthService';
+
+const queryClient = useQueryClient();
 const userId = ref(null);
 
 const form = ref({
@@ -101,6 +105,41 @@ const form = ref({
   note: '',
   payment: 'cod'
 });
+
+// 1. Query User Info
+const userQuery = useQuery({
+    queryKey: computed(() => ['user-profile', userId.value]),
+    queryFn: () => UserService.getUserById(userId.value),
+    enabled: computed(() => !!userId.value),
+    staleTime: 1000 * 60 * 15,
+});
+
+watch(() => userQuery.data.value, (data) => {
+    if (data) {
+        form.value.fullName = data.name || '';
+        form.value.phone = data.phone || '';
+        form.value.email = data.email || '';
+        if (!data.address) form.value.addressType = 'new';
+    }
+}, { immediate: true });
+
+// 2. Query Cart Items for Checkout
+const urlParams = new URLSearchParams(window.location.search);
+const itemIdsStr = urlParams.get('items') || '';
+const itemIds = itemIdsStr.split(',');
+
+const cartQuery = useQuery({
+    queryKey: computed(() => ['cart', userId.value]),
+    queryFn: () => CartService.getCart(userId.value),
+    enabled: computed(() => !!userId.value),
+});
+
+const cartItems = computed(() => {
+    const all = cartQuery.data.value || [];
+    return all.filter(i => itemIds.includes(i.cartItemID.toString()));
+});
+
+const loading = computed(() => userQuery.isLoading.value || cartQuery.isLoading.value);
 
 const locations = {
     hanoi: {
@@ -123,8 +162,6 @@ const locations = {
 
 const paymentMethodsList = [
   { id: 'cod', title: 'Thanh toán khi nhận hàng (COD)', desc: 'Thanh toán bằng tiền mặt khi nhận hàng', icon: 'fas fa-money-bill-wave' },
-  // { id: 'bank', title: 'Chuyển khoản ngân hàng', desc: 'Chuyển khoản qua VietQR hoặc số tài khoản', icon: 'fas fa-university' },
-  // { id: 'momo', title: 'Ví điện tử MoMo', desc: 'Thanh toán qua ví MoMo', icon: 'fas fa-wallet' }
 ];
 
 const subtotal = computed(() => cartItems.value.reduce((sum, item) => sum + (item.bookPrice * item.quantity), 0));
@@ -133,79 +170,48 @@ const discount = ref(0);
 const total = computed(() => subtotal.value + shippingFee.value - discount.value);
 
 const defaultAddressDisplay = computed(() => {
-    if (userData.value?.address) return userData.value.address;
+    if (userQuery.data.value?.address) return userQuery.data.value.address;
     return 'Chưa có địa chỉ mặc định';
 });
 
-onMounted(async () => {
-    const user = JSON.parse(localStorage.getItem('user'));
-    if (!user) {
-        window.location.href = '/login';
-        return;
+// Mutation Place Order
+const checkoutMutation = useMutation({
+    mutationFn: (data) => OrderService.checkout(data),
+    onSuccess: (data) => {
+        if (data.success || data.orderID) {
+            if (window.showToast) window.showToast('Đặt hàng thành công!', 'success');
+            queryClient.invalidateQueries({ queryKey: ['cart', userId.value] });
+            setTimeout(() => {
+                window.location.href = `/profile?tab=my-orders`;
+            }, 1500);
+        }
     }
-    userId.value = user.userID;
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const itemIds = urlParams.get('items')?.split(',') || [];
-    
-    if (itemIds.length === 0) {
-        window.location.href = '/cart';
-        return;
-    }
-
-    await Promise.all([fetchUserInfo(), fetchCartItems(itemIds)]);
-    loading.value = false;
 });
 
-const fetchUserInfo = async () => {
-    try {
-        const res = await fetch(`/api/users/${userId.value}`);
-        const data = await res.json();
-        userData.value = data;
-        form.value.fullName = data.name || '';
-        form.value.phone = data.phone || '';
-        form.value.email = data.email || '';
-        if (!data.address) {
-            form.value.addressType = 'new';
-        }
-    } catch (e) { console.error(e); }
-};
-
-const fetchCartItems = async (ids) => {
-    try {
-        const res = await fetch(`/api/cart?userID=${userId.value}`);
-        const all = await res.json();
-        cartItems.value = all.filter(i => ids.includes(i.cartItemID.toString()));
-    } catch (e) { console.error(e); }
-};
+const placing = computed(() => checkoutMutation.isPending.value);
 
 const handlePlaceOrder = async () => {
+    const userData = userQuery.data.value;
     if (!form.value.fullName || !form.value.phone || !form.value.email) {
         if (window.showToast) window.showToast('Vui lòng điền đủ họ tên, số điện thoại và email', 'warning');
-        else alert('Vui lòng điền đủ họ tên, số điện thoại và email');
         return;
     }
 
-    // Compare email with logged in user's email
-    if (form.value.email.toLowerCase() !== userData.value.email.toLowerCase()) {
+    if (form.value.email.toLowerCase() !== userData.email.toLowerCase()) {
         if (window.showToast) window.showToast('Email không trùng khớp với tài khoản đăng nhập', 'warning');
-        else alert('Email không trùng khớp với tài khoản đăng nhập');
         return;
     }
 
-    // Validate phone number format
     const phoneRegex = /^(0)(3|5|7|8|9)[0-9]{8}$/;
     if (!phoneRegex.test(form.value.phone)) {
         if (window.showToast) window.showToast('Số điện thoại không đúng định dạng (VD: 0912345678)', 'warning');
-        else alert('Số điện thoại không đúng định dạng');
         return;
     }
 
-    let finalAddress = userData.value?.address;
+    let finalAddress = userData?.address;
     if (form.value.addressType === 'new') {
         if (!form.value.province || !form.value.district || !form.value.ward || !form.value.address) {
             if (window.showToast) window.showToast('Vui lòng điền đầy đủ địa chỉ giao hàng', 'warning');
-            else alert('Vui lòng điền đầy đủ địa chỉ giao hàng');
             return;
         }
         const p = locations[form.value.province].name;
@@ -213,70 +219,33 @@ const handlePlaceOrder = async () => {
         finalAddress = `${form.value.address}, ${form.value.ward}, ${d}, ${p}`;
     } else if (!finalAddress) {
         if (window.showToast) window.showToast('Bạn chưa có địa chỉ mặc định, vui lòng chọn Địa chỉ mới', 'warning');
-        else alert('Bạn chưa có địa chỉ mặc định, vui lòng chọn Địa chỉ mới');
         return;
     }
 
-    placing.value = true;
+    // Prepare data
+    const orderData = {
+        userID: userId.value,
+        cartItemIDs: cartItems.value.map(i => i.cartItemID),
+        shipping_address: finalAddress,
+        payment_method: form.value.payment,
+        note: form.value.note,
+        receiver_name: form.value.fullName,
+        receiver_phone: form.value.phone
+    };
 
-    // Auto-update profile if information changed
-    const needsProfileUpdate = 
-        form.value.fullName !== userData.value.name || 
-        form.value.phone !== userData.value.phone || 
-        (form.value.addressType === 'new' && finalAddress !== userData.value.address);
-
-    if (needsProfileUpdate) {
-        try {
-            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
-            await fetch(`/api/users/${userId.value}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken
-                },
-                body: JSON.stringify({
-                    name: form.value.fullName,
-                    phone: form.value.phone,
-                    address: finalAddress
-                })
-            });
-            // Update local userData to reflect changes
-            userData.value.name = form.value.fullName;
-            userData.value.phone = form.value.phone;
-            userData.value.address = finalAddress;
-        } catch (e) { console.error('Auto-profile update failed:', e); }
-    }
-    try {
-        const response = await fetch('/api/checkout', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                userID: userId.value,
-                cartItemIDs: cartItems.value.map(i => i.cartItemID),
-                shipping_address: finalAddress,
-                payment_method: form.value.payment,
-                note: form.value.note,
-                receiver_name: form.value.fullName,
-                receiver_phone: form.value.phone
-            })
-        });
-        const data = await response.json();
-        if (data.success || data.orderID) {
-            if (window.showToast) window.showToast('Đặt hàng thành công!', 'success');
-            setTimeout(() => {
-                window.location.href = `/profile?tab=my-orders`;
-            }, 1500);
-        } else {
-            if (window.showToast) window.showToast(data.error || 'Có lỗi xảy ra khi đặt hàng', 'danger');
-            else alert(data.error || 'Có lỗi xảy ra khi đặt hàng');
-            placing.value = false;
-        }
-    } catch (e) {
-        if (window.showToast) window.showToast('Lỗi kết nối server', 'danger');
-        else alert('Lỗi kết nối server');
-        placing.value = false;
-    }
+    checkoutMutation.mutate(orderData);
 };
+
+onMounted(() => {
+    userId.value = AuthService.getCurrentUser()?.userID || null;
+    if (!userId.value) {
+        window.location.href = '/login';
+        return;
+    }
+    if (!itemIdsStr) {
+        window.location.href = '/cart';
+    }
+});
 </script>
 
 <style scoped>

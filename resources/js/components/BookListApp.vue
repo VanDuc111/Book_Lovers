@@ -58,9 +58,18 @@
           </div>
 
           <!-- Suggested Books Section -->
-          <div v-if="!loading && books.length === 0 && suggestions.length > 0" class="suggested-section mt-5 pt-4 border-top">
-            <h3 class="suggested-title mb-4" style="font-size: 2rem; font-weight: 700; color: var(--black);">Sách gợi ý cho bạn</h3>
-            <div class="row">
+          <div v-if="!loading && books.length === 0" class="suggested-section mt-5 pt-4 border-top">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+               <h3 v-if="suggestions.length > 0 || loadingSuggestions" class="suggested-title m-0" style="font-size: 2rem; font-weight: 700; color: var(--black);">Có thể bạn sẽ thích</h3>
+            </div>
+            
+            <div v-if="loadingSuggestions" class="row">
+               <div v-for="i in 4" :key="i" class="col-6 col-md-4 col-lg-3 mb-4">
+                  <div class="skeleton" style="height: 350px; border-radius: 12px;"></div>
+               </div>
+            </div>
+
+            <div v-else-if="suggestions.length > 0" class="row">
               <div v-for="book in suggestions" :key="book.bookID" class="col-6 col-md-4 col-lg-3 mb-4">
                 <book-card :book="book" />
               </div>
@@ -73,33 +82,101 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
+import { useQuery } from '@tanstack/vue-query';
 import BookCard from './BookCard.vue';
 import FilterSidebar from './book-list/FilterSidebar.vue';
 
-const books = ref([]);
-const suggestions = ref([]);
-const loading = ref(true);
+// Import Services
+import BookService from '@/services/BookService';
+import CategoryService from '@/services/CategoryService';
+
 const currentCategory = ref('all');
 const currentSearch = ref('');
-const totalBooksCount = ref(0);
 
-const availableCategories = ref([]);
-const availablePublishers = ref([]);
 const filters = ref({
   minPrice: '',
   maxPrice: '',
   publishers: []
 });
 
-// Computed title for breadcrumb
+// Reacting to URL params on load
+const initFromUrl = () => {
+    const params = new URLSearchParams(window.location.search);
+    currentCategory.value = params.get('category') || 'all';
+    currentSearch.value = params.get('search') || '';
+};
+
+// 1. Fetch Danh sách sách chính với Vue Query
+const booksQuery = useQuery({
+    queryKey: computed(() => ['books', { 
+        category: currentCategory.value, 
+        search: currentSearch.value,
+        ...filters.value 
+    }]),
+    queryFn: () => BookService.fetchBooks({
+        category: currentCategory.value !== 'all' ? currentCategory.value : undefined,
+        search: currentSearch.value || undefined,
+        minPrice: filters.value.minPrice || undefined,
+        maxPrice: filters.value.maxPrice || undefined,
+        publishers: filters.value.publishers.length > 0 ? filters.value.publishers.join(',') : undefined
+    }),
+    staleTime: 1000 * 60 * 5, // Cache 5 phút
+});
+
+const books = computed(() => booksQuery.data.value || []);
+const loading = computed(() => booksQuery.isLoading.value);
+
+// 3. Query Gợi ý (khi ko có kết quả)
+const suggestionQuery = useQuery({
+    queryKey: ['book-suggestions-list'],
+    queryFn: () => BookService.fetchBooks({ limit: 8 }),
+    enabled: computed(() => !loading.value && books.value.length === 0),
+    staleTime: 1000 * 60 * 15,
+});
+
+const suggestions = computed(() => suggestionQuery.data.value ? suggestionQuery.data.value.slice(0, 8) : []);
+const loadingSuggestions = computed(() => suggestionQuery.isLoading.value);
+
+// 2. Fetch Metadata (Categories & Publishers)
+const metadataQuery = useQuery({
+    queryKey: ['books-metadata'],
+    queryFn: async () => {
+        const [categories, allBooks] = await Promise.all([
+            CategoryService.getCategories(),
+            BookService.fetchBooks()
+        ]);
+        
+        const availableCategories = categories.map(c => ({
+            name: c.categoryName,
+            count: allBooks.filter(b => b.categoryName === c.categoryName).length
+        }));
+
+        const pubMap = {};
+        allBooks.forEach(b => {
+            if (b.publisher) pubMap[b.publisher] = (pubMap[b.publisher] || 0) + 1;
+        });
+        const availablePublishers = Object.entries(pubMap).map(([name, count]) => ({ name, count }));
+
+        return {
+            availableCategories,
+            availablePublishers,
+            totalCount: allBooks.length
+        };
+    },
+    staleTime: 1000 * 60 * 30,
+});
+
+const availableCategories = computed(() => metadataQuery.data.value?.availableCategories || []);
+const availablePublishers = computed(() => metadataQuery.data.value?.availablePublishers || []);
+const totalBooksCount = computed(() => metadataQuery.data.value?.totalCount || 0);
+
 const currentTitle = computed(() => {
   if (currentSearch.value) return `Kết quả cho: "${currentSearch.value}"`;
   if (currentCategory.value !== 'all') return currentCategory.value;
   return 'Tất cả sách';
 });
 
-// Message when no results
 const emptyMessage = computed(() => {
   if (currentSearch.value) {
     return `Rất tiếc, không tìm thấy kết quả nào cho từ khóa "<strong>${currentSearch.value}</strong>".`;
@@ -107,52 +184,12 @@ const emptyMessage = computed(() => {
   return 'Xin lỗi, chúng tôi không tìm thấy sách phù hợp.';
 });
 
-const fetchBooks = async () => {
-  loading.value = true;
-  let url = '/api/books';
-  const params = new URLSearchParams();
-  
-  if (currentCategory.value !== 'all') {
-    params.append('category', currentCategory.value);
-  }
-  if (currentSearch.value) {
-    params.append('search', currentSearch.value);
-  }
-  if (filters.value.minPrice) {
-    params.append('minPrice', filters.value.minPrice);
-  }
-  if (filters.value.maxPrice) {
-    params.append('maxPrice', filters.value.maxPrice);
-  }
-  if (filters.value.publishers && filters.value.publishers.length > 0) {
-    params.append('publishers', filters.value.publishers.join(','));
-  }
-  
-  const queryString = params.toString();
-  if (queryString) url += `?${queryString}`;
-
-  try {
-    const response = await fetch(url);
-    books.value = await response.json();
-    
-    if (books.value.length === 0) {
-      await fetchSuggestions();
-    }
-  } catch (error) {
-    console.error('Lỗi khi tải sách:', error);
-  } finally {
-    loading.value = false;
-  }
-};
-
-const fetchSuggestions = async () => {
-  try {
-    const response = await fetch('/api/books');
-    const all = await response.json();
-    suggestions.value = all.sort(() => 0.5 - Math.random()).slice(0, 4);
-  } catch (error) {
-    console.error('Lỗi khi tải gợi ý:', error);
-  }
+const applyFilters = () => {
+  const url = new URL(window.location);
+  url.searchParams.set('category', currentCategory.value);
+  if (currentSearch.value) url.searchParams.set('search', currentSearch.value);
+  else url.searchParams.delete('search');
+  window.history.pushState({}, '', url);
 };
 
 const filterByCategory = (category) => {
@@ -169,14 +206,6 @@ const onFilterChanged = (filterData) => {
   applyFilters();
 };
 
-const applyFilters = () => {
-  const url = new URL(window.location);
-  url.searchParams.set('category', currentCategory.value);
-  url.searchParams.delete('search');
-  window.history.pushState({}, '', url);
-  fetchBooks();
-};
-
 const resetFilters = () => {
   currentCategory.value = 'all';
   filters.value.minPrice = '';
@@ -185,48 +214,12 @@ const resetFilters = () => {
   applyFilters();
 };
 
-const fetchMetadata = async () => {
-    try {
-        const [catRes, bookRes] = await Promise.all([
-            fetch('/api/categories'),
-            fetch('/api/books')
-        ]);
-        const categories = await catRes.json();
-        const allBooks = await bookRes.json();
-        totalBooksCount.value = allBooks.length;
-
-        // Map categories with counts
-        availableCategories.value = categories.map(c => ({
-            name: c.categoryName,
-            count: allBooks.filter(b => b.categoryName === c.categoryName).length
-        }));
-        
-        // Calculate publisher counts
-        const pubMap = {};
-        allBooks.forEach(b => {
-            if (b.publisher) {
-                pubMap[b.publisher] = (pubMap[b.publisher] || 0) + 1;
-            }
-        });
-        availablePublishers.value = Object.entries(pubMap).map(([name, count]) => ({ name, count }));
-    } catch (e) {
-        console.error('Lỗi khi tải dữ liệu lọc', e);
-    }
-};
-
 onMounted(() => {
-  const params = new URLSearchParams(window.location.search);
-  currentCategory.value = params.get('category') || 'all';
-  currentSearch.value = params.get('search') || '';
-  
-  fetchMetadata();
-  fetchBooks();
-
-  // Listen for category selection from header
+  initFromUrl();
   window.addEventListener('categoryChanged', (e) => {
     currentCategory.value = e.detail.category;
     currentSearch.value = '';
-    fetchBooks();
+    applyFilters();
   });
 });
 </script>
@@ -352,4 +345,5 @@ onMounted(() => {
 @media (max-width: 480px) {
     .card-img-top { height: 16rem; }
 }
+
 </style>

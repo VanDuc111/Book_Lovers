@@ -41,73 +41,68 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-
+import { onMounted, computed, ref } from 'vue';
+import { useQuery } from '@tanstack/vue-query';
 import SearchBox from './SearchBox.vue';
+
+// Import Services
+import CategoryService from '@/services/CategoryService';
+import CartService from '@/services/CartService';
+import AuthService from '@/services/AuthService';
 
 const logoSrc = '/assets/images/logo-full.svg';
 const categoryIconSrc = '/assets/icons/category.svg';
 const cartIconSrc = '/assets/icons/shopping-cart.svg';
 const userIconSrc = '/assets/icons/user.svg';
 
-const categories = ref([]);
-const loadingCategories = ref(false);
-const cartCount = ref(0);
 const user = ref(null);
 
-onMounted(() => {
-    fetchCategories();
-    updateCartIcon();
-    checkUser();
-
-    // Listen for cart updates
-    window.addEventListener('cart-updated', updateCartIcon);
-    // Listen for user updates (login/logout)
-    window.addEventListener('user-updated', checkUser);
+// 1. Fetch Danh mục với Vue Query
+const categoriesQuery = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => CategoryService.getCategories(),
+    initialData: () => CategoryService.getCachedCategories(),
+    staleTime: 1000 * 60 * 30,
 });
 
-const fetchCategories = async () => {
-    loadingCategories.value = true;
-    try {
-        const response = await fetch('/api/categories');
-        categories.value = await response.json();
-    } catch (error) {
-        console.error('Error fetching categories:', error);
-    } finally {
-        loadingCategories.value = false;
-    }
-};
+const categories = computed(() => categoriesQuery.data.value || []);
+const loadingCategories = computed(() => categoriesQuery.isLoading.value && categories.value.length === 0);
 
-const updateCartIcon = async () => {
-    try {
-        const storedUser = JSON.parse(localStorage.getItem('user'));
-        if (storedUser && storedUser.userID) {
-            // Fetch from API for logged-in users
-            const response = await fetch(`/api/cart?userID=${storedUser.userID}`);
-            const cartItems = await response.json();
-            cartCount.value = Array.isArray(cartItems) ? cartItems.length : 0;
-        } else {
-            // Fetch from LocalStorage for guests
-            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-            cartCount.value = cart.length; // Count unique items (lines), not total quantity
+// 2. Fetch Giỏ hàng với Vue Query
+const cartQuery = useQuery({
+    queryKey: computed(() => ['cart', user.value?.userID]),
+    queryFn: async () => {
+        if (user.value?.userID) {
+            return await CartService.getCart(user.value.userID);
         }
-    } catch (e) {
-        console.error('Error updating cart count:', e);
-        cartCount.value = 0;
-    }
-};
+        return JSON.parse(localStorage.getItem('cart') || '[]');
+    },
+    initialData: () => {
+        const currentUser = AuthService.getCurrentUser();
+        if (currentUser?.userID) return CartService.getCachedCart(currentUser.userID);
+        return JSON.parse(localStorage.getItem('cart') || '[]');
+    },
+    staleTime: 1000 * 60 * 5, // Cache 5 phút
+});
+
+const cartCount = computed(() => {
+    const data = cartQuery.data.value;
+    return Array.isArray(data) ? data.length : 0;
+});
+
+onMounted(() => {
+    checkUser();
+    // Listen for cart updates
+    window.addEventListener('cart-updated', () => cartQuery.refetch());
+    // Listen for user updates
+    window.addEventListener('user-updated', () => {
+        checkUser();
+        cartQuery.refetch();
+    });
+});
 
 const checkUser = () => {
-    try {
-        const storedUser = JSON.parse(localStorage.getItem('user'));
-        if (storedUser) {
-            user.value = storedUser;
-        } else {
-            user.value = null;
-        }
-    } catch (e) {
-        user.value = null;
-    }
+    user.value = AuthService.getCurrentUser();
 };
 
 const welcomeMessage = computed(() => {

@@ -146,7 +146,13 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import { formatDateShort as formatDate } from '@/utils/formatters';
+
+// Import Services
+import ReviewService from '@/services/ReviewService';
+import OrderService from '@/services/OrderService';
+import AuthService from '@/services/AuthService';
 
 const props = defineProps({
   bookId: {
@@ -155,19 +161,64 @@ const props = defineProps({
   }
 });
 
+const queryClient = useQueryClient();
 const userId = ref(null);
-const reviews = ref([]);
-const summary = ref(null);
-const loadingReviews = ref(true);
-const hasPurchased = ref(false);
 const showForm = ref(false);
-const submitting = ref(false);
 const hoverRating = ref(0);
+const newReview = ref({ rating: 0, comment: '' });
 
-const newReview = ref({
-  rating: 0,
-  comment: ''
+// 1. Fetch Summary
+const summaryQuery = useQuery({
+    queryKey: computed(() => ['reviews-summary', props.bookId]),
+    queryFn: () => ReviewService.getReviewSummary(props.bookId),
+    enabled: computed(() => !!props.bookId),
+    staleTime: 1000 * 60 * 10,
 });
+
+const summary = computed(() => summaryQuery.data.value);
+
+// 2. Fetch Review List
+const reviewsQuery = useQuery({
+    queryKey: computed(() => ['reviews-list', props.bookId]),
+    queryFn: () => ReviewService.getBookReviews(props.bookId),
+    enabled: computed(() => !!props.bookId),
+    staleTime: 1000 * 60 * 5,
+});
+
+const reviews = computed(() => reviewsQuery.data.value || []);
+const loadingReviews = computed(() => reviewsQuery.isLoading.value);
+
+// 3. Check purchase
+const purchaseQuery = useQuery({
+    queryKey: computed(() => ['purchase-check', userId.value, props.bookId]),
+    queryFn: () => OrderService.getPurchasedBooks(userId.value, props.bookId),
+    enabled: computed(() => !!userId.value && !!props.bookId),
+    staleTime: 1000 * 60 * 30,
+});
+
+const hasPurchased = computed(() => {
+    const data = purchaseQuery.data.value;
+    return Array.isArray(data) && data.length > 0;
+});
+
+// Mutation gửi review
+const submitMutation = useMutation({
+    mutationFn: (data) => ReviewService.submitReview(data),
+    onSuccess: (data) => {
+        if (data.success || data.reviewID) {
+            if (window.showToast) window.showToast('Gửi đánh giá thành công!', 'success');
+            showForm.value = false;
+            newReview.value = { rating: 0, comment: '' };
+            // Làm tươi dữ liệu
+            queryClient.invalidateQueries({ queryKey: ['reviews-summary', props.bookId] });
+            queryClient.invalidateQueries({ queryKey: ['reviews-list', props.bookId] });
+        } else {
+            if (window.showToast) window.showToast(data.error || 'Lỗi gửi đánh giá', 'danger');
+        }
+    }
+});
+
+const submitting = computed(() => submitMutation.isPending.value);
 
 const totalReviews = computed(() => summary.value ? parseInt(summary.value.review_count) : 0);
 const averageRating = computed(() => summary.value ? parseFloat(summary.value.avg_rating) : 0);
@@ -178,32 +229,7 @@ const getPercentage = (star) => {
   return Math.round((count / totalReviews.value) * 100);
 };
 
-const fetchData = async () => {
-  loadingReviews.value = true;
-  try {
-    // 1. Fetch Summary
-    const sumRes = await fetch(`/api/reviews?summary=1&bookID=${props.bookId}`);
-    const sumData = await sumRes.json();
-    if (sumData.length > 0) summary.value = sumData[0];
-
-    // 2. Fetch Reviews List
-    const listRes = await fetch(`/api/reviews?bookID=${props.bookId}`);
-    reviews.value = await listRes.json();
-
-    // 3. Check purchase
-    if (userId.value) {
-      const purRes = await fetch(`/api/purchased-books?userID=${userId.value}&bookID=${props.bookId}`);
-      const purData = await purRes.json();
-      hasPurchased.value = purData.length > 0;
-    }
-  } catch (err) {
-    console.error('Lỗi tải đánh giá:', err);
-  } finally {
-    loadingReviews.value = false;
-  }
-};
-
-const submitReview = async () => {
+const submitReview = () => {
   if (newReview.value.rating === 0) {
     if (window.showToast) window.showToast('Vui lòng chọn số sao đánh giá', 'warning');
     return;
@@ -213,40 +239,16 @@ const submitReview = async () => {
     return;
   }
 
-  submitting.value = true;
-  try {
-    const res = await fetch('/api/reviews', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        bookID: props.bookId,
-        userID: userId.value,
-        rating: newReview.value.rating,
-        comment: newReview.value.comment
-      })
-    });
-    const data = await res.json();
-    if (data.success || data.reviewID) {
-      if (window.showToast) window.showToast('Gửi đánh giá thành công!', 'success');
-      showForm.value = false;
-      newReview.value = { rating: 0, comment: '' };
-      await fetchData(); // Reload
-    } else {
-      if (window.showToast) window.showToast(data.error || 'Lỗi gửi đánh giá', 'danger');
-    }
-  } catch (err) {
-    console.error('Lỗi gửi đánh giá:', err);
-  } finally {
-    submitting.value = false;
-  }
+  submitMutation.mutate({
+    bookID: props.bookId,
+    userID: userId.value,
+    rating: newReview.value.rating,
+    comment: newReview.value.comment
+  });
 };
 
-
 onMounted(() => {
-  console.log('BookReviews component mounted!');
-  const user = JSON.parse(localStorage.getItem('user'));
-  userId.value = user ? user.userID : null;
-  fetchData();
+  userId.value = AuthService.getCurrentUser()?.userID || null;
 });
 </script>
 

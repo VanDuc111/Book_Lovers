@@ -18,7 +18,12 @@ import BaseButton from './components/BaseButton.vue';
 import GlobalVariables from './components/GlobalVariables.vue';
 import PasswordField from './components/common/PasswordField.vue';
 
+import { VueQueryPlugin } from '@tanstack/vue-query';
+
 const app = createApp({});
+
+// Plugins
+app.use(VueQueryPlugin);
 
 // Components registration
 app.component('password-field', PasswordField);

@@ -59,14 +59,23 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, computed } from 'vue';
+import { ref, reactive, onMounted, computed, watch } from 'vue';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import ProfileSidebar from './profile/ProfileSidebar.vue';
 import ProfileInfoPane from './profile/ProfileInfoPane.vue';
 import OrderHistory from './profile/OrderHistory.vue';
 import PurchasedBooks from './profile/PurchasedBooks.vue';
 import ChangePassword from './profile/ChangePassword.vue';
 
+// Import Services
+import UserService from '@/services/UserService';
+import OrderService from '@/services/OrderService';
+import AuthService from '@/services/AuthService';
+
 const props = defineProps(['config']);
+const queryClient = useQueryClient();
+const userId = ref(null);
+const activeTab = ref('profile-info');
 
 const user = reactive({
     userID: null,
@@ -75,14 +84,6 @@ const user = reactive({
     phone: '',
     address: ''
 });
-
-const activeTab = ref('profile-info');
-const orders = ref([]);
-const purchasedBooks = ref([]);
-const loadingOrders = ref(false);
-const loadingPurchased = ref(false);
-const saving = ref(false);
-const savingPassword = ref(false);
 
 const navItems = [
     { id: 'profile-info', label: 'Thông tin cá nhân', icon: 'fas fa-user-circle' },
@@ -102,75 +103,79 @@ const tabMap = {
     'password': 'change-password'
 };
 
-onMounted(() => {
-    initUser();
-    handleUrlParams();
-    fetchUserData();
-    fetchOrders();
-    fetchPurchasedBooks();
+// 1. Query User Info
+const userQuery = useQuery({
+    queryKey: computed(() => ['user-profile', userId.value]),
+    queryFn: () => UserService.getUserById(userId.value),
+    enabled: computed(() => !!userId.value),
+    staleTime: 1000 * 60 * 15,
 });
 
-const initUser = () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    let userID = urlParams.get('userID');
-    
-    if (!userID) {
-        const storedUser = JSON.parse(localStorage.getItem('user'));
-        userID = storedUser ? storedUser.userID : null;
+watch(() => userQuery.data.value, (newData) => {
+    if (newData) Object.assign(user, newData);
+}, { immediate: true });
+
+// 2. Query Orders
+const ordersQuery = useQuery({
+    queryKey: computed(() => ['user-orders', userId.value]),
+    queryFn: () => OrderService.getMyOrders(userId.value),
+    enabled: computed(() => !!userId.value),
+    staleTime: 1000 * 60 * 5,
+});
+
+const orders = computed(() => ordersQuery.data.value || []);
+const loadingOrders = computed(() => ordersQuery.isLoading.value);
+
+// 3. Query Purchased Books
+const purchasedQuery = useQuery({
+    queryKey: computed(() => ['purchased-books', userId.value]),
+    queryFn: () => OrderService.getPurchasedBooks(userId.value),
+    enabled: computed(() => !!userId.value),
+    staleTime: 1000 * 60 * 10,
+});
+
+const purchasedBooks = computed(() => purchasedQuery.data.value || []);
+const loadingPurchased = computed(() => purchasedQuery.isLoading.value);
+
+// Mutations
+const updateProfileMutation = useMutation({
+    mutationFn: (data) => UserService.updateProfile(userId.value, data),
+    onSuccess: (data) => {
+        if (data.success || !data.error) {
+            if (window.showToast) window.showToast('Cập nhật hồ sơ thành công!', 'success');
+            queryClient.invalidateQueries({ queryKey: ['user-profile', userId.value] });
+        }
     }
-    
-    if (!userID) {
-        window.location.href = safeConfig.value.loginUrl || '/login';
+});
+
+const updatePasswordMutation = useMutation({
+    mutationFn: (data) => UserService.updatePassword(userId.value, data),
+    onSuccess: (data) => {
+         if (data.success || !data.error) {
+            if (window.showToast) window.showToast('Đổi mật khẩu thành công! Vui lòng đăng nhập lại.', 'success');
+            setTimeout(() => logout(), 2000);
+        } else {
+             if (window.showToast) window.showToast(data.error || 'Lỗi đổi mật khẩu', 'danger');
+        }
+    }
+});
+
+const saving = computed(() => updateProfileMutation.isPending.value);
+const savingPassword = computed(() => updatePasswordMutation.isPending.value);
+
+onMounted(() => {
+    const storedUser = AuthService.getCurrentUser();
+    if (!storedUser) {
+        window.location.href = '/login';
         return;
     }
+    userId.value = storedUser.userID;
     
-    user.userID = userID;
-};
-
-const handleUrlParams = () => {
+    // Handle URL Params
     const urlParams = new URLSearchParams(window.location.search);
     const initialTab = urlParams.get('tab') || urlParams.get('target');
-    if (initialTab) {
-        activeTab.value = tabMap[initialTab] || initialTab;
-    }
-};
-
-const fetchUserData = async () => {
-    if (!safeConfig.value.apiUrl) return;
-    try {
-        const response = await fetch(`${safeConfig.value.apiUrl}/${user.userID}`);
-        const data = await response.json();
-        if (data) {
-            Object.assign(user, data);
-        }
-    } catch (error) {
-        console.error('Error fetching user:', error);
-    }
-};
-
-const fetchOrders = async () => {
-    loadingOrders.value = true;
-    try {
-        const response = await fetch(`/api/orders?userID=${user.userID}`);
-        orders.value = await response.json();
-    } catch (error) {
-        console.error('Error fetching orders:', error);
-    } finally {
-        loadingOrders.value = false;
-    }
-};
-
-const fetchPurchasedBooks = async () => {
-    loadingPurchased.value = true;
-    try {
-        const response = await fetch(`/api/purchased-books?userID=${user.userID}`);
-        purchasedBooks.value = await response.json();
-    } catch (error) {
-        console.error('Error fetching purchased books:', error);
-    } finally {
-        loadingPurchased.value = false;
-    }
-};
+    if (initialTab) activeTab.value = tabMap[initialTab] || initialTab;
+});
 
 const switchTab = (tabId) => {
     activeTab.value = tabId;
@@ -179,104 +184,31 @@ const switchTab = (tabId) => {
     window.history.pushState({}, '', url);
 };
 
-const updateProfile = async (updatedData) => {
-    // Validate phone number format (Vietnamese mobile standard: 10 digits, starts with 03, 05, 07, 08, 09)
-    if (updatedData.phone) {
-        const phoneRegex = /^(0)(3|5|7|8|9)[0-9]{8}$/;
-        if (!phoneRegex.test(updatedData.phone)) {
-            if (window.showToast) window.showToast('Số điện thoại không đúng định dạng (VD: 0912345678)', 'warning');
-            else alert('Số điện thoại không đúng định dạng');
-            return;
-        }
-    }
-
-    saving.value = true;
-    try {
-        const response = await fetch(`${safeConfig.value.apiUrl}/${user.userID}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': safeConfig.value.csrfToken
-            },
-            body: JSON.stringify({
-                name: updatedData.name,
-                phone: updatedData.phone,
-                address: updatedData.address
-            })
-        });
-        const result = await response.json();
-        if (result.success || !result.error) {
-            if (window.showToast) window.showToast('Cập nhật hồ sơ thành công!', 'success');
-            else alert('Cập nhật hồ sơ thành công!');
-            Object.assign(user, updatedData);
-        } else {
-            if (window.showToast) window.showToast('Lỗi: ' + (result.error || result.message), 'danger');
-            else alert('Lỗi: ' + (result.error || result.message));
-        }
-    } catch (error) {
-        if (window.showToast) window.showToast('Đã xảy ra lỗi khi kết nối server.', 'danger');
-        else alert('Đã xảy ra lỗi khi kết nối server.');
-    } finally {
-        saving.value = false;
-    }
-};
-
-const updatePassword = async (passwords) => {
-    if (!passwords.current || !passwords.new) {
-        if (window.showToast) window.showToast('Vui lòng điền đầy đủ các thông tin mật khẩu.', 'warning');
+const updateProfile = (updatedData) => {
+    // Basic phone validation
+    if (updatedData.phone && !/^(0)(3|5|7|8|9)[0-9]{8}$/.test(updatedData.phone)) {
+        if (window.showToast) window.showToast('Số điện thoại không đúng định dạng', 'warning');
         return;
     }
+    updateProfileMutation.mutate(updatedData);
+};
 
+const updatePassword = (passwords) => {
     if (passwords.new.length < 8) {
         if (window.showToast) window.showToast('Mật khẩu mới phải có ít nhất 8 ký tự.', 'warning');
         return;
     }
-
     if (passwords.new !== passwords.confirmation) {
         if (window.showToast) window.showToast('Xác nhận mật khẩu mới không khớp.', 'warning');
         return;
     }
-
-    if (passwords.new === passwords.current) {
-        if (window.showToast) window.showToast('Mật khẩu mới không được trùng với mật khẩu hiện tại.', 'warning');
-        return;
-    }
-
-    savingPassword.value = true;
-    try {
-        const response = await fetch(`${safeConfig.value.apiUrl}/${user.userID}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': safeConfig.value.csrfToken
-            },
-            body: JSON.stringify({
-                current_password: passwords.current,
-                password: passwords.new
-            })
-        });
-        const result = await response.json();
-        if (result.success || !result.error) {
-            if (window.showToast) window.showToast('Đổi mật khẩu thành công! Vui lòng đăng nhập lại.', 'success');
-            setTimeout(() => {
-                logout();
-            }, 2000);
-        } else {
-            const errorMsg = result.error || result.message || 'Lỗi không xác định';
-            if (window.showToast) window.showToast(errorMsg, 'danger');
-            else alert('Lỗi: ' + errorMsg);
-        }
-    } catch (error) {
-        if (window.showToast) window.showToast('Đã xảy ra lỗi khi kết nối server.', 'danger');
-    } finally {
-        savingPassword.value = false;
-    }
+    updatePasswordMutation.mutate({
+        current_password: passwords.current,
+        password: passwords.new
+    });
 };
 
-const logout = () => {
-    localStorage.removeItem('user');
-    window.location.href = safeConfig.value.homeUrl || '/';
-};
+const logout = () => AuthService.logout();
 </script>
 
 <style scoped>

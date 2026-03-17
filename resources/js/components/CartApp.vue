@@ -152,16 +152,47 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import CartItem from './cart/CartItem.vue';
 import CartSummary from './cart/CartSummary.vue';
 
-const items = ref([]);
+// Import Services
+import CartService from '@/services/CartService';
+import AuthService from '@/services/AuthService';
+
+const queryClient = useQueryClient();
 const selectedIds = ref([]);
-const loading = ref(true);
 const userId = ref(null);
 
 const showConfirmModal = ref(false);
 const itemToRemove = ref(null);
+
+// 1. Fetch Giỏ hàng với Vue Query
+const cartQuery = useQuery({
+    queryKey: computed(() => ['cart', userId.value]),
+    queryFn: () => CartService.getCart(userId.value),
+    enabled: computed(() => !!userId.value),
+    staleTime: 1000 * 60 * 5,
+});
+
+const items = computed(() => cartQuery.data.value || []);
+const loading = computed(() => cartQuery.isLoading.value);
+
+// Mutations cho việc cập nhật/xóa
+const updateQtyMutation = useMutation({
+    mutationFn: ({ id, qty }) => CartService.updateQuantity(id, qty),
+    onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['cart'] });
+    }
+});
+
+const removeMutation = useMutation({
+    mutationFn: (id) => CartService.removeFromCart(id),
+    onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['cart'] });
+        window.dispatchEvent(new Event('cart-updated'));
+    }
+});
 
 const isAllSelected = computed(() => {
   return items.value.length > 0 && selectedIds.value.length === items.value.length;
@@ -172,18 +203,6 @@ const totalPrice = computed(() => {
     .filter(item => selectedIds.value.includes(item.cartItemID))
     .reduce((sum, item) => sum + (item.bookPrice * item.quantity), 0);
 });
-
-const fetchCart = async () => {
-  if (!userId.value) return;
-  try {
-    const res = await fetch(`/api/cart?userID=${userId.value}`);
-    items.value = await res.json();
-  } catch (err) {
-    console.error('Lỗi tải giỏ hàng:', err);
-  } finally {
-    loading.value = false;
-  }
-};
 
 const toggleSelectAll = (e) => {
   if (e.target.checked) {
@@ -211,24 +230,7 @@ const handleUpdateQty = async ({ item, delta }) => {
     return;
   }
 
-  const originalQty = item.quantity;
-  item.quantity = newQty;
-
-  try {
-    const res = await fetch(`/api/cart/${item.cartItemID}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ quantity: newQty }),
-    });
-    const data = await res.json();
-    if (data.error) {
-       item.quantity = originalQty;
-       if (window.showToast) window.showToast(data.error, "danger");
-    }
-  } catch (err) {
-    item.quantity = originalQty;
-    console.error('Lỗi cập nhật số lượng:', err);
-  }
+  updateQtyMutation.mutate({ id: item.cartItemID, qty: newQty });
 };
 
 const removeItem = (id) => {
@@ -243,20 +245,10 @@ const cancelRemove = () => {
 
 const confirmRemove = async () => {
   if (!itemToRemove.value) return;
-  
-  const id = itemToRemove.value;
-  try {
-    await fetch(`/api/cart/${id}`, { method: "DELETE" });
-    items.value = items.value.filter(i => i.cartItemID !== id);
-    selectedIds.value = selectedIds.value.filter(sid => sid !== id);
-    if (window.showToast) window.showToast("Đã xóa sản phẩm", "success");
-    window.dispatchEvent(new Event('cart-updated'));
-  } catch (err) {
-    console.error('Lỗi xóa sản phẩm:', err);
-  } finally {
-    showConfirmModal.value = false;
-    itemToRemove.value = null;
-  }
+  removeMutation.mutate(itemToRemove.value);
+  selectedIds.value = selectedIds.value.filter(sid => sid !== itemToRemove.value);
+  showConfirmModal.value = false;
+  itemToRemove.value = null;
 };
 
 const checkout = () => {
@@ -268,14 +260,7 @@ const goToLogin = () => window.location.href = '/login';
 const goToBooks = () => window.location.href = '/book-list';
 
 onMounted(() => {
-  const user = JSON.parse(localStorage.getItem('user'));
-  userId.value = user ? user.userID : null;
-  
-  if (userId.value) {
-    fetchCart();
-  } else {
-    loading.value = false;
-  }
+  userId.value = AuthService.getCurrentUser()?.userID || null;
 });
 </script>
 

@@ -62,10 +62,6 @@ Route::get('/book-details', function () {
     return view('book-details');
 });
 
-Route::get('/search-results', function () {
-    return view('search-results');
-});
-
 Route::get('/admin', function () {
     return view('admin');
 });

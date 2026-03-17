@@ -42,11 +42,24 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { useQuery } from '@tanstack/vue-query';
+import BookService from '@/services/BookService';
 
 const query = ref('');
-const suggestions = ref([]);
 const showSuggestions = ref(false);
+
+// Fetch gợi ý với Vue Query
+const searchParams = computed(() => ({ search: query.value.trim() }));
+
+const { data: suggestionsData = [] } = useQuery({
+    queryKey: computed(() => ['search-suggestions', query.value.trim()]),
+    queryFn: () => BookService.fetchBooks(searchParams.value),
+    enabled: computed(() => query.value.trim().length >= 2),
+    staleTime: 1000 * 60 * 5, // Cache gợi ý 5 phút
+});
+
+const suggestions = computed(() => (Array.isArray(suggestionsData.value) ? suggestionsData.value.slice(0, 5) : []));
 
 const handleSearch = () => {
     const q = query.value.trim();
@@ -55,21 +68,11 @@ const handleSearch = () => {
     }
 };
 
-const handleInput = async () => {
-    const q = query.value.trim();
-    if (q.length < 2) {
-        suggestions.value = [];
-        showSuggestions.value = false;
-        return;
-    }
-
-    try {
-        const res = await fetch(`/api/books?search=${encodeURIComponent(q)}`);
-        const data = await res.json();
-        suggestions.value = data.slice(0, 5);
+const handleInput = () => {
+    if (query.value.trim().length >= 2) {
         showSuggestions.value = true;
-    } catch (e) {
-        console.error(e);
+    } else {
+        showSuggestions.value = false;
     }
 };
 

@@ -58,6 +58,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import AuthService from '@/services/AuthService';
 
 const username = ref('');
 const email = ref('');
@@ -68,54 +69,36 @@ const loading = ref(false);
 const handleRegister = async () => {
     if (!username.value.trim()) {
         if (window.showToast) window.showToast("Vui lòng nhập tên người dùng.", "warning");
-        else alert("Vui lòng nhập tên người dùng.");
         return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.value)) {
         if (window.showToast) window.showToast("Email không đúng định dạng chuẩn (Ví dụ: ten@example.com).", "warning");
-        else alert("Email không đúng định dạng chuẩn.");
         return;
     }
 
     if (password.value !== confirmPassword.value) {
         if (window.showToast) window.showToast("Mật khẩu xác nhận không khớp.", "warning");
-        else alert("Mật khẩu xác nhận không khớp.");
         return;
     }
 
     loading.value = true;
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
     try {
-        const response = await fetch('/api/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken
-            },
-            body: JSON.stringify({
-                name: username.value,
-                email: email.value,
-                password: password.value,
-            }),
+        const data = await AuthService.register({
+            name: username.value,
+            email: email.value,
+            password: password.value,
         });
-        const data = await response.json();
         
         if (data.success) {
             if (window.showToast) window.showToast("Đăng ký thành công! Đang chuyển hướng...", "success");
             setTimeout(() => {
                 window.location.href = "/login";
             }, 1500);
-        } else {
-            if (window.showToast) window.showToast("Đăng ký thất bại: " + data.message, "danger");
-            else alert("Đăng ký thất bại: " + data.message);
         }
     } catch (error) {
         console.error('Lỗi đăng ký:', error);
-        if (window.showToast) window.showToast('Đã xảy ra lỗi khi đăng ký.', "danger");
-        else alert('Đã xảy ra lỗi khi đăng ký.');
     } finally {
         loading.value = false;
     }
