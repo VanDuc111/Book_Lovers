@@ -60,6 +60,12 @@ const reviewsQuery = useQuery({
     },
 });
 
+// 4. Fetch sách gợi ý ngẫu nhiên (Server-side)
+const recommendedQuery = useQuery({
+    queryKey: ['books-recommended'],
+    queryFn: () => BookService.fetchBooks({ limit: 7, random: true }),
+});
+
 // Logic biến đổi dữ liệu (Dùng .value vì useQuery trả về các ref)
 const allBooks = computed(() => booksQuery.data.value || []);
 const vanHocBooks = computed(() => vanHocQuery.data.value || []);
@@ -70,12 +76,10 @@ const featuredBooks = computed(() => {
     return featured.length > 0 ? featured : allBooks.value.slice(0, 6);
 });
 
-const recommendedBooks = computed(() => {
-    return [...allBooks.value].sort(() => 0.5 - Math.random()).slice(0, 7);
-});
+const recommendedBooks = computed(() => recommendedQuery.data.value || []);
 
 const loadingFeatured = computed(() => booksQuery.isLoading.value);
 const loadingVanHoc = computed(() => vanHocQuery.isLoading.value);
-const loadingRecommended = computed(() => booksQuery.isLoading.value);
+const loadingRecommended = computed(() => recommendedQuery.isLoading.value);
 const loadingReviews = computed(() => reviewsQuery.isLoading.value);
 </script>

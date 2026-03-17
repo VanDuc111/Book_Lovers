@@ -129,7 +129,7 @@ const loading = computed(() => booksQuery.isLoading.value);
 // 3. Query Gợi ý (khi ko có kết quả)
 const suggestionQuery = useQuery({
     queryKey: ['book-suggestions-list'],
-    queryFn: () => BookService.fetchBooks({ limit: 8 }),
+    queryFn: () => BookService.fetchBooks({ limit: 8, random: true }),
     enabled: computed(() => !loading.value && books.value.length === 0),
 });
 

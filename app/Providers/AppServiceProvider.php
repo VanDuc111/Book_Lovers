@@ -14,12 +14,10 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
-        if (config('app.env') === 'production' || str_contains(config('app.url'), 'https')) {
+        // Ép HTTPS nếu chạy trên Production hoặc qua Proxy (Render)
+        if (config('app.env') === 'production' || isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
     }

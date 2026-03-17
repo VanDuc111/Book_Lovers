@@ -206,13 +206,33 @@ textarea {
 }
 
 .form-control:focus, 
-input:focus, 
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="tel"]:focus,
 select:focus, 
 textarea:focus {
   border-color: var(--orange) !important;
   box-shadow: var(--focus-shadow) !important;
   outline: none !important;
   background-color: var(--white) !important;
+}
+
+/* Form Check Customization (Checkbox/Radio) */
+.form-check-input {
+  cursor: pointer;
+  border: 1.5px solid var(--border-color-fade) !important;
+}
+
+.form-check-input:checked {
+  background-color: var(--orange) !important;
+  border-color: var(--orange) !important;
+}
+
+.form-check-input:focus {
+  border-color: var(--orange) !important;
+  box-shadow: var(--focus-shadow) !important;
 }
 
 /* Global Price Style */

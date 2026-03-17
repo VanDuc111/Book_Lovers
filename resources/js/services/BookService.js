@@ -23,10 +23,13 @@ class BookService extends BaseApiService {
      * Lấy các sách liên quan dựa trên thể loại
      */
     async getRelatedBooks(categoryName, currentBookId) {
-        const allBooks = await this.getAll();
-        return allBooks
-            .filter(b => (b.categoryName === categoryName || b.categoryID === categoryName) && b.bookID != currentBookId)
-            .slice(0, 8);
+        // Lấy sách cùng thể loại trực tiếp từ server với tính năng random và limit
+        const related = await this.getAll({ 
+            category: categoryName, 
+            limit: 9, 
+            random: true 
+        });
+        return related.filter(b => b.bookID != currentBookId).slice(0, 8);
     }
 
     /**

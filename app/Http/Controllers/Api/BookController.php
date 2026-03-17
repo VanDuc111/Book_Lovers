@@ -49,6 +49,14 @@ class BookController extends Controller
             }
         }
 
+        if ($request->boolean('random')) {
+            $query->inRandomOrder();
+        }
+
+        if ($request->has('limit')) {
+            $query->limit((int)$request->limit);
+        }
+
         $books = $query->get()->map(function ($book) {
             $book->image = $this->fixImagePath($book->image);
             $book->categoryName = $book->category ? $book->category->categoryName : null;
