@@ -7,6 +7,7 @@ import axios from 'axios';
 class BaseApiService {
     constructor(resource) {
         this.api = axios.create({
+            // Đảm bảo baseURL không có dấu gạch chéo ở cuối (trailing slash)
             baseURL: '/api',
             headers: {
                 'Content-Type': 'application/json',
@@ -67,14 +68,17 @@ class BaseApiService {
     }
 
     async get(endpoint, params = {}) {
-        const isAbsolute = endpoint.startsWith('/');
-        const url = isAbsolute ? endpoint : `${this.resource}/${endpoint}`;
+        const isAbsolute = endpoint && endpoint.startsWith('/');
+        let url = isAbsolute ? endpoint : (endpoint ? `${this.resource}/${endpoint}` : `${this.resource}`);
+        // Loại bỏ dấu gạch chéo cuối nếu có để tránh redirect
+        if (url.endsWith('/') && url.length > 1) url = url.slice(0, -1);
         return await this.api.get(url, { params });
     }
 
     async post(endpoint, data) {
-        const isAbsolute = endpoint.startsWith('/');
-        const url = isAbsolute ? endpoint : `${this.resource}/${endpoint}`;
+        const isAbsolute = endpoint && endpoint.startsWith('/');
+        let url = isAbsolute ? endpoint : (endpoint ? `${this.resource}/${endpoint}` : `${this.resource}`);
+        if (url.endsWith('/') && url.length > 1) url = url.slice(0, -1);
         return await this.api.post(url, data);
     }
 
