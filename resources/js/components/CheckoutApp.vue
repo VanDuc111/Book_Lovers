@@ -135,7 +135,7 @@ const cartQuery = useQuery({
 
 const cartItems = computed(() => {
     const all = cartQuery.data.value || [];
-    return all.filter(i => itemIds.includes(i.cartItemID.toString()));
+    return all.filter(i => itemIds.includes(i.id.toString()));
 });
 
 const loading = computed(() => userQuery.isLoading.value || cartQuery.isLoading.value);
@@ -163,7 +163,7 @@ const paymentMethodsList = [
   { id: 'cod', title: 'Thanh toán khi nhận hàng (COD)', desc: 'Thanh toán bằng tiền mặt khi nhận hàng', icon: 'fas fa-money-bill-wave' },
 ];
 
-const subtotal = computed(() => cartItems.value.reduce((sum, item) => sum + (item.bookPrice * item.quantity), 0));
+const subtotal = computed(() => cartItems.value.reduce((sum, item) => sum + (item.price * item.quantity), 0));
 const shippingFee = ref(0);
 const discount = ref(0);
 const total = computed(() => subtotal.value + shippingFee.value - discount.value);
@@ -177,7 +177,7 @@ const defaultAddressDisplay = computed(() => {
 const checkoutMutation = useMutation({
     mutationFn: (data) => OrderService.checkout(data),
     onSuccess: (data) => {
-        if (data.success || data.orderID) {
+        if (data.success || data.id) {
             if (window.showToast) window.showToast('Đặt hàng thành công!', 'success');
             queryClient.invalidateQueries({ queryKey: ['cart', userId.value] });
             setTimeout(() => {
@@ -223,8 +223,8 @@ const handlePlaceOrder = async () => {
 
     // Prepare data
     const orderData = {
-        userID: userId.value,
-        cartItemIDs: cartItems.value.map(i => i.cartItemID),
+        user_id: userId.value,
+        cart_item_ids: cartItems.value.map(i => i.id),
         shipping_address: finalAddress,
         payment_method: form.value.payment,
         note: form.value.note,
@@ -236,7 +236,7 @@ const handlePlaceOrder = async () => {
 };
 
 onMounted(() => {
-    userId.value = AuthService.getCurrentUser()?.userID || null;
+    userId.value = AuthService.getCurrentUser()?.id || null;
     if (!userId.value) {
         window.location.href = '/login';
         return;

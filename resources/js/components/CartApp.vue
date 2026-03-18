@@ -107,9 +107,9 @@
               <tbody>
                 <cart-item 
                   v-for="item in items" 
-                  :key="item.cartItemID"
+                  :key="item.id"
                   :item="item"
-                  :is-selected="selectedIds.includes(item.cartItemID)"
+                  :is-selected="selectedIds.includes(item.id)"
                   @toggle-select="handleToggleSelect"
                   @update-qty="handleUpdateQty"
                   @remove="removeItem"
@@ -187,7 +187,7 @@ const updateQtyMutation = useMutation({
         // Optimistically update to the new value
         queryClient.setQueryData(['cart', userId.value], (old) => {
             if (!old) return [];
-            return old.map(item => item.cartItemID === id ? { ...item, quantity: qty } : item);
+            return old.map(item => item.id === id ? { ...item, quantity: qty } : item);
         });
         return { previousCart };
     },
@@ -216,13 +216,13 @@ const isAllSelected = computed(() => {
 
 const totalPrice = computed(() => {
   return items.value
-    .filter(item => selectedIds.value.includes(item.cartItemID))
-    .reduce((sum, item) => sum + (item.bookPrice * item.quantity), 0);
+    .filter(item => selectedIds.value.includes(item.id))
+    .reduce((sum, item) => sum + (item.price * item.quantity), 0);
 });
 
 const toggleSelectAll = (e) => {
   if (e.target.checked) {
-    selectedIds.value = items.value.map(i => i.cartItemID);
+    selectedIds.value = items.value.map(i => i.id);
   } else {
     selectedIds.value = [];
   }
@@ -246,7 +246,7 @@ const handleUpdateQty = async ({ item, delta }) => {
     return;
   }
 
-  updateQtyMutation.mutate({ id: item.cartItemID, qty: newQty });
+  updateQtyMutation.mutate({ id: item.id, qty: newQty });
 };
 
 const removeItem = (id) => {
@@ -276,7 +276,7 @@ const goToLogin = () => window.location.href = '/login';
 const goToBooks = () => window.location.href = '/book-list';
 
 onMounted(() => {
-  userId.value = AuthService.getCurrentUser()?.userID || null;
+  userId.value = AuthService.getCurrentUser()?.id || null;
 });
 </script>
 

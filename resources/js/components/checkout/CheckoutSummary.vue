@@ -7,12 +7,12 @@
             </div>
             <div class="card-body">
                 <div class="order-items">
-                    <div v-for="item in cartItems" :key="item.cartItemID" class="order-item">
+                    <div v-for="item in cartItems" :key="item.id" class="order-item">
                         <img :src="item.image || 'https://fakeimg.pl/100x150/f0f0f0/909090?text=No+Image'" :alt="item.title" class="item-image">
                         <div class="item-details">
                             <div class="item-title">{{ item.title }}</div>
                             <div class="item-meta">Số lượng: {{ item.quantity }}</div>
-                            <div class="item-price">{{ formatCurrency(item.bookPrice * item.quantity) }}</div>
+                            <div class="item-price">{{ formatCurrency(item.price * item.quantity) }}</div>
                         </div>
                     </div>
                 </div>

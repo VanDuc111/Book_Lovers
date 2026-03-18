@@ -10,14 +10,14 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
+        $categories = Category::withCount('books')->orderBy('sort_order')->get();
         return response()->json($categories);
     }
 
     public function store(Request $request)
     {
         $category = Category::create($request->all());
-        return response()->json(['message' => 'Created successfully', 'categoryID' => $category->categoryID]);
+        return response()->json(['message' => 'Created successfully', 'id' => $category->id]);
     }
 
     public function update(Request $request, $id)

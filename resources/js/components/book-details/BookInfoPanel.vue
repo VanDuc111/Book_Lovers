@@ -16,7 +16,7 @@
 
         <div class="price-section py-4 px-4 rounded mb-5 bg-light-orange">
             <div class="d-flex align-items-center flex-wrap gap-3">
-                <span class="current-price text-orange fw-bold display-5">{{ formatCurrency(book.bookPrice) }}</span>
+                <span class="current-price text-orange fw-bold display-5">{{ formatCurrency(book.price) }}</span>
             </div>
         </div>
 

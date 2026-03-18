@@ -13,24 +13,25 @@ use App\Traits\ImageHelper;
 class CartController extends Controller
 {
     use ImageHelper;
+
     public function index(Request $request)
     {
-        $userID = $request->userID;
-        if (!$userID) return response()->json(['error' => 'UserID required'], 400);
+        $userId = $request->user_id;
+        if (!$userId) return response()->json(['error' => 'user_id required'], 400);
 
-        $cart = Cart::where('userID', $userID)->first();
+        $cart = Cart::where('user_id', $userId)->first();
         if (!$cart) return response()->json([]);
 
-        $items = CartItem::where('cartID', $cart->cartID)->with('book')->get()->map(function($item) {
+        $items = CartItem::where('cart_id', $cart->id)->with('book')->get()->map(function($item) {
              $item->book->image = $this->fixImagePath($item->book->image);
              return [
-                 'cartItemID' => $item->cartItemID,
-                 'bookID' => $item->bookID,
-                 'title' => $item->book->title,
-                 'bookPrice' => $item->book->bookPrice,
-                 'image' => $item->book->image,
+                 'id'       => $item->id,
+                 'book_id'  => $item->book_id,
+                 'title'    => $item->book->title,
+                 'price'    => $item->book->price,
+                 'image'    => $item->book->image,
                  'quantity' => $item->quantity,
-                 'stock' => $item->book->stock, // Thêm stock để FE kiểm tra
+                 'stock'    => $item->book->stock,
              ];
         });
 
@@ -39,18 +40,18 @@ class CartController extends Controller
 
     public function store(Request $request)
     {
-        $userID = $request->userID;
-        $bookID = $request->bookID;
+        $userId = $request->user_id;
+        $bookId = $request->book_id;
         $quantity = $request->quantity ?? 1;
 
-        if (!$userID || !$bookID) return response()->json(['error' => 'Missing data'], 400);
+        if (!$userId || !$bookId) return response()->json(['error' => 'Missing data'], 400);
 
-        $cart = Cart::firstOrCreate(['userID' => $userID], ['created_at' => now()]);
+        $cart = Cart::firstOrCreate(['user_id' => $userId]);
         
-        $book = Book::find($bookID);
+        $book = Book::find($bookId);
         if (!$book) return response()->json(['error' => 'Sách không tồn tại'], 404);
 
-        $cartItem = CartItem::where('cartID', $cart->cartID)->where('bookID', $bookID)->first();
+        $cartItem = CartItem::where('cart_id', $cart->id)->where('book_id', $bookId)->first();
         $totalRequested = ($cartItem ? $cartItem->quantity : 0) + $quantity;
 
         if ($totalRequested > $book->stock) {
@@ -62,25 +63,24 @@ class CartController extends Controller
             $cartItem->save();
         } else {
             $cartItem = CartItem::create([
-                'cartID' => $cart->cartID,
-                'bookID' => $bookID,
+                'cart_id'  => $cart->id,
+                'book_id'  => $bookId,
                 'quantity' => $quantity
             ]);
         }
 
         return response()->json([
             'message' => 'Đã thêm vào giỏ hàng',
-            'cartItemID' => $cartItem->cartItemID
+            'id'      => $cartItem->id
         ]);
     }
 
     public function update(Request $request, $id)
     {
-        $cartItem = CartItem::where('cartItemID', $id)->with('book')->first();
+        $cartItem = CartItem::with('book')->find($id);
         if ($cartItem) {
             $newQuantity = (int)$request->quantity;
             
-            // Kiểm tra tồn kho
             if ($newQuantity > $cartItem->book->stock) {
                 return response()->json([
                     'error' => "Số lượng vượt quá tồn kho (Còn lại: {$cartItem->book->stock})",
@@ -101,7 +101,7 @@ class CartController extends Controller
              CartItem::destroy($id);
              return response()->json(['message' => 'Item deleted']);
          }
-         return response()->json(['error' => 'cartItemID required'], 400);
+         return response()->json(['error' => 'ID required'], 400);
     }
 
 }

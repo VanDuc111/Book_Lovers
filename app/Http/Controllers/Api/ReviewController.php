@@ -12,40 +12,38 @@ use App\Traits\ImageHelper;
 class ReviewController extends Controller
 {
     use ImageHelper;
+
     public function index(Request $request)
     {
-        $bookID = $request->get('bookID');
+        $bookId = $request->get('book_id');
         $summary = $request->get('summary');
 
         if ($summary) {
             $query = Review::select(
-                'bookID',
+                'book_id',
                 DB::raw('COUNT(*) as review_count'),
                 DB::raw('ROUND(AVG(rating), 2) as avg_rating')
             )
-            ->with(['book:bookID,title,image']) // Eager load book title/image
-            ->groupBy('bookID');
+            ->with(['book:id,title,image'])
+            ->groupBy('book_id');
 
-            if ($bookID) {
-                $query->where('bookID', $bookID);
-                // Add distribution logic for specific book summary
-                 // For now, let's keep it simple or implement specific logic if needed
+            if ($bookId) {
+                $query->where('book_id', $bookId);
             } else {
                 $query->orderBy('review_count', 'desc');
             }
 
-            $reviews = $query->get()->map(function($item) use ($bookID) {
+            $reviews = $query->get()->map(function($item) use ($bookId) {
                  $data = [
-                    'bookID' => $item->bookID,
+                    'book_id'      => $item->book_id,
                     'review_count' => $item->review_count,
-                    'avg_rating' => $item->avg_rating,
-                    'title' => $item->book->title ?? null,
-                    'image' => $this->fixImagePath($item->book->image ?? null),
+                    'avg_rating'   => $item->avg_rating,
+                    'title'        => $item->book->title ?? null,
+                    'image'        => $this->fixImagePath($item->book->image ?? null),
                  ];
 
-                 if ($bookID) {
-                     // Calculate distribution only if specific book is requested to save performance
-                     $distribution = Review::where('bookID', $item->bookID)
+                 if ($bookId) {
+                     $distribution = Review::where('book_id', $item->book_id)
                          ->select('rating', DB::raw('count(*) as count'))
                          ->groupBy('rating')
                          ->pluck('count', 'rating')->toArray();
@@ -62,22 +60,25 @@ class ReviewController extends Controller
             return response()->json($reviews);
         }
 
-        $query = Review::with(['user:userID,name', 'book:bookID,title,image'])->orderBy('created_at', 'desc');
-        if ($bookID) {
-            $query->where('bookID', $bookID);
+        $query = Review::with(['user:id,name,avatar', 'book:id,title,image'])->orderBy('created_at', 'desc');
+        if ($bookId) {
+            $query->where('book_id', $bookId);
         }
 
         $reviews = $query->get()->map(function($review) {
             return [
-                'reviewID' => $review->reviewID,
-                'bookID' => $review->bookID,
-                'userID' => $review->userID,
-                'userName' => $review->user->name ?? 'Unknown',
-                'bookTitle' => $review->book->title ?? 'Unknown', // Added
-                'bookImage' => $this->fixImagePath($review->book->image ?? null), // Added
-                'rating' => $review->rating,
-                'comment' => $review->comment,
-                'created_at' => $review->created_at,
+                'id'                   => $review->id,
+                'book_id'              => $review->book_id,
+                'user_id'              => $review->user_id,
+                'userName'             => $review->user->name ?? 'Unknown',
+                'userAvatar'           => $review->user->avatar ?? null,
+                'bookTitle'            => $review->book->title ?? 'Unknown',
+                'bookImage'            => $this->fixImagePath($review->book->image ?? null),
+                'rating'               => $review->rating,
+                'title'                => $review->title,
+                'comment'              => $review->comment,
+                'is_verified_purchase' => $review->is_verified_purchase,
+                'created_at'           => $review->created_at,
             ];
         });
 
@@ -87,13 +88,13 @@ class ReviewController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'bookID' => 'required|exists:books,bookID',
-            'userID' => 'required|exists:users,userID',
-            'rating' => 'required|integer|min:1|max:5',
+            'book_id' => 'required|exists:books,id',
+            'user_id' => 'required|exists:users,id',
+            'rating'  => 'required|integer|min:1|max:5',
         ]);
 
         $review = Review::create($request->all());
-        return response()->json(['success' => true, 'message' => 'Review created', 'reviewID' => $review->reviewID]);
+        return response()->json(['success' => true, 'message' => 'Review created', 'id' => $review->id]);
     }
 
     public function destroy($id)

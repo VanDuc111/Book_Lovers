@@ -31,12 +31,12 @@
                         <td v-for="j in 6" :key="j"><div class="skeleton-loader skeleton-text"></div></td>
                     </tr>
                     <tr v-else v-for="review in filteredReviews" 
-                        :key="review.reviewID" 
-                        :class="{ 'table-active': selectedId === review.reviewID }"
-                        @click="$emit('toggle-select', review.reviewID)">
-                        <td>{{ review.reviewID }}</td>
-                        <td>{{ review.bookID }}</td>
-                        <td>{{ review.userID }}</td>
+                        :key="review.id" 
+                        :class="{ 'table-active': selectedId === review.id }"
+                        @click="$emit('toggle-select', review.id)">
+                        <td>{{ review.id }}</td>
+                        <td>{{ review.book_id }}</td>
+                        <td>{{ review.user_id }}</td>
                         <td>
                             <div class="text-warning">
                                 <i v-for="n in 5" :key="n" class="fa-star" :class="n <= review.rating ? 'fas' : 'far'"></i>

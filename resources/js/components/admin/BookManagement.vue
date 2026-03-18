@@ -37,18 +37,18 @@
                             <td v-for="j in 8" :key="j"><div class="skeleton-loader skeleton-text"></div></td>
                         </tr>
                         <tr v-else v-for="book in filteredBooks" 
-                            :key="book.bookID" 
-                            :class="{ 'table-active': selectedId === book.bookID }"
-                            @click="$emit('toggle-select', book.bookID)">
-                            <td>{{ book.bookID }}</td>
+                            :key="book.id" 
+                            :class="{ 'table-active': selectedId === book.id }"
+                            @click="$emit('toggle-select', book.id)">
+                            <td>{{ book.id }}</td>
                             <td>
                                 <img :src="book.image || '/assets/images/default-book.png'" alt="book" class="book-thumbnail">
                             </td>
                             <td>{{ book.title }}</td>
                             <td>{{ book.author }}</td>
                             <td>{{ book.publisher }}</td>
-                            <td>{{ book.categoryName }}</td>
-                            <td>{{ formatCurrency(book.bookPrice) }}</td>
+                            <td>{{ book.category_name || book.categoryName }}</td>
+                            <td>{{ formatCurrency(book.price) }}</td>
                             <td>{{ book.stock }}</td>
                         </tr>
                     </tbody>
@@ -58,7 +58,7 @@
 
         <!-- Book Form -->
         <div v-else class="card p-4 shadow-sm border-0">
-            <h3>{{ formData.bookID ? 'Sửa Sách' : 'Thêm Sách mới' }}</h3>
+            <h3>{{ formData.id ? 'Sửa Sách' : 'Thêm Sách mới' }}</h3>
             <form @submit.prevent="$emit('save', formData)" class="row g-3 mt-2">
                 <div class="col-md-6 form-group">
                     <label class="form-label fw-bold">Tiêu đề</label>
@@ -74,16 +74,16 @@
                 </div>
                 <div class="col-md-6 form-group">
                     <label class="form-label fw-bold">Thể loại</label>
-                    <select v-model="formData.categoryName" class="form-control" required>
+                    <select v-model="formData.category_id" class="form-control" required>
                         <option value="">-- Chọn thể loại --</option>
-                        <option v-for="cat in categories" :key="cat.categoryID" :value="cat.categoryName">
-                            {{ cat.categoryName }}
+                        <option v-for="cat in categories" :key="cat.id" :value="cat.id">
+                            {{ cat.name }}
                         </option>
                     </select>
                 </div>
                 <div class="col-md-6 form-group">
                     <label class="form-label fw-bold">Giá</label>
-                    <input v-model.number="formData.bookPrice" type="number" step="0.01" class="form-control" required>
+                    <input v-model.number="formData.price" type="number" step="0.01" class="form-control" required>
                 </div>
                 <div class="col-md-6 form-group">
                     <label class="form-label fw-bold">Số lượng trong kho</label>

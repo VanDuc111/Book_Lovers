@@ -6,7 +6,7 @@
                class="link-orange fw-bold">Xem tất cả <i class="fas fa-arrow-right ms-1"></i></a>
         </div>
         <div class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-4">
-            <div v-for="relBook in books" :key="relBook.bookID" class="col">
+            <div v-for="relBook in books" :key="relBook.id" class="col">
                 <book-card :book="relBook" />
             </div>
         </div>

@@ -33,7 +33,7 @@ class UserController extends Controller
              'phone' => $request->phone,
              'address' => $request->address
          ]);
-         return response()->json(['message' => 'User created', 'userID' => $user->userID]);
+         return response()->json(['message' => 'User created', 'id' => $user->id]);
     }
 
     public function update(Request $request, $id)
@@ -56,7 +56,7 @@ class UserController extends Controller
             }
         }
 
-        $data = $request->except(['password', 'email', 'userID']);
+        $data = $request->except(['password', 'email', 'id']);
         
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);

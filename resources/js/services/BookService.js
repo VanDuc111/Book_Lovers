@@ -29,7 +29,7 @@ class BookService extends BaseApiService {
             limit: 9, 
             random: true 
         });
-        return related.filter(b => b.bookID != currentBookId).slice(0, 8);
+        return related.filter(b => b.id != currentBookId).slice(0, 8);
     }
 
     /**
@@ -37,7 +37,7 @@ class BookService extends BaseApiService {
      * Sử dụng FormData để hỗ trợ upload ảnh
      */
     async saveBook(formData) {
-        const bookId = formData.get('bookID');
+        const bookId = formData.get('id');
         if (bookId) {
             // Laravel yêu cầu _method=PUT khi gửi FormData qua POST để giả lập PUT
             formData.append('_method', 'PUT');

@@ -78,7 +78,7 @@ const userId = ref(null);
 const activeTab = ref('profile-info');
 
 const user = reactive({
-    userID: null,
+    id: null,
     name: '',
     email: '',
     phone: '',
@@ -166,7 +166,7 @@ onMounted(() => {
         window.location.href = '/login';
         return;
     }
-    userId.value = storedUser.userID;
+    userId.value = storedUser.id;
     
     // Handle URL Params
     const urlParams = new URLSearchParams(window.location.search);

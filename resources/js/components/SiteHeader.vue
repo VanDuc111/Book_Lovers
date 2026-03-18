@@ -15,9 +15,9 @@
                         <li v-if="categories.length === 0">
                             <a href="#">{{ loadingCategories ? 'Đang tải...' : 'Không có thể loại nào' }}</a>
                         </li>
-                        <li v-for="cat in categories" :key="cat.categoryID">
-                            <a :href="'/book-list?category=' + encodeURIComponent(cat.categoryName)" class="category-link">
-                                {{ cat.categoryName }}
+                        <li v-for="cat in categories" :key="cat.id">
+                            <a :href="'/book-list?category=' + encodeURIComponent(cat.name)" class="category-link">
+                                {{ cat.name }}
                             </a>
                         </li>
                     </ul>
@@ -70,16 +70,18 @@ const loadingCategories = computed(() => categoriesQuery.isLoading.value && cate
 
 // 2. Fetch Giỏ hàng với Vue Query
 const cartQuery = useQuery({
-    queryKey: computed(() => ['cart', user.value?.userID]),
     queryFn: async () => {
-        if (user.value?.userID) {
-            return await CartService.getCart(user.value.userID);
+        const u = user.value;
+        const uid = u?.id;
+        if (uid) {
+            return await CartService.getCart(uid);
         }
         return JSON.parse(localStorage.getItem('cart') || '[]');
     },
     initialData: () => {
         const currentUser = AuthService.getCurrentUser();
-        if (currentUser?.userID) return CartService.getCachedCart(currentUser.userID);
+        const uid = currentUser?.id;
+        if (uid) return CartService.getCachedCart(uid);
         return JSON.parse(localStorage.getItem('cart') || '[]');
     },
     staleTime: 1000 * 60 * 5, // Cache 5 phút

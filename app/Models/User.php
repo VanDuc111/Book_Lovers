@@ -12,9 +12,8 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
-    protected $table = 'users';
-    protected $primaryKey = 'userID';
-    public $timestamps = false;
+    // Laravel mặc định hiểu khóa chính là 'id'
+    public $timestamps = true;
 
     protected $fillable = [
         'name',
@@ -23,6 +22,7 @@ class User extends Authenticatable
         'address',
         'phone',
         'role',
+        'avatar',
     ];
 
     protected $hidden = [
@@ -36,5 +36,22 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // ── Relationships ──────────────────────────────
+
+    public function cart()
+    {
+        return $this->hasOne(Cart::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
     }
 }

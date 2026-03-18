@@ -10,7 +10,7 @@ class CartService extends BaseApiService {
      */
     async getCart(userId) {
         try {
-            const data = await this.getAll({ userID: userId });
+            const data = await this.getAll({ user_id: userId });
             // Cache lại số lượng để hiện tức thì khi load trang (MPA)
             localStorage.setItem(`cart_cache_${userId}`, JSON.stringify(data));
             return data;
@@ -30,10 +30,10 @@ class CartService extends BaseApiService {
     /**
      * Thêm sản phẩm vào giỏ
      */
-    async addToCart(bookID, userId, quantity = 1) {
+    async addToCart(bookId, userId, quantity = 1) {
         return await this.post('/cart', {
-            bookID,
-            userID: userId,
+            book_id: bookId,
+            user_id: userId,
             quantity
         });
     }

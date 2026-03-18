@@ -17,7 +17,7 @@ class OrderService extends BaseApiService {
      * Lấy lịch sử đơn hàng của User
      */
     async getMyOrders(userId) {
-        return await this.getAll({ userID: userId });
+        return await this.getAll({ user_id: userId });
     }
 
     /**
@@ -31,15 +31,15 @@ class OrderService extends BaseApiService {
      * Tác vụ Admin: Cập nhật trạng thái đơn hàng
      */
     async updateStatus(id, status) {
-        return await this.put(`${id}`, { orderID: id, order_status: status });
+        return await this.put(id, { status });
     }
 
     /**
      * Lấy danh sách sách đã mua (cho Profile/Review)
      */
     async getPurchasedBooks(userId, bookId = null) {
-        const params = { userID: userId };
-        if (bookId) params.bookID = bookId;
+        const params = { user_id: userId };
+        if (bookId) params.book_id = bookId;
         return await this.get('/purchased-books', params);
     }
 }

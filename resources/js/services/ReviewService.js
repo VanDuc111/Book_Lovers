@@ -9,7 +9,7 @@ class ReviewService extends BaseApiService {
      * Lấy tóm tắt đánh giá (avg_rating, review_count, v.v.)
      */
     async getReviewSummary(bookId) {
-        const res = await this.get('', { summary: 1, bookID: bookId });
+        const res = await this.get('', { summary: 1, book_id: bookId });
         return (Array.isArray(res) && res.length > 0) ? res[0] : null;
     }
 
@@ -17,7 +17,7 @@ class ReviewService extends BaseApiService {
      * Lấy đánh giá của một cuốn sách
      */
     async getBookReviews(bookId) {
-        return await this.get('', { bookID: bookId });
+        return await this.get('', { book_id: bookId });
     }
 
     /**

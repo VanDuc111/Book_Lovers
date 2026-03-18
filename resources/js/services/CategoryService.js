@@ -28,8 +28,8 @@ class CategoryService extends BaseApiService {
      * Tác vụ Admin: Lưu thể loại (Thêm/Sửa)
      */
     async saveCategory(data) {
-        if (data.categoryID) {
-            return await this.put(data.categoryID, data);
+        if (data.id) {
+            return await this.put(data.id, data);
         }
         return await this.post('/', data);
     }

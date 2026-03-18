@@ -200,10 +200,10 @@ const selectedReviewId = ref(null);
 
 // FORM STATE
 const isBookFormVisible = ref(false);
-const bookFormData = ref({ bookID: '', title: '', author: '', publisher: '', categoryName: '', bookPrice: 0, stock: 0, description: '', image: null });
+const bookFormData = ref({ id: '', title: '', author: '', publisher: '', category_id: '', price: 0, stock: 0, description: '', image: null });
 
 const isCategoryFormVisible = ref(false);
-const categoryFormData = ref({ categoryID: '', categoryName: '', description: '' });
+const categoryFormData = ref({ id: '', name: '', description: '' });
 
 // MODAL STATE
 const isOrderDetailsModalVisible = ref(false);
@@ -308,17 +308,17 @@ const fetchReviews = async () => {
 // FILTERED DATA
 const filteredBooks = computed(() => {
     const q = bookSearchQuery.value.trim().toLowerCase();
-    return books.value.filter(b => !q || String(b.bookID).toLowerCase().includes(q) || (b.title && b.title.toLowerCase().includes(q)));
+    return books.value.filter(b => !q || String(b.id).toLowerCase().includes(q) || (b.title && b.title.toLowerCase().includes(q)));
 });
 
 const filteredUsers = computed(() => {
     const q = userSearchQuery.value.trim().toLowerCase();
-    return users.value.filter(u => !q || String(u.userID).toLowerCase().includes(q) || (u.name && u.name.toLowerCase().includes(q)));
+    return users.value.filter(u => !q || String(u.id).toLowerCase().includes(q) || (u.name && u.name.toLowerCase().includes(q)));
 });
 
 const filteredCategories = computed(() => {
     const q = categorySearchQuery.value.trim().toLowerCase();
-    return categories.value.filter(c => !q || String(c.categoryID).toLowerCase().includes(q) || (c.categoryName && c.categoryName.toLowerCase().includes(q)));
+    return categories.value.filter(c => !q || String(c.id).toLowerCase().includes(q) || (c.name && c.name.toLowerCase().includes(q)));
 });
 
 const filteredOrders = computed(() => {
@@ -327,16 +327,16 @@ const filteredOrders = computed(() => {
     const dt = orderDateFilter.value;
 
     return orders.value.filter(o => {
-        const matchesSearch = !q || String(o.orderID).includes(q) || String(o.userID).includes(q) || (o.receiver_name && o.receiver_name.toLowerCase().includes(q)) || (o.receiver_phone && o.receiver_phone.includes(q));
-        const matchesStatus = !st || o.order_status === st;
-        const matchesDate = !dt || (new Date(o.order_date).toISOString().split('T')[0] === dt);
+        const matchesSearch = !q || String(o.id).includes(q) || String(o.user_id).includes(q) || (o.receiver_name && o.receiver_name.toLowerCase().includes(q)) || (o.receiver_phone && o.receiver_phone.includes(q));
+        const matchesStatus = !st || o.status === st;
+        const matchesDate = !dt || (new Date(o.created_at || o.order_date).toISOString().split('T')[0] === dt);
         return matchesSearch && matchesStatus && matchesDate;
     });
 });
 
 const filteredReviews = computed(() => {
     const q = reviewSearchQuery.value.trim().toLowerCase();
-    return reviews.value.filter(r => !q || String(r.reviewID).includes(q) || String(r.bookID).includes(q) || String(r.userID).includes(q));
+    return reviews.value.filter(r => !q || String(r.id).includes(q) || String(r.book_id).includes(q) || String(r.user_id).includes(q));
 });
 
 // HANDLERS
@@ -346,12 +346,12 @@ const toggleOrderSelection = (id) => selectedOrderId.value = selectedOrderId.val
 const toggleReviewSelection = (id) => selectedReviewId.value = selectedReviewId.value === id ? null : id;
 
 const showBookForm = () => {
-    bookFormData.value = { bookID: '', title: '', author: '', publisher: '', categoryName: '', bookPrice: 0, stock: 0, description: '', image: null };
+    bookFormData.value = { id: '', title: '', author: '', publisher: '', category_id: '', price: 0, stock: 0, description: '', image: null };
     isBookFormVisible.value = true;
 };
 
 const editBook = () => {
-    const b = books.value.find(x => x.bookID == selectedBookId.value);
+    const b = books.value.find(x => x.id == selectedBookId.value);
     if (!b) return;
     bookFormData.value = { ...b, image: null };
     isBookFormVisible.value = true;
@@ -387,12 +387,12 @@ const confirmDeleteBook = async (id) => {
 };
 
 const showCategoryForm = () => {
-    categoryFormData.value = { categoryID: '', categoryName: '', description: '' };
+    categoryFormData.value = { id: '', name: '', description: '' };
     isCategoryFormVisible.value = true;
 };
 
 const editCategory = () => {
-    const c = categories.value.find(x => x.categoryID == selectedCategoryId.value);
+    const c = categories.value.find(x => x.id == selectedCategoryId.value);
     if (!c) return;
     categoryFormData.value = { ...c };
     isCategoryFormVisible.value = true;
@@ -428,7 +428,7 @@ const updateOrderStatus = async ({ id, status }) => {
 };
 
 const viewOrderDetails = () => {
-    detailedOrder.value = orders.value.find(o => o.orderID == selectedOrderId.value);
+    detailedOrder.value = orders.value.find(o => o.id == selectedOrderId.value);
     isOrderDetailsModalVisible.value = true;
 };
 

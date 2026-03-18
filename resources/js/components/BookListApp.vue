@@ -45,7 +45,7 @@
           <!-- Book Grid -->
           <div v-else class="row book-list">
             <template v-if="books.length > 0">
-              <div v-for="book in books" :key="book.bookID" class="col-6 col-md-4 col-lg-3 mb-4">
+              <div v-for="book in books" :key="book.id" class="col-6 col-md-4 col-lg-3 mb-4">
                 <book-card :book="book" />
               </div>
             </template>
@@ -70,7 +70,7 @@
             </div>
 
             <div v-else-if="suggestions.length > 0" class="row">
-              <div v-for="book in suggestions" :key="book.bookID" class="col-6 col-md-4 col-lg-3 mb-4">
+              <div v-for="book in suggestions" :key="book.id" class="col-6 col-md-4 col-lg-3 mb-4">
                 <book-card :book="book" />
               </div>
             </div>
@@ -146,8 +146,8 @@ const metadataQuery = useQuery({
         ]);
         
         const availableCategories = categories.map(c => ({
-            name: c.categoryName,
-            count: allBooks.filter(b => b.categoryName === c.categoryName).length
+            name: c.name,
+            count: allBooks.filter(b => b.categoryName === c.name).length
         }));
 
         const pubMap = {};

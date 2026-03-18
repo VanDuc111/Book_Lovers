@@ -18,9 +18,9 @@
             <div v-if="showSuggestions && suggestions.length > 0" class="search-suggestions shadow-sm">
                 <div 
                     v-for="s in suggestions" 
-                    :key="s.bookID" 
+                    :key="s.id" 
                     class="suggestion-item"
-                    @click="goToBook(s.bookID)"
+                    @click="goToBook(s.id)"
                 >
                     <div class="suggestion-thumb">
                         <img :src="s.image || 'https://fakeimg.pl/100x150/f0f0f0/909090?text=No+Image'" alt="">
@@ -28,7 +28,7 @@
                     <div class="s-info">
                         <div class="s-title">{{ s.title }}</div>
                         <div class="s-meta">
-                            <span class="s-price">{{ formatPrice(s.bookPrice) }}</span>
+                            <span class="s-price">{{ formatPrice(s.price) }}</span>
                             <span class="s-author" v-if="s.author"> • {{ s.author }}</span>
                         </div>
                     </div>

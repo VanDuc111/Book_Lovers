@@ -5,7 +5,7 @@
     </div>
     <div class="content">
       <h3 class="title">{{ book.title }}</h3>
-      <div class="price">{{ formatCurrency(book.bookPrice) }}</div>
+      <div class="price">{{ formatCurrency(book.price) }}</div>
     </div>
   </div>
 </template>
@@ -21,8 +21,8 @@ const props = defineProps({
 });
 
 const goToDetails = () => {
-  if (props.book.bookID) {
-    window.location.href = `/book-details?id=${props.book.bookID}`;
+  if (props.book.id) {
+    window.location.href = `/book-details?id=${props.book.id}`;
   }
 };
 </script>

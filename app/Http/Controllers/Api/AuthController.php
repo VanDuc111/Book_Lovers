@@ -56,7 +56,7 @@ class AuthController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Đăng ký thành công!',
-            'userID' => $user->userID
+            'id' => $user->id
         ], 201);
     }
 }

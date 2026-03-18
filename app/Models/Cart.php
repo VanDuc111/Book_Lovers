@@ -6,22 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cart extends Model
 {
-    protected $table = 'carts';
-    protected $primaryKey = 'cartID';
-    public $timestamps = false;
-
     protected $fillable = [
-        'userID',
-        'created_at',
+        'user_id',
     ];
+
+    // ── Relationships ──────────────────────────────
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'userID', 'userID');
+        return $this->belongsTo(User::class);
     }
 
     public function items()
     {
-        return $this->hasMany(CartItem::class, 'cartID', 'cartID');
+        return $this->hasMany(CartItem::class);
     }
 }

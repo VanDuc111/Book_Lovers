@@ -11,7 +11,7 @@
             <div v-else-if="reviews.length === 0" class="col-12 text-center py-5">
                 <p class="text-muted">Chưa có đánh giá nào.</p>
             </div>
-            <div v-for="review in reviews" :key="review.reviewID" class="col-md-4 mb-4">
+            <div v-for="review in reviews" :key="review.id" class="col-md-4 mb-4">
                 <div class="card h-100">
                     <img :src="review.bookImage || '/assets/images/placeholder.png'" class="card-img-top" :alt="review.bookTitle">
                     <div class="card-body">

@@ -5,24 +5,24 @@
                 type="checkbox" 
                 class="select-item" 
                 :checked="isSelected"
-                @change="$emit('toggle-select', item.cartItemID)"
+                @change="$emit('toggle-select', item.id)"
             >
         </td>
         <td>
             <div class="d-flex align-items-center">
-                <a :href="'/book-details?id=' + item.bookID" class="me-3 shrink-0">
+                <a :href="'/book-details?id=' + item.book_id" class="me-3 shrink-0">
                     <img 
                         :src="item.image || 'https://fakeimg.pl/100x150/f0f0f0/909090?text=No+Image'" 
                         class="cart-item-image" 
                         :alt="item.title"
                     >
                 </a>
-                <a :href="'/book-details?id=' + item.bookID" class="cart-item-title">{{ item.title }}</a>
+                <a :href="'/book-details?id=' + item.book_id" class="cart-item-title">{{ item.title }}</a>
             </div>
         </td>
         <td class="cart-item-price text-end" style="width: 120px;">
             <span class="mobile-label d-lg-none">Giá gốc:</span>
-            {{ formatCurrency(item.bookPrice) }}
+            {{ formatCurrency(item.price) }}
         </td>
         <td class="text-center" style="width: 150px;">
             <div class="d-flex justify-content-between align-items-center w-100 d-lg-flex justify-content-lg-center">
@@ -37,11 +37,11 @@
         </td>
         <td class="cart-item-subtotal text-end" style="width: 140px;">
             <span class="mobile-label d-lg-none">Thành tiền:</span>
-            {{ formatCurrency(item.bookPrice * item.quantity) }}
+            {{ formatCurrency(item.price * item.quantity) }}
         </td>
         <td>
             <div class="cart-actions text-center">
-                <base-button variant="danger" size="sm" @click="$emit('remove', item.cartItemID)" title="Xóa" class="btn-remove-item">
+                <base-button variant="danger" size="sm" @click="$emit('remove', item.id)" title="Xóa" class="btn-remove-item">
                     <i class="fas fa-trash"></i>
                     <span class="d-lg-none ms-2">Xóa khỏi giỏ</span>
                 </base-button>

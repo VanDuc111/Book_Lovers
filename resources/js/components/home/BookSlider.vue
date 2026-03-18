@@ -6,7 +6,7 @@
                 <div v-if="loading" class="swiper-slide loading-message text-center w-100">
                     {{ loadingText }}
                 </div>
-                <div v-for="book in books" :key="book.bookID" class="swiper-slide">
+                <div v-for="book in books" :key="book.id" class="swiper-slide">
                     <book-card :book="book" />
                 </div>
             </div>

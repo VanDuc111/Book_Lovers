@@ -13,8 +13,8 @@
                         <div v-if="loading" class="swiper-slide loading-message">
                             Đang tải danh sách nổi bật...
                         </div>
-                        <div v-for="book in books" :key="book.bookID" class="swiper-slide">
-                            <a :href="'/book-details?id=' + book.bookID">
+                        <div v-for="book in books" :key="book.id" class="swiper-slide">
+                            <a :href="'/book-details?id=' + book.id">
                                 <img :src="book.image || '/assets/images/placeholder.jpg'" :alt="book.title">
                             </a>
                         </div>

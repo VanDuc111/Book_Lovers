@@ -33,14 +33,14 @@
                             <td v-for="j in 4" :key="j"><div class="skeleton-loader skeleton-text"></div></td>
                         </tr>
                         <tr v-else v-for="cat in filteredCategories" 
-                            :key="cat.categoryID" 
-                            :class="{ 'table-active': selectedId === cat.categoryID }"
-                            @click="emit('toggle-select', cat.categoryID)">
-                            <td>{{ cat.categoryID }}</td>
-                            <td>{{ cat.categoryName }}</td>
+                            :key="cat.id" 
+                            :class="{ 'table-active': selectedId === cat.id }"
+                            @click="emit('toggle-select', cat.id)">
+                            <td>{{ cat.id }}</td>
+                            <td>{{ cat.name }}</td>
                             <td class="text-center">
                                 <span class="badge rounded-pill bg-light text-dark border">
-                                    {{ getBookCount(cat.categoryName) }}
+                                    {{ getBookCount(cat.name) }}
                                 </span>
                             </td>
                             <td>{{ cat.description }}</td>
@@ -52,11 +52,11 @@
 
         <!-- Category Form -->
         <div v-else class="card p-4 shadow-sm border-0">
-            <h3>{{ formData.categoryID ? 'Sửa Thể loại' : 'Thêm Thể loại mới' }}</h3>
+            <h3>{{ formData.id ? 'Sửa Thể loại' : 'Thêm Thể loại mới' }}</h3>
             <form @submit.prevent="emit('save', formData)" class="mt-4">
                 <div class="form-group mb-3">
                     <label class="form-label fw-bold">Tên Thể loại</label>
-                    <input v-model="formData.categoryName" class="form-control" required>
+                    <input v-model="formData.name" class="form-control" required>
                 </div>
                 <div class="form-group mb-3">
                     <label class="form-label fw-bold">Mô tả</label>

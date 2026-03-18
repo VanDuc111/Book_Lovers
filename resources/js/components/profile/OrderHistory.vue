@@ -26,20 +26,20 @@
         </div>
 
         <div v-else class="orders-container">
-            <div v-for="order in orders" :key="order.orderID" class="order-card">
+            <div v-for="order in orders" :key="order.id" class="order-card">
                 <div class="order-header">
                     <div class="order-id">
                         <i class="fas fa-receipt"></i>
-                        <span>Đơn hàng #{{ order.orderID }}</span>
+                        <span>Đơn hàng {{ order.order_code || '#' + order.id }}</span>
                     </div>
-                    <span class="order-status" :class="getStatusClass(order.order_status)">
-                        {{ order.order_status }}
+                    <span class="order-status" :class="getStatusClass(order.status)">
+                        {{ order.status }}
                     </span>
                 </div>
                 <div class="order-body">
                     <div class="order-info-row">
                         <i class="far fa-calendar-alt"></i>
-                        <span>{{ formatDateTime(order.order_date) }}</span>
+                        <span>{{ formatDateTime(order.created_at || order.order_date) }}</span>
                     </div>
                     <div class="order-info-row">
                         <i class="fas fa-money-bill-wave"></i>

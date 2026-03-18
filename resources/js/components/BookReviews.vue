@@ -113,7 +113,7 @@
         </div>
         
         <template v-else-if="reviews.length > 0">
-          <div v-for="review in reviews" :key="review.reviewID" class="review-item d-flex mb-4 pb-4 border-bottom">
+          <div v-for="review in reviews" :key="review.id" class="review-item d-flex mb-4 pb-4 border-bottom">
             <div class="review-user-info" style="width: 140px;">
               <div class="fw-bold fs-5 text-dark">{{ (review.userName || 'Ẩn danh').split(' ')[0] }}</div>
               <div class="text-muted small">{{ formatDate(review.created_at) }}</div>
@@ -202,7 +202,7 @@ const hasPurchased = computed(() => {
 const submitMutation = useMutation({
     mutationFn: (data) => ReviewService.submitReview(data),
     onSuccess: (data) => {
-        if (data.success || data.reviewID) {
+        if (data.success || data.id) {
             if (window.showToast) window.showToast('Gửi đánh giá thành công!', 'success');
             showForm.value = false;
             newReview.value = { rating: 0, comment: '' };
@@ -237,15 +237,15 @@ const submitReview = () => {
   }
 
   submitMutation.mutate({
-    bookID: props.bookId,
-    userID: userId.value,
+    book_id: props.bookId,
+    user_id: userId.value,
     rating: newReview.value.rating,
     comment: newReview.value.comment
   });
 };
 
 onMounted(() => {
-  userId.value = AuthService.getCurrentUser()?.userID || null;
+  userId.value = AuthService.getCurrentUser()?.id || null;
 });
 </script>
 

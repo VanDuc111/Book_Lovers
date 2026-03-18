@@ -12,14 +12,39 @@ class DatabaseSeeder extends Seeder
 
     /**
      * Seed the application's database.
+     * Thứ tự: Users -> Categories -> Books -> Reviews
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // ── 1. Users ───────────────────────────────────
+        User::create([
+            'name'     => 'Admin',
+            'email'    => 'admin@example.com',
+            'password' => \Illuminate\Support\Facades\Hash::make('admin123'),
+            'role'     => 'admin',
+        ]);
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        User::create([
+            'name'     => 'Client One',
+            'email'    => 'client1@example.com',
+            'password' => \Illuminate\Support\Facades\Hash::make('password'),
+            'address'  => 'Hanoi',
+            'phone'    => '0987654321',
+            'role'     => 'client',
+        ]);
+
+        User::create([
+            'name'     => 'Client Two',
+            'email'    => 'client2@example.com',
+            'password' => \Illuminate\Support\Facades\Hash::make('password'),
+            'role'     => 'client',
+        ]);
+
+        // ── 2. Categories -> Books -> Reviews ──────────
+        $this->call([
+            CategorySeeder::class,
+            BookSeeder::class,
+            ReviewSeeder::class,
         ]);
     }
 }

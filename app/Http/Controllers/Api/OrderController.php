@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\CartItem;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -14,31 +15,35 @@ use App\Traits\ImageHelper;
 class OrderController extends Controller
 {
     use ImageHelper;
+
     // List orders (admin or user)
     public function index(Request $request)
     {
-        $userID = $request->userID;
-        $query = Order::query()->with('user:userID,name,email');
-        if ($userID) {
-            $query->where('userID', $userID);
+        $userId = $request->user_id;
+        $query = Order::query()->with('user:id,name,email');
+        if ($userId) {
+            $query->where('user_id', $userId);
         }
         
-        // Get all orders with complete information
-        $orders = $query->orderBy('order_date', 'desc')->get();
+        $orders = $query->orderBy('created_at', 'desc')->get();
         
         return response()->json($orders->map(function($order) {
             return [
-                'orderID' => $order->orderID,
-                'userID' => $order->userID,
-                'order_date' => $order->order_date,
-                'total_amount' => $order->total_amount,
+                'id'               => $order->id,
+                'order_code'       => $order->order_code,
+                'user_id'          => $order->user_id,
+                'created_at'       => $order->created_at,
+                'total_amount'     => $order->total_amount,
+                'shipping_fee'     => $order->shipping_fee,
+                'discount_amount'  => $order->discount_amount,
                 'shipping_address' => $order->shipping_address,
-                'receiver_name' => $order->receiver_name,
-                'receiver_phone' => $order->receiver_phone,
-                'payment_method' => $order->payment_method,
-                'note' => $order->note,
-                'order_status' => $order->order_status,
-                'user' => $order->user
+                'receiver_name'    => $order->receiver_name,
+                'receiver_phone'   => $order->receiver_phone,
+                'payment_method'   => $order->payment_method,
+                'payment_status'   => $order->payment_status,
+                'note'             => $order->note,
+                'status'           => $order->status,
+                'user'             => $order->user,
             ];
         }));
     }
@@ -46,60 +51,66 @@ class OrderController extends Controller
     // Checkout (Create Order)
     public function checkout(Request $request)
     {
-        // Route is typically /api/checkout mapped here OR handled via standard store
-        $userID = $request->userID;
-        $cartItemIDs = $request->cartItemIDs ?? [];
+        $userId = $request->user_id;
+        $cartItemIds = $request->cart_item_ids ?? [];
         
-        if (!$userID || empty($cartItemIDs)) {
+        if (!$userId || empty($cartItemIds)) {
              return response()->json(['error' => 'Invalid data'], 400);
         }
 
-        $user = User::find($userID);
+        $user = User::find($userId);
         if (!$user) return response()->json(['error' => 'User not found'], 404);
 
         // Calculate total and validate stock
-        $items = CartItem::whereIn('cartItemID', $cartItemIDs)->with('book')->get();
+        $items = CartItem::whereIn('id', $cartItemIds)->with('book')->get();
         $total = 0;
         
         foreach($items as $item) {
              if ($item->quantity > $item->book->stock) {
                  return response()->json(['error' => "Sản phẩm '{$item->book->title}' vượt quá tồn kho (Còn lại: {$item->book->stock})"], 400);
              }
-             $total += $item->quantity * $item->book->bookPrice;
+             $total += $item->quantity * $item->book->price;
         }
 
         DB::beginTransaction();
         try {
             $order = Order::create([
-                'userID' => $userID,
-                'order_date' => now(),
-                'total_amount' => $total,
+                'user_id'          => $userId,
+                'total_amount'     => $total,
+                'shipping_fee'     => $request->shipping_fee ?? 0,
+                'discount_amount'  => $request->discount_amount ?? 0,
                 'shipping_address' => $request->shipping_address ?? $user->address,
-                'receiver_name' => $request->receiver_name ?? $user->name,
-                'receiver_phone' => $request->receiver_phone ?? $user->phone,
-                'payment_method' => $request->payment_method ?? 'cod',
-                'note' => $request->note,
-                'order_status' => 'Pending'
+                'receiver_name'    => $request->receiver_name ?? $user->name,
+                'receiver_phone'   => $request->receiver_phone ?? $user->phone,
+                'payment_method'   => $request->payment_method ?? 'cod',
+                'note'             => $request->note,
+                'status'           => 'pending',
             ]);
 
             // Insert order items and deduct stock
             foreach ($items as $item) {
-                DB::table('order_items')->insert([
-                    'orderID' => $order->orderID,
-                    'bookID' => $item->bookID,
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'book_id'  => $item->book_id,
                     'quantity' => $item->quantity,
-                    'price' => $item->book->bookPrice
+                    'price'    => $item->book->price,
                 ]);
 
-                // Deduct stock
-                DB::table('books')->where('bookID', $item->bookID)->decrement('stock', $item->quantity);
+                // Deduct stock & increment sold_count
+                $item->book->decrement('stock', $item->quantity);
+                $item->book->increment('sold_count', $item->quantity);
             }
 
             // Clear cart items
-            CartItem::whereIn('cartItemID', $cartItemIDs)->delete();
+            CartItem::whereIn('id', $cartItemIds)->delete();
 
             DB::commit();
-            return response()->json(['success' => true, 'message' => 'Đặt hàng thành công!', 'orderID' => $order->orderID]);
+            return response()->json([
+                'success'    => true,
+                'message'    => 'Đặt hàng thành công!',
+                'id'         => $order->id,
+                'order_code' => $order->order_code,
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['success' => false, 'error' => 'Có lỗi xảy ra trong quá trình xử lý đơn hàng.'], 500);
@@ -110,7 +121,21 @@ class OrderController extends Controller
     {
         $order = Order::find($id);
         if ($order) {
-            $order->order_status = $request->order_status ?? $request->status; // accept both
+            $newStatus = $request->status;
+            $order->status = $newStatus;
+
+            // Auto-set timestamp for status changes
+            match ($newStatus) {
+                'confirmed'  => $order->confirmed_at = now(),
+                'shipped'    => $order->shipped_at = now(),
+                'delivered'  => $order->delivered_at = now(),
+                'cancelled'  => $order->fill([
+                    'cancelled_at' => now(),
+                    'cancel_reason' => $request->cancel_reason,
+                ]),
+                default      => null,
+            };
+
             $order->save();
             return response()->json(['message' => 'Status updated']);
         }
@@ -124,36 +149,40 @@ class OrderController extends Controller
          }
          return response()->json(['error' => 'ID required'], 400);
     }
+
     public function purchasedBooks(Request $request)
-{
-    $userID = $request->userID;
-    if (!$userID) return response()->json(['error' => 'Missing userID'], 400);
+    {
+        $userId = $request->user_id;
+        if (!$userId) return response()->json(['error' => 'Missing user_id'], 400);
 
-    // We need to join orders -> items -> books
-    // Assuming models are set up: Order hasMany items, Item belongsTo Book
-    // Or using DB facade for direct performance/simplicity matching legacy query
-    
-    $query = DB::table('orders')
-        ->join('order_items', 'orders.orderID', '=', 'order_items.orderID')
-        ->join('books', 'order_items.bookID', '=', 'books.bookID')
-        ->where('orders.userID', $userID);
-    
-    // Filter by specific bookID if provided (for checking if user purchased a specific book)
-    if ($request->has('bookID')) {
-        $query->where('books.bookID', $request->bookID);
-    }
-    
-    $books = $query
-        ->select('books.bookID', 'books.title', 'books.author', 'books.bookPrice', 'books.image', 'orders.order_date', 'order_items.price as purchase_price')
-        ->distinct()
-        ->orderBy('orders.order_date', 'desc')
-        ->get();
+        $query = DB::table('orders')
+            ->join('order_items', 'orders.id', '=', 'order_items.order_id')
+            ->join('books', 'order_items.book_id', '=', 'books.id')
+            ->where('orders.user_id', $userId);
+        
+        if ($request->has('book_id')) {
+            $query->where('books.id', $request->book_id);
+        }
+        
+        $books = $query
+            ->select(
+                'books.id',
+                'books.title',
+                'books.author',
+                'books.price',
+                'books.image',
+                'orders.created_at as order_date',
+                'order_items.price as purchase_price'
+            )
+            ->distinct()
+            ->orderBy('orders.created_at', 'desc')
+            ->get();
 
-    $books->map(function ($book) {
-        $book->image = $this->fixImagePath($book->image);
-        return $book;
-    });
+        $books->map(function ($book) {
+            $book->image = $this->fixImagePath($book->image);
+            return $book;
+        });
 
-    return response()->json($books);
-}    
+        return response()->json($books);
+    }    
 }

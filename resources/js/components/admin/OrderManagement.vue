@@ -56,12 +56,12 @@
                         <td v-for="j in 10" :key="j"><div class="skeleton-loader skeleton-text"></div></td>
                     </tr>
                     <tr v-else v-for="order in filteredOrders" 
-                        :key="order.orderID" 
-                        :class="{ 'table-active': selectedId === order.orderID }"
-                        @click="$emit('toggle-select', order.orderID)">
-                        <td>{{ order.orderID }}</td>
-                        <td>{{ order.userID }}</td>
-                        <td>{{ formatDateTime(order.order_date) }}</td>
+                        :key="order.id" 
+                        :class="{ 'table-active': selectedId === order.id }"
+                        @click="$emit('toggle-select', order.id)">
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.user_id }}</td>
+                        <td>{{ formatDateTime(order.created_at || order.order_date) }}</td>
                         <td class="text-end">{{ formatCurrency(order.total_amount) }}</td>
                         <td :title="order.shipping_address">{{ truncate(order.shipping_address, 25) }}</td>
                         <td :title="order.receiver_name">{{ truncate(order.receiver_name, 15) }}</td>
@@ -70,10 +70,10 @@
                         <td :title="order.note">{{ truncate(order.note, 15) }}</td>
                         <td>
                             <select class="form-control order-status-select" 
-                                    :value="order.order_status"
-                                    @change.stop="$emit('update-status', { id: order.orderID, status: $event.target.value })"
+                                    :value="order.status || order.order_status"
+                                    @change.stop="$emit('update-status', { id: order.id, status: $event.target.value })"
                                     @click.stop>
-                                <option v-for="st in statuses" :key="st" :value="st">{{ st }}</option>
+                                <option v-for="st in statuses" :key="st" :value="st.toLowerCase()">{{ st }}</option>
                             </select>
                         </td>
                     </tr>

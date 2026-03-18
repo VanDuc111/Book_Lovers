@@ -132,7 +132,7 @@ const handleCartAction = async (isBuyNow) => {
     
     if (!data.error) {
        if (isBuyNow) {
-         window.location.href = `/checkout?items=${data.cartItemID}`;
+         window.location.href = `/checkout?items=${data.id}`;
        } else {
          if (window.showToast) window.showToast("Đã thêm vào giỏ hàng!", "success");
          window.dispatchEvent(new Event('cart-updated'));
@@ -146,7 +146,7 @@ const handleCartAction = async (isBuyNow) => {
 };
 
 onMounted(() => {
-  userId.value = AuthService.getCurrentUser()?.userID || null;
+  userId.value = AuthService.getCurrentUser()?.id || null;
 });
 </script>
 

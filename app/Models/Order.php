@@ -6,30 +6,59 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $table = 'orders';
-    protected $primaryKey = 'orderID';
-    public $timestamps = false;
-
     protected $fillable = [
-        'userID',
-        'order_date',
+        'user_id',
+        'order_code',
         'total_amount',
-        'shipping_address',
-        'payment_method',
+        'shipping_fee',
+        'discount_amount',
         'receiver_name',
         'receiver_phone',
+        'shipping_address',
         'note',
-        'order_status',
+        'payment_method',
+        'payment_status',
+        'status',
+        'confirmed_at',
+        'shipped_at',
+        'delivered_at',
+        'cancelled_at',
+        'cancel_reason',
     ];
 
     protected $casts = [
-        'order_date' => 'datetime',
+        'total_amount'    => 'decimal:2',
+        'shipping_fee'    => 'decimal:2',
+        'discount_amount' => 'decimal:2',
+        'confirmed_at'    => 'datetime',
+        'shipped_at'      => 'datetime',
+        'delivered_at'    => 'datetime',
+        'cancelled_at'    => 'datetime',
     ];
+
+    /**
+     * Auto-generate order_code when creating.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (Order $order) {
+            if (empty($order->order_code)) {
+                $date = now()->format('Ymd');
+                $count = self::whereDate('created_at', today())->count() + 1;
+                $order->order_code = 'BL-' . $date . '-' . str_pad($count, 3, '0', STR_PAD_LEFT);
+            }
+        });
+    }
+
+    // ── Relationships ──────────────────────────────
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'userID', 'userID');
+        return $this->belongsTo(User::class);
     }
-    
-    // In a full implementation, you might have OrderItems aka OrderDetail
+
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
 }

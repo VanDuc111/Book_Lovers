@@ -11,6 +11,7 @@ use App\Traits\ImageHelper;
 class BookController extends Controller
 {
     use ImageHelper;
+
     public function index(Request $request)
     {
         $query = Book::with('category');
@@ -26,20 +27,20 @@ class BookController extends Controller
         if ($request->has('category')) {
             $category = $request->category;
             if (is_numeric($category)) {
-                $query->where('categoryID', $category);
+                $query->where('category_id', $category);
             } else {
                 $query->whereHas('category', function($q) use ($category) {
-                    $q->where('categoryName', $category);
+                    $q->where('name', $category);
                 });
             }
         }
 
         if ($request->has('minPrice') && is_numeric($request->minPrice)) {
-            $query->where('bookPrice', '>=', $request->minPrice);
+            $query->where('price', '>=', $request->minPrice);
         }
 
         if ($request->has('maxPrice') && is_numeric($request->maxPrice)) {
-            $query->where('bookPrice', '<=', $request->maxPrice);
+            $query->where('price', '<=', $request->maxPrice);
         }
 
         if ($request->has('publishers')) {
@@ -47,6 +48,15 @@ class BookController extends Controller
             if (count($publishers) > 0) {
                 $query->whereIn('publisher', $publishers);
             }
+        }
+
+        if ($request->boolean('featured')) {
+            $query->where('is_featured', true);
+        }
+
+        // Only show active books by default
+        if (!$request->boolean('include_inactive')) {
+            $query->where('is_active', true);
         }
 
         if ($request->boolean('random')) {
@@ -59,7 +69,7 @@ class BookController extends Controller
 
         $books = $query->get()->map(function ($book) {
             $book->image = $this->fixImagePath($book->image);
-            $book->categoryName = $book->category ? $book->category->categoryName : null;
+            $book->categoryName = $book->category ? $book->category->name : null;
             return $book;
         });
 
@@ -71,7 +81,7 @@ class BookController extends Controller
         $book = Book::with('category')->find($id);
         if ($book) {
             $book->image = $this->fixImagePath($book->image);
-            $book->categoryName = $book->category ? $book->category->categoryName : null;
+            $book->categoryName = $book->category ? $book->category->name : null;
             return response()->json($book);
         }
         return response()->json(['error' => 'Book not found'], 404);
@@ -79,9 +89,6 @@ class BookController extends Controller
 
     public function store(Request $request) 
     {
-       // Implementation for create book
-       // For brevity, assuming standard Model::create but would need category lookup logic like in legacy code
-       // if we receive categoryName instead of ID.
        $data = $request->all();
        
        if ($request->hasFile('image')) {
@@ -91,13 +98,14 @@ class BookController extends Controller
            $data['image'] = $filename;
        }
 
-       if (isset($data['categoryName']) && !isset($data['categoryID'])) {
-           $cat = \App\Models\Category::where('categoryName', $data['categoryName'])->first();
-           if ($cat) $data['categoryID'] = $cat->categoryID;
+       // Support category by name (for backward compatibility)
+       if (isset($data['categoryName']) && !isset($data['category_id'])) {
+           $cat = \App\Models\Category::where('name', $data['categoryName'])->first();
+           if ($cat) $data['category_id'] = $cat->id;
        }
        
        $book = Book::create($data);
-       return response()->json(['message' => 'Book created', 'bookID' => $book->bookID]);
+       return response()->json(['message' => 'Book created', 'id' => $book->id]);
     }
 
     public function update(Request $request, $id)
@@ -114,10 +122,10 @@ class BookController extends Controller
             $data['image'] = $filename;
         }
 
-         if (isset($data['categoryName'])) {
-           $cat = \App\Models\Category::where('categoryName', $data['categoryName'])->first();
-           if ($cat) $data['categoryID'] = $cat->categoryID;
-       }
+        if (isset($data['categoryName'])) {
+           $cat = \App\Models\Category::where('name', $data['categoryName'])->first();
+           if ($cat) $data['category_id'] = $cat->id;
+        }
 
         $book->update($data);
         return response()->json(['message' => 'Book updated']);

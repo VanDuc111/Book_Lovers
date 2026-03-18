@@ -28,14 +28,14 @@
         </div>
 
         <div v-else class="row g-4">
-            <div v-for="book in books" :key="book.bookID" class="col-6 col-md-4 col-lg-3 mb-4">
+            <div v-for="book in books" :key="book.id" class="col-6 col-md-4 col-lg-3 mb-4">
                 <div class="purchased-book-card">
                     <div class="p-book-image-wrapper">
                         <img :src="book.image || 'https://fakeimg.pl/200x300/f0f0f0/909090?text=No+Image'" 
                              class="p-book-image" :alt="book.title">
                     </div>
                     <div class="p-book-info">
-                        <a :href="'/book-details?id=' + book.bookID" class="p-book-title" :title="book.title">
+                        <a :href="'/book-details?id=' + book.id" class="p-book-title" :title="book.title">
                             {{ book.title }}
                         </a>
                         <div class="p-book-author">{{ book.author || 'Đang cập nhật' }}</div>
@@ -47,7 +47,7 @@
                             Mua ngày: {{ formatDateShort(book.order_date) }}
                         </div>
                         <div class="p-book-actions">
-                            <base-button variant="primary" size="sm" class="w-100" @click="viewDetails(book.bookID)">Mua lại</base-button>
+                            <base-button variant="primary" size="sm" class="w-100" @click="viewDetails(book.id)">Mua lại</base-button>
                         </div>
                     </div>
                 </div>

@@ -26,7 +26,7 @@ class LegacyApiController extends Controller
                     return $controller->index($request);
                 }
                 if ($method === 'POST') return $controller->store($request);
-                if ($method === 'PUT') return $controller->update($request, $request->bookID);
+                if ($method === 'PUT') return $controller->update($request, $request->id);
                 if ($method === 'DELETE') return $controller->destroy($request->id);
                 break;
 
@@ -34,16 +34,16 @@ class LegacyApiController extends Controller
                 $controller = new CategoryController();
                 if ($method === 'GET') return $controller->index();
                 if ($method === 'POST') return $controller->store($request);
-                if ($method === 'PUT') return $controller->update($request, $request->categoryID);
+                if ($method === 'PUT') return $controller->update($request, $request->id);
                 if ($method === 'DELETE') return $controller->destroy($request->id);
                 break;
             
             case 'users':
                 $controller = new UserController();
-                if ($method === 'GET' && $request->has('userID')) return $controller->show($request);
+                if ($method === 'GET' && $request->has('id')) return $controller->show($request->id);
                 if ($method === 'GET') return $controller->index();
                 if ($method === 'POST') return $controller->store($request);
-                if ($method === 'PUT') return $controller->update($request);
+                if ($method === 'PUT') return $controller->update($request, $request->id);
                 if ($method === 'DELETE') return $controller->destroy($request->id);
                 break;
 
@@ -58,19 +58,25 @@ class LegacyApiController extends Controller
                 $controller = new CartController();
                 if ($method === 'GET') return $controller->index($request);
                 if ($method === 'POST') return $controller->store($request);
-                if ($method === 'DELETE') return $controller->destroy($request);
+                if ($method === 'PUT') return $controller->update($request, $request->id);
+                if ($method === 'DELETE') return $controller->destroy($request->id);
                 break;
 
             case 'order':
                  $controller = new OrderController();
                  if ($method === 'GET') return $controller->index($request);
-                 if ($method === 'PUT') return $controller->update($request);
-                 if ($method === 'DELETE') return $controller->destroy($request);
+                 if ($method === 'PUT') return $controller->update($request, $request->id);
+                 if ($method === 'DELETE') return $controller->destroy($request->id);
                  break;
 
             case 'checkout':
                  $controller = new OrderController();
                  if ($method === 'POST') return $controller->checkout($request);
+                 break;
+
+            case 'purchased-books':
+                 $controller = new OrderController();
+                 if ($method === 'GET') return $controller->purchasedBooks($request);
                  break;
                  
             default:

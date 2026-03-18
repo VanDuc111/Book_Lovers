@@ -2,13 +2,13 @@
     <div v-if="visible" class="modal-overlay" @click.self="$emit('close')">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Chi tiết đơn hàng #{{ order.orderID }}</h3>
+                <h3>Chi tiết đơn hàng {{ order.order_code || '#' + order.id }}</h3>
                 <button @click="$emit('close')" class="close-btn">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="detail-grid">
-                    <div class="detail-item"><strong>Ngày đặt:</strong> {{ formatDateTime(order.order_date) }}</div>
-                    <div class="detail-item"><strong>Trạng thái:</strong> <span class="status-text">{{ order.order_status }}</span></div>
+                    <div class="detail-item"><strong>Ngày đặt:</strong> {{ formatDateTime(order.created_at || order.order_date) }}</div>
+                    <div class="detail-item"><strong>Trạng thái:</strong> <span class="status-text">{{ order.status || order.order_status }}</span></div>
                     <div class="detail-item"><strong>Tổng tiền:</strong> <span class="price-text">{{ formatCurrency(order.total_amount) }}</span></div>
                     <div class="divider grid-span-all"></div>
                     <div class="detail-item"><strong>Người nhận:</strong> {{ order.receiver_name || 'N/A' }}</div>
@@ -17,7 +17,7 @@
                     <div class="detail-item"><strong>Phương thức thanh toán:</strong> {{ order.payment_method || 'COD' }}</div>
                     <div v-if="order.note" class="detail-item grid-span-all"><strong>Ghi chú:</strong> {{ order.note }}</div>
                     <div class="divider grid-span-all"></div>
-                    <div class="detail-item"><strong>Khách hàng ID:</strong> {{ order.userID }}</div>
+                    <div class="detail-item"><strong>Khách hàng ID:</strong> {{ order.user_id }}</div>
                 </div>
             </div>
             <div class="modal-footer">

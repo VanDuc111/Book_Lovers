@@ -25,8 +25,8 @@
                     <tr v-if="loading" v-for="i in 5" :key="i">
                         <td v-for="j in 4" :key="j"><div class="skeleton-loader skeleton-text"></div></td>
                     </tr>
-                    <tr v-else v-for="user in filteredUsers" :key="user.userID">
-                        <td>{{ user.userID }}</td>
+                    <tr v-else v-for="user in filteredUsers" :key="user.id">
+                        <td>{{ user.id }}</td>
                         <td>{{ user.name }}</td>
                         <td>{{ user.email }}</td>
                         <td>
