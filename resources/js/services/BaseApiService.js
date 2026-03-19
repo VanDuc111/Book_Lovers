@@ -5,9 +5,8 @@ import axios from 'axios';
  * Sử dụng Axios để tận dụng tính năng Interceptors và tự động xử lý JSON.
  */
 class BaseApiService {
-    constructor(resource) {
+    constructor(resource, transformer = null) {
         this.api = axios.create({
-            // Đảm bảo baseURL không có dấu gạch chéo ở cuối (trailing slash)
             baseURL: '/api',
             headers: {
                 'Content-Type': 'application/json',
@@ -16,6 +15,7 @@ class BaseApiService {
         });
 
         this.resource = resource;
+        this.transformer = transformer;
 
         // Thêm CSRF Token từ meta tag (yêu cầu của Laravel)
         const token = document.querySelector('meta[name="csrf-token"]');
@@ -27,7 +27,23 @@ class BaseApiService {
         this.api.interceptors.response.use(
             (response) => {
                 // Axios trả về dữ liệu trong object data
-                return response.data;
+                let data = response.data;
+                
+                // Áp dụng transformer nếu có
+                if (this.transformer && data) {
+                    if (Array.isArray(data)) {
+                        data = data.map(item => this.transformer(item));
+                    } else if (typeof data === 'object') {
+                        // Nếu là object đơn lẻ, hoặc kết quả trả về từ Laravel là { data: [...] }
+                        if (data.data && Array.isArray(data.data)) {
+                            data.data = data.data.map(item => this.transformer(item));
+                        } else {
+                            data = this.transformer(data);
+                        }
+                    }
+                }
+                
+                return data;
             },
             (error) => {
                 return this.handleError(error);
@@ -39,18 +55,9 @@ class BaseApiService {
         let message = 'Đã xảy ra lỗi kết nối.';
         
         if (error.response) {
-            // Server trả về lỗi (4xx, 5xx)
             message = error.response.data.message || error.response.data.error || message;
-            
-            // Xử lý các mã lỗi đặc biệt
-            if (error.response.status === 401) {
-                // Ví dụ: Logout nếu hết hạn phiên đăng nhập
-                // localStorage.removeItem('user');
-                // window.location.href = '/login';
-            }
         }
         
-        // Hiển thị thông báo lỗi qua Toast nếu có sẵn
         if (window.showToast) {
             window.showToast(message, 'danger');
         }
@@ -70,7 +77,6 @@ class BaseApiService {
     async get(endpoint, params = {}) {
         const isAbsolute = endpoint && endpoint.startsWith('/');
         let url = isAbsolute ? endpoint : (endpoint ? `${this.resource}/${endpoint}` : `${this.resource}`);
-        // Loại bỏ dấu gạch chéo cuối nếu có để tránh redirect
         if (url.endsWith('/') && url.length > 1) url = url.slice(0, -1);
         return await this.api.get(url, { params });
     }
@@ -99,3 +105,4 @@ class BaseApiService {
 }
 
 export default BaseApiService;
+

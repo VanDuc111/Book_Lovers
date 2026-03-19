@@ -2,16 +2,31 @@ import BaseApiService from './BaseApiService';
 
 class CartService extends BaseApiService {
     constructor() {
-        super('/cart');
+        super('/cart', (data) => this.transformCartItem(data));
     }
 
     /**
-     * Lấy danh sách giỏ hàng theo User ID
+     * Chuẩn hóa dữ liệu mục trong giỏ hàng
+     */
+    transformCartItem(item) {
+        if (!item) return null;
+        return {
+            ...item,
+            id: item.id || item.cartItemID,
+            book_id: item.book_id || item.bookID,
+            user_id: item.user_id || item.userID,
+            price: parseFloat(item.price || item.bookPrice || 0),
+            quantity: parseInt(item.quantity || 1)
+        };
+    }
+
+    /**
+     * Lấy danh sách giỏ hàng
      */
     async getCart(userId) {
         try {
             const data = await this.getAll({ user_id: userId });
-            // Cache lại số lượng để hiện tức thì khi load trang (MPA)
+            // Cache lại trạng thái đã transform
             localStorage.setItem(`cart_cache_${userId}`, JSON.stringify(data));
             return data;
         } catch (error) {
@@ -31,7 +46,8 @@ class CartService extends BaseApiService {
      * Thêm sản phẩm vào giỏ
      */
     async addToCart(bookId, userId, quantity = 1) {
-        return await this.post('/cart', {
+        // Gọi thẳng checkout logic hoặc cart logic tùy API route
+        return await this.post('/', {
             book_id: bookId,
             user_id: userId,
             quantity
@@ -39,14 +55,14 @@ class CartService extends BaseApiService {
     }
 
     /**
-     * Cập nhật số lượng sản phẩm trong giỏ
+     * Cập nhật số lượng
      */
     async updateQuantity(cartItemId, quantity) {
         return await this.put(cartItemId, { quantity });
     }
 
     /**
-     * Xóa sản phẩm khỏi giỏ hàng
+     * Xóa sản phẩm
      */
     async removeFromCart(cartItemId) {
         return await this.delete(cartItemId);

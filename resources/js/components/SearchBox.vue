@@ -80,11 +80,8 @@ const goToBook = (id) => {
     window.location.href = `/book-details?id=${id}`;
 };
 
-const formatPrice = (p) => new Intl.NumberFormat('vi-VN', { 
-    style: 'currency', 
-    currency: 'VND', 
-    maximumFractionDigits: 0 
-}).format(p);
+import { formatCurrency } from '@/utils/formatters';
+const formatPrice = (p) => formatCurrency(p);
 
 // Close suggestions on click outside
 const closeSuggestions = (e) => {

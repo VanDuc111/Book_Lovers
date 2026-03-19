@@ -2,17 +2,28 @@ import BaseApiService from './BaseApiService';
 
 class CategoryService extends BaseApiService {
     constructor() {
-        super('/categories');
+        super('/categories', (data) => this.transformCategory(data));
+    }
+
+    /**
+     * Chuẩn hóa dữ liệu thể loại
+     */
+    transformCategory(category) {
+        if (!category) return null;
+        return {
+            ...category,
+            id: category.id || category.categoryID,
+            name: category.name || category.categoryName || ''
+        };
     }
 
     async getCategories() {
         try {
             const categories = await this.getAll();
-            // Lưu vào localStorage để hỗ trợ instant loading (MPA)
+            // Cập nhật cache sau khi đã được transform bởi BaseApiService
             localStorage.setItem('cached_categories', JSON.stringify(categories));
             return categories;
         } catch (error) {
-            // Nếu lỗi mạng, cố gắng lấy từ cache
             const cached = localStorage.getItem('cached_categories');
             if (cached) return JSON.parse(cached);
             throw error;
@@ -25,7 +36,7 @@ class CategoryService extends BaseApiService {
     }
 
     /**
-     * Tác vụ Admin: Lưu thể loại (Thêm/Sửa)
+     * Tác vụ Admin: Lưu thể loại
      */
     async saveCategory(data) {
         if (data.id) {

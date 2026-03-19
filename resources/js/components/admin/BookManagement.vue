@@ -47,7 +47,7 @@
                             <td>{{ book.title }}</td>
                             <td>{{ book.author }}</td>
                             <td>{{ book.publisher }}</td>
-                            <td>{{ book.category_name || book.categoryName }}</td>
+                            <td>{{ book.category_name }}</td>
                             <td>{{ formatCurrency(book.price) }}</td>
                             <td>{{ book.stock }}</td>
                         </tr>

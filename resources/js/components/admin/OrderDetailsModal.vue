@@ -7,8 +7,8 @@
             </div>
             <div class="modal-body">
                 <div class="detail-grid">
-                    <div class="detail-item"><strong>Ngày đặt:</strong> {{ formatDateTime(order.created_at || order.order_date) }}</div>
-                    <div class="detail-item"><strong>Trạng thái:</strong> <span class="status-text">{{ order.status || order.order_status }}</span></div>
+                    <div class="detail-item"><strong>Ngày đặt:</strong> {{ formatDateTime(order.created_at) }}</div>
+                    <div class="detail-item"><strong>Trạng thái:</strong> <span class="status-text">{{ order.status }}</span></div>
                     <div class="detail-item"><strong>Tổng tiền:</strong> <span class="price-text">{{ formatCurrency(order.total_amount) }}</span></div>
                     <div class="divider grid-span-all"></div>
                     <div class="detail-item"><strong>Người nhận:</strong> {{ order.receiver_name || 'N/A' }}</div>

@@ -115,7 +115,7 @@
         <template v-else-if="reviews.length > 0">
           <div v-for="review in reviews" :key="review.id" class="review-item d-flex mb-4 pb-4 border-bottom">
             <div class="review-user-info" style="width: 140px;">
-              <div class="fw-bold fs-5 text-dark">{{ (review.userName || 'Ẩn danh').split(' ')[0] }}</div>
+              <div class="fw-bold fs-5 text-dark">{{ (review.user_name || 'Ẩn danh').split(' ')[0] }}</div>
               <div class="text-muted small">{{ formatDate(review.created_at) }}</div>
             </div>
             <div class="review-content grow">

@@ -2,14 +2,31 @@ import BaseApiService from './BaseApiService';
 
 class OrderService extends BaseApiService {
     constructor() {
-        super('/orders');
+        super('/orders', (data) => this.transformOrder(data));
+    }
+
+    /**
+     * Chuẩn hóa dữ liệu đơn hàng
+     */
+    transformOrder(order) {
+        if (!order) return null;
+        return {
+            ...order,
+            id: order.id || order.orderID,
+            user_id: order.user_id || order.userID,
+            status: (order.status || order.order_status || 'pending').toLowerCase(),
+            created_at: order.created_at || order.order_date,
+            total_amount: parseFloat(order.total_amount || 0),
+            // Đảm bảo thông tin người nhận tồn tại
+            receiver_name: order.receiver_name || order.receiverName || '',
+            receiver_phone: order.receiver_phone || order.receiverPhone || ''
+        };
     }
 
     /**
      * Đặt hàng (Checkout)
      */
     async checkout(orderData) {
-        // Endpoint đặc biệt /api/checkout trong routes/api.php
         return await this.api.post('/checkout', orderData);
     }
 
@@ -21,7 +38,7 @@ class OrderService extends BaseApiService {
     }
 
     /**
-     * Lấy thông tin chi tiết đơn hàng (Dành cho Admin hoặc User xem chi tiết)
+     * Lấy thông tin chi tiết đơn hàng
      */
     async getOrderDetails(orderId) {
         return await this.getById(orderId);
@@ -35,7 +52,7 @@ class OrderService extends BaseApiService {
     }
 
     /**
-     * Lấy danh sách sách đã mua (cho Profile/Review)
+     * Lấy danh sách sách đã mua
      */
     async getPurchasedBooks(userId, bookId = null) {
         const params = { user_id: userId };

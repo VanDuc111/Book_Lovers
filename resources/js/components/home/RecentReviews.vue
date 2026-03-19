@@ -13,11 +13,11 @@
             </div>
             <div v-for="review in reviews" :key="review.id" class="col-md-4 mb-4">
                 <div class="card h-100">
-                    <img :src="review.bookImage || '/assets/images/placeholder.png'" class="card-img-top" :alt="review.bookTitle">
+                    <img :src="review.book_image || '/assets/images/placeholder.png'" class="card-img-top" :alt="review.book_title">
                     <div class="card-body">
-                        <h5 class="card-title">{{ review.bookTitle || '---' }}</h5>
+                        <h5 class="card-title">{{ review.book_title || '---' }}</h5>
                         <div class="text-muted mb-2">
-                            <i class="fas fa-user me-1"></i> {{ review.userName }}
+                            <i class="fas fa-user me-1"></i> {{ review.user_name }}
                         </div>
                         <p class="card-text">
                             "{{ review.comment || 'Không có bình luận.' }}"

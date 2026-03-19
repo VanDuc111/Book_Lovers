@@ -3,7 +3,7 @@ services:
     name: booklovers
     env: docker
     plan: free
-    preDeployCommand: php artisan migrate:fresh --seed --force
+    preDeployCommand: php artisan migrate --force
     envVars:
       - key: APP_KEY
         generateValue: true
