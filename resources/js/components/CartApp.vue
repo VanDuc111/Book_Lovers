@@ -62,7 +62,7 @@
 
     <!-- Empty Cart -->
     <div v-else-if="items.length === 0" class="text-center py-5">
-      <div class="empty-cart-icon mb-3"><i class="fas fa-shopping-cart fa-3x" style="opacity: 0.2;"></i></div>
+      <div class="empty-cart-icon mb-3"><i class="fas fa-shopping-cart fa-3x" style="color: #ddd;"></i></div>
       <p style="font-size: 1.6rem;">Giỏ hàng của bạn đang trống.</p>
       <base-button variant="primary" size="lg" class="mt-3" @click="goToBooks">Tiếp tục mua sắm</base-button>
     </div>

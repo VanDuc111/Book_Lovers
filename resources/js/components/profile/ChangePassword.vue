@@ -5,12 +5,13 @@
             <p>Đảm bảo an toàn cho tài khoản của bạn</p>
         </div>
 
-        <div style="max-width: 45rem;">
+        <div v-if="showForm" style="max-width: 45rem;">
             <password-field 
-                id="current_password"
+                id="old_p_field"
                 v-model="pass.current"
                 label="Mật khẩu hiện tại"
                 placeholder="Nhập mật khẩu hiện tại"
+                autocomplete="current-password"
                 required
             />
 
@@ -18,7 +19,8 @@
                 id="new_password"
                 v-model="pass.new"
                 label="Mật khẩu mới"
-                placeholder="Nhập mật khẩu mới"
+                placeholder="Nhập mật khẩu mới (tối thiểu 8 ký tự)"
+                autocomplete="new-password"
                 required
             />
 
@@ -27,6 +29,7 @@
                 v-model="pass.confirmation"
                 label="Xác nhận mật khẩu mới"
                 placeholder="Xác nhận mật khẩu mới"
+                autocomplete="new-password"
                 required
             />
 
@@ -44,13 +47,15 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue';
+import { reactive, onMounted, ref } from 'vue';
+import MSG from '@/constants/messages';
 
 const props = defineProps({
     loading: Boolean
 });
 
 const emit = defineEmits(['update-password']);
+const showForm = ref(false);
 
 const pass = reactive({
     current: '',
@@ -58,10 +63,13 @@ const pass = reactive({
     confirmation: ''
 });
 
+// Hiện form ngay vì PasswordField đã xử lý readonly
+onMounted(() => {
+    showForm.value = true;
+});
+
 const submit = () => {
     emit('update-password', { ...pass });
-    // Clear form only on success (controlled by parent usually, but we clear it here as well)
-    // Actually better to let parent decide, but for now we reset.
 };
 </script>
 

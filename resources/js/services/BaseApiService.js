@@ -75,15 +75,13 @@ class BaseApiService {
     }
 
     async get(endpoint, params = {}) {
-        const isAbsolute = endpoint && endpoint.startsWith('/');
-        let url = isAbsolute ? endpoint : (endpoint ? `${this.resource}/${endpoint}` : `${this.resource}`);
+        let url = (endpoint && endpoint !== '/') ? (endpoint.startsWith('/') ? endpoint : `${this.resource}/${endpoint}`) : this.resource;
         if (url.endsWith('/') && url.length > 1) url = url.slice(0, -1);
         return await this.api.get(url, { params });
     }
 
     async post(endpoint, data) {
-        const isAbsolute = endpoint && endpoint.startsWith('/');
-        let url = isAbsolute ? endpoint : (endpoint ? `${this.resource}/${endpoint}` : `${this.resource}`);
+        let url = (endpoint && endpoint !== '/') ? (endpoint.startsWith('/') ? endpoint : `${this.resource}/${endpoint}`) : this.resource;
         if (url.endsWith('/') && url.length > 1) url = url.slice(0, -1);
         return await this.api.post(url, data);
     }
