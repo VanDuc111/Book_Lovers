@@ -36,6 +36,12 @@ class UserService extends BaseApiService {
         return await this.put(userId, passwordData);
     }
 
+    async updateAvatar(userId, file) {
+        const formData = new FormData();
+        formData.append('avatar', file);
+        return await this.postFormData(`${userId}/avatar`, formData);
+    }
+
     async getUsers() {
         return await this.getAll();
     }

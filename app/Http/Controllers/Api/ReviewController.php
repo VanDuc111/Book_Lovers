@@ -71,7 +71,7 @@ class ReviewController extends Controller
                 'book_id'              => $review->book_id,
                 'user_id'              => $review->user_id,
                 'userName'             => $review->user->name ?? 'Unknown',
-                'userAvatar'           => $review->user->avatar ?? null,
+                'userAvatar'           => $this->fixImagePath($review->user->avatar ?? null),
                 'bookTitle'            => $review->book->title ?? 'Unknown',
                 'bookImage'            => $this->fixImagePath($review->book->image ?? null),
                 'rating'               => $review->rating,
