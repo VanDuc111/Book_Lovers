@@ -153,6 +153,7 @@ import { formatDateShort as formatDate } from '@/utils/formatters';
 import ReviewService from '@/services/ReviewService';
 import OrderService from '@/services/OrderService';
 import AuthService from '@/services/AuthService';
+import MSG from '@/constants/messages';
 
 const props = defineProps({
   bookId: {
@@ -203,14 +204,14 @@ const submitMutation = useMutation({
     mutationFn: (data) => ReviewService.submitReview(data),
     onSuccess: (data) => {
         if (data.success || data.id) {
-            if (window.showToast) window.showToast('Gửi đánh giá thành công!', 'success');
+            if (window.showToast) window.showToast(MSG.REVIEW.SUBMIT_SUCCESS, 'success');
             showForm.value = false;
             newReview.value = { rating: 0, comment: '' };
             // Làm tươi dữ liệu
             queryClient.invalidateQueries({ queryKey: ['reviews-summary', props.bookId] });
             queryClient.invalidateQueries({ queryKey: ['reviews-list', props.bookId] });
         } else {
-            if (window.showToast) window.showToast(data.error || 'Lỗi gửi đánh giá', 'danger');
+            if (window.showToast) window.showToast(data.error || MSG.REVIEW.SUBMIT_ERROR, 'danger');
         }
     }
 });
@@ -228,11 +229,11 @@ const getPercentage = (star) => {
 
 const submitReview = () => {
   if (newReview.value.rating === 0) {
-    if (window.showToast) window.showToast('Vui lòng chọn số sao đánh giá', 'warning');
+    if (window.showToast) window.showToast(MSG.REVIEW.RATING_REQUIRED, 'warning');
     return;
   }
   if (!newReview.value.comment.trim()) {
-    if (window.showToast) window.showToast('Vui lòng nhập nhận xét', 'warning');
+    if (window.showToast) window.showToast(MSG.REVIEW.COMMENT_REQUIRED, 'warning');
     return;
   }
 

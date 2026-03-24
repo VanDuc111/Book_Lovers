@@ -70,6 +70,7 @@ const loadingCategories = computed(() => categoriesQuery.isLoading.value && cate
 
 // 2. Fetch Giỏ hàng với Vue Query
 const cartQuery = useQuery({
+    queryKey: computed(() => ['cart-count', user.value?.id]),
     queryFn: async () => {
         const u = user.value;
         const uid = u?.id;

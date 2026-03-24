@@ -5,6 +5,7 @@
     </label>
     <div class="password-wrapper">
       <input 
+        v-bind="$attrs"
         :type="isVisible ? 'text' : 'password'" 
         :id="id"
         :value="modelValue"
@@ -12,6 +13,8 @@
         class="form-control custom-input"
         :placeholder="placeholder"
         :required="required"
+        readonly
+        @focus="$event.target.removeAttribute('readonly')"
       >
       <div class="toggle-password" @click="toggleVisibility" title="Hiển thị/Ẩn mật khẩu">
         <img 

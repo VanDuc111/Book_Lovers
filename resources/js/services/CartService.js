@@ -46,8 +46,7 @@ class CartService extends BaseApiService {
      * Thêm sản phẩm vào giỏ
      */
     async addToCart(bookId, userId, quantity = 1) {
-        // Gọi thẳng checkout logic hoặc cart logic tùy API route
-        return await this.post('/', {
+        return await this.post('', {
             book_id: bookId,
             user_id: userId,
             quantity
