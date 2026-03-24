@@ -114,9 +114,18 @@
         
         <template v-else-if="reviews.length > 0">
           <div v-for="review in reviews" :key="review.id" class="review-item d-flex mb-4 pb-4 border-bottom">
-            <div class="review-user-info" style="width: 140px;">
-              <div class="fw-bold fs-5 text-dark">{{ (review.user_name || 'Ẩn danh').split(' ')[0] }}</div>
-              <div class="text-muted small">{{ formatDate(review.created_at) }}</div>
+            <div class="review-user-info d-flex align-items-center gap-3" style="width: 220px;">
+              <div class="user-avatar-wrapper">
+                <img 
+                  :src="review.userAvatar ? review.userAvatar : `https://ui-avatars.com/api/?name=${encodeURIComponent(review.userName || 'U')}&background=random&color=fff`" 
+                  alt="Avatar" 
+                  class="review-avatar shadow-sm"
+                />
+              </div>
+              <div class="user-meta">
+                <div class="fw-bold fs-5 text-dark">{{ (review.userName || 'Ẩn danh').split(' ')[0] }}</div>
+                <div class="text-muted small">{{ formatDate(review.created_at) }}</div>
+              </div>
             </div>
             <div class="review-content grow">
               <div class="stars mb-2">
@@ -305,7 +314,19 @@ onMounted(() => {
 }
 
 .review-user-info {
-    min-width: 120px;
+    min-width: 220px;
+}
+
+.review-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+}
+
+.user-avatar-wrapper {
+    flex-shrink: 0;
 }
 
 .review-content .stars {

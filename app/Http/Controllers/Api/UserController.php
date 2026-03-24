@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
@@ -68,6 +69,50 @@ class UserController extends Controller
         
         $user->update($data);
         return response()->json(['success' => true, 'message' => 'Updated successfully']);
+    }
+
+    public function updateAvatar(Request $request, $id)
+    {
+        $user = User::find($id);
+        if (!$user) return response()->json(['error' => 'Người dùng không tồn tại.'], 404);
+
+        $request->validate([
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($request->hasFile('avatar')) {
+            $file = $request->file('avatar');
+            $filename = time() . '_' . $id . '.jpg';
+            
+            // Đường dẫn thư mục đích trong public
+            $destinationPath = public_path('assets/avatars');
+            
+            // Tạo thư mục nếu chưa tồn tại
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+
+            // Xóa ảnh cũ nếu có trong assets/avatars
+            if ($user->avatar && str_contains($user->avatar, 'assets/avatars')) {
+                $oldPath = public_path($user->avatar);
+                if (file_exists($oldPath)) @unlink($oldPath);
+            }
+
+            // Lưu ảnh mới vào public/assets/avatars
+            $file->move($destinationPath, $filename);
+
+            // Cập nhật Database với đường dẫn public
+            $user->avatar = '/assets/avatars/' . $filename;
+            $user->save();
+
+            return response()->json([
+                'success' => true,
+                'avatar_url' => $user->avatar,
+                'message' => 'Cập nhật ảnh đại diện thành công.'
+            ]);
+        }
+
+        return response()->json(['error' => 'Không tìm thấy file.'], 400);
     }
 
     public function destroy($id)

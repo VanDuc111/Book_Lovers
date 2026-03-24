@@ -1,11 +1,19 @@
 <template>
     <aside class="profile-sidebar glass">
         <div class="user-profile-header">
-            <div class="avatar-container">
+            <div class="avatar-container" @click="triggerFileInput">
                 <img :src="avatarUrl" id="profile-avatar-img" alt="Avatar">
                 <div class="edit-avatar">
                     <i class="fas fa-camera"></i>
                 </div>
+                <!-- Input file ẩn -->
+                <input 
+                    type="file" 
+                    ref="fileInput" 
+                    style="display: none" 
+                    accept="image/*"
+                    @change="handleFileChange"
+                >
             </div>
             <h3 id="sidebar-name">{{ userName || 'Người dùng' }}</h3>
             <p id="sidebar-email">{{ userEmail || 'email@example.com' }}</p>
@@ -31,20 +39,39 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 const props = defineProps({
     userName: String,
     userEmail: String,
+    avatar: String, // Nhận avatar từ user object
     activeTab: String,
     navItems: Array
 });
 
-defineEmits(['switch-tab', 'logout']);
+const emit = defineEmits(['switch-tab', 'logout', 'avatar-selected']);
+const fileInput = ref(null);
+
+const triggerFileInput = () => {
+    fileInput.value.click();
+};
+
+const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        emit('avatar-selected', file);
+        // Reset input để có thể chọn lại cùng 1 file
+        e.target.value = '';
+    }
+};
 
 const avatarUrl = computed(() => {
+    if (props.avatar) {
+        // Nếu đã có đường dẫn avatar thì trả về, có thể là link Cloudinary hoặc storage local
+        return props.avatar;
+    }
     const name = props.userName || 'User';
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ff6347&color=fff&size=128`;
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=ff6347&color=fff&size=256`;
 });
 </script>
 

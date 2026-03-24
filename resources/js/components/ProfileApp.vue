@@ -5,10 +5,12 @@
             <profile-sidebar 
                 :user-name="user.name"
                 :user-email="user.email"
+                :avatar="user.avatar"
                 :active-tab="activeTab"
                 :nav-items="navItems"
                 @switch-tab="switchTab"
                 @logout="logout"
+                @avatar-selected="handleAvatarSelected"
             />
 
             <!-- Main Content Area -->
@@ -55,6 +57,49 @@
                 />
             </main>
         </div>
+
+        <!-- Avatar Cropper Modal-->
+        <Teleport to="body">
+            <div v-if="showCropper" class="avatar-edit-modal-overlay">
+                <div class="avatar-edit-modal">
+                    <div class="modal-header">
+                        <button class="back-btn" @click="closeCropper"><i class="fas fa-chevron-left"></i></button>
+                        <h3>Cập nhật ảnh đại diện</h3>
+                        <button class="close-btn" @click="closeCropper">&times;</button>
+                    </div>
+                    <div class="cropper-container">
+                        <cropper
+                            ref="cropperRef"
+                            class="advanced-cropper"
+                            :src="cropperSrc"
+                            :stencil-component="CircleStencil"
+                            :stencil-props="{
+                                aspectRatio: 1/1
+                            }"
+                        />
+                    </div>
+                    <div class="zoom-wrapper">
+                        <i class="fas fa-minus"></i>
+                        <input 
+                            type="range" 
+                            v-model="zoomLevel" 
+                            min="0" 
+                            max="1" 
+                            step="0.01" 
+                            @input="onZoomLevelChange"
+                            class="zoom-slider"
+                        >
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-cancel" @click="closeCropper">Hủy</button>
+                        <button class="btn-update" @click="handleConfirmCrop" :disabled="savingAvatar">
+                            {{ savingAvatar ? 'Đang lưu...' : 'Cập nhật' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </Teleport>
     </section>
 </template>
 
@@ -72,6 +117,8 @@ import UserService from '@/services/UserService';
 import OrderService from '@/services/OrderService';
 import AuthService from '@/services/AuthService';
 import MSG from '@/constants/messages';
+import { Cropper, CircleStencil } from 'vue-advanced-cropper';
+import 'vue-advanced-cropper/dist/style.css';
 
 const props = defineProps(['config']);
 const queryClient = useQueryClient();
@@ -83,8 +130,16 @@ const user = reactive({
     name: '',
     email: '',
     phone: '',
-    address: ''
+    address: '',
+    avatar: ''
 });
+
+// Cropper refs & state
+const showCropper = ref(false);
+const cropperRef = ref(null);
+const cropperSrc = ref('');
+const zoomLevel = ref(0); 
+let lastZoom = 0;
 
 const navItems = [
     { id: 'profile-info', label: 'Thông tin cá nhân', icon: 'fas fa-user-circle' },
@@ -161,6 +216,22 @@ const updatePasswordMutation = useMutation({
 const saving = computed(() => updateProfileMutation.isPending.value);
 const savingPassword = computed(() => updatePasswordMutation.isPending.value);
 
+const updateAvatarMutation = useMutation({
+    mutationFn: (file) => UserService.updateAvatar(userId.value, file),
+    onSuccess: (data) => {
+        if (data.success || !data.error) {
+            if (window.showToast) window.showToast("Cập nhật ảnh đại diện thành công!", 'success');
+            queryClient.invalidateQueries({ queryKey: ['user-profile', userId.value] });
+            closeCropper();
+            // Emit to sync in other places if needed
+            window.dispatchEvent(new Event('user-updated'));
+        } else {
+             if (window.showToast) window.showToast(data.error || "Lỗi cập nhật ảnh.", 'danger');
+        }
+    }
+});
+const savingAvatar = computed(() => updateAvatarMutation.isPending.value);
+
 onMounted(() => {
     const storedUser = AuthService.getCurrentUser();
     if (!storedUser) {
@@ -204,6 +275,44 @@ const updatePassword = (passwords) => {
         current_password: passwords.current,
         password: passwords.new
     });
+};
+
+const handleAvatarSelected = (file) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        cropperSrc.value = e.target.result;
+        showCropper.value = true;
+    };
+    reader.readAsDataURL(file);
+};
+
+const onZoomLevelChange = () => {
+    if (!cropperRef.value) return;
+    const factor = zoomLevel.value - lastZoom;
+    cropperRef.value.zoom(1 + factor);
+    lastZoom = zoomLevel.value;
+};
+
+const closeCropper = () => {
+    showCropper.value = false;
+    cropperSrc.value = '';
+    zoomLevel.value = 0;
+    lastZoom = 0;
+};
+
+const handleConfirmCrop = () => {
+    if (!cropperRef.value) return;
+    
+    // Lấy kết quả cắt
+    const { canvas } = cropperRef.value.getResult();
+    if (canvas) {
+        canvas.toBlob((blob) => {
+            if (blob) {
+                const file = new File([blob], "avatar.jpg", { type: "image/jpeg" });
+                updateAvatarMutation.mutate(file);
+            }
+        }, 'image/jpeg', 0.9);
+    }
 };
 
 const logout = () => AuthService.logout();
@@ -255,7 +364,136 @@ const logout = () => AuthService.logout();
 .content-header p { font-size: var(--fs-sm); color: var(--light-color); }
 
 @media (max-width: 991px) {
+    .profile-section { padding: 1.5rem; }
     .profile-wrapper { flex-direction: column; }
     .content-pane { padding: 2rem; }
 }
+</style>
+
+<!-- CSS Toàn cục cho Modal (vì dùng Teleport nên ko dùng scoped được) -->
+<style>
+.avatar-edit-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; 
+    width: 100vw !important; 
+    height: 100vh !important;
+    background: rgba(0, 0, 0, 0.4) !important; /* Nền tối nhẹ kiểu Facebook/Instagram */
+    display: flex !important; 
+    align-items: center !important; 
+    justify-content: center !important;
+    z-index: 2147483647 !important;
+    backdrop-filter: blur(8px);
+}
+
+.avatar-edit-modal {
+    background: #ffffff !important;
+    width: 95% !important; 
+    max-width: 500px !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    position: relative !important;
+    border: 1px solid #e1e4e8 !important;
+}
+
+.modal-header {
+    padding: 1.2rem 1.5rem !important; 
+    border-bottom: 1px solid #f1f1f1 !important;
+    display: flex !important; 
+    justify-content: space-between !important; 
+    align-items: center !important;
+    color: #333 !important;
+    background: #fff !important;
+}
+
+.modal-header h3 { 
+    font-size: 1.6rem !important; 
+    font-weight: 600 !important; 
+    margin: 0 !important; 
+    color: #222 !important; 
+    text-align: center;
+    flex: 1;
+}
+
+.back-btn, .close-btn { 
+    background: none !important; 
+    border: none !important; 
+    color: #666 !important; 
+    font-size: 1.8rem !important;
+    cursor: pointer !important;
+}
+.back-btn:hover, .close-btn:hover { color: #000; }
+
+.cropper-container {
+    width: 100% !important;
+    height: 420px !important; 
+    background: #f8f9fa !important;
+    overflow: hidden !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Đảm bảo cropper lấp đầy container */
+.advanced-cropper {
+    max-height: 100%;
+    width: 100%;
+}
+
+/* Biến khung cắt thành hình tròn */
+.avatar-edit-modal .vue-circle-stencil {
+    border: 3px solid #ffffff;
+    box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.8) !important; /* Làm mờ phần ngoài vòng tròn */
+}
+
+.zoom-wrapper {
+    padding: 1.5rem 3rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 1.5rem !important;
+    background: #fff !important;
+    border-top: 1px solid #f1f1f1 !important;
+}
+
+.zoom-slider {
+    flex: 1;
+    height: 6px !important;
+    background: #e1e4e8 !important;
+    accent-color: #ff6347 !important; /* Màu cam thương hiệu */
+    cursor: pointer;
+}
+
+.modal-footer {
+    padding: 1.2rem 2rem !important; 
+    border-top: 1px solid #f1f1f1 !important;
+    display: flex !important; 
+    justify-content: flex-end !important; 
+    gap: 1.2rem !important;
+    background: #fff !important;
+}
+
+.btn-cancel {
+    background: #f1f2f4 !important;
+    border: none !important;
+    color: #4b4f56 !important;
+    padding: 0.8rem 2.2rem !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    cursor: pointer;
+}
+
+.btn-update {
+    background: #ff6347 !important;
+    border: none !important;
+    color: white !important;
+    padding: 0.8rem 2.5rem !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(255, 99, 71, 0.2);
+}
+.btn-update:hover { background: #e5533d !important; }
+.btn-update:disabled { opacity: 0.6; cursor: not-allowed; }
 </style>
