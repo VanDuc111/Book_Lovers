@@ -71,6 +71,7 @@ import ChangePassword from './profile/ChangePassword.vue';
 import UserService from '@/services/UserService';
 import OrderService from '@/services/OrderService';
 import AuthService from '@/services/AuthService';
+import MSG from '@/constants/messages';
 
 const props = defineProps(['config']);
 const queryClient = useQueryClient();
@@ -139,7 +140,7 @@ const updateProfileMutation = useMutation({
     mutationFn: (data) => UserService.updateProfile(userId.value, data),
     onSuccess: (data) => {
         if (data.success || !data.error) {
-            if (window.showToast) window.showToast('Cập nhật hồ sơ thành công!', 'success');
+            if (window.showToast) window.showToast(MSG.AUTH.PROFILE_UPDATE_SUCCESS, 'success');
             queryClient.invalidateQueries({ queryKey: ['user-profile', userId.value] });
         }
     }
@@ -149,10 +150,10 @@ const updatePasswordMutation = useMutation({
     mutationFn: (data) => UserService.updatePassword(userId.value, data),
     onSuccess: (data) => {
          if (data.success || !data.error) {
-            if (window.showToast) window.showToast('Đổi mật khẩu thành công! Vui lòng đăng nhập lại.', 'success');
+            if (window.showToast) window.showToast(MSG.AUTH.PASSWORD_UPDATE_SUCCESS, 'success');
             setTimeout(() => logout(), 2000);
         } else {
-             if (window.showToast) window.showToast(data.error || 'Lỗi đổi mật khẩu', 'danger');
+             if (window.showToast) window.showToast(data.error || MSG.ERROR.GENERAL, 'danger');
         }
     }
 });
@@ -184,7 +185,7 @@ const switchTab = (tabId) => {
 const updateProfile = (updatedData) => {
     // Basic phone validation
     if (updatedData.phone && !/^(0)(3|5|7|8|9)[0-9]{8}$/.test(updatedData.phone)) {
-        if (window.showToast) window.showToast('Số điện thoại không đúng định dạng', 'warning');
+        if (window.showToast) window.showToast(MSG.AUTH.PHONE_INVALID, 'warning');
         return;
     }
     updateProfileMutation.mutate(updatedData);
@@ -192,11 +193,11 @@ const updateProfile = (updatedData) => {
 
 const updatePassword = (passwords) => {
     if (passwords.new.length < 8) {
-        if (window.showToast) window.showToast('Mật khẩu mới phải có ít nhất 8 ký tự.', 'warning');
+        if (window.showToast) window.showToast(MSG.AUTH.PASSWORD_MIN_LENGTH, 'warning');
         return;
     }
     if (passwords.new !== passwords.confirmation) {
-        if (window.showToast) window.showToast('Xác nhận mật khẩu mới không khớp.', 'warning');
+        if (window.showToast) window.showToast(MSG.AUTH.PASSWORD_MISMATCH, 'warning');
         return;
     }
     updatePasswordMutation.mutate({

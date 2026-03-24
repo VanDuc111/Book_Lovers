@@ -33,7 +33,8 @@
                 id="password"
                 v-model="password"
                 label="Mật Khẩu"
-                placeholder="Nhập mật khẩu..."
+                placeholder="Nhập mật khẩu (tối thiểu 8 ký tự)..."
+                autocomplete="new-password"
                 required
             />
 
@@ -42,6 +43,7 @@
                 v-model="confirmPassword"
                 label="Xác Nhận Mật Khẩu"
                 placeholder="Nhập lại mật khẩu..."
+                autocomplete="new-password"
                 required
             />
             
@@ -59,6 +61,7 @@
 <script setup>
 import { ref } from 'vue';
 import AuthService from '@/services/AuthService';
+import MSG from '@/constants/messages';
 
 const username = ref('');
 const email = ref('');
@@ -68,18 +71,23 @@ const loading = ref(false);
 
 const handleRegister = async () => {
     if (!username.value.trim()) {
-        if (window.showToast) window.showToast("Vui lòng nhập tên người dùng.", "warning");
+        if (window.showToast) window.showToast(MSG.AUTH.REQUIRED_NAME, "warning");
         return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email.value)) {
-        if (window.showToast) window.showToast("Email không đúng định dạng chuẩn (Ví dụ: ten@example.com).", "warning");
+        if (window.showToast) window.showToast(MSG.AUTH.EMAIL_INVALID, "warning");
+        return;
+    }
+
+    if (password.value.length < 8) {
+        if (window.showToast) window.showToast(MSG.AUTH.PASSWORD_MIN_LENGTH, "warning");
         return;
     }
 
     if (password.value !== confirmPassword.value) {
-        if (window.showToast) window.showToast("Mật khẩu xác nhận không khớp.", "warning");
+        if (window.showToast) window.showToast(MSG.AUTH.PASSWORD_MISMATCH, "warning");
         return;
     }
 
@@ -92,7 +100,7 @@ const handleRegister = async () => {
         });
         
         if (data.success) {
-            if (window.showToast) window.showToast("Đăng ký thành công! Đang chuyển hướng...", "success");
+            if (window.showToast) window.showToast(MSG.AUTH.REGISTER_SUCCESS, "success");
             setTimeout(() => {
                 window.location.href = "/login";
             }, 1500);
