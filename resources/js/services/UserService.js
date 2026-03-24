@@ -33,7 +33,7 @@ class UserService extends BaseApiService {
     }
 
     async updatePassword(userId, passwordData) {
-        return await this.post(`/change-password`, passwordData);
+        return await this.put(userId, passwordData);
     }
 
     async getUsers() {
